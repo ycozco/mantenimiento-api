@@ -28,6 +28,7 @@ part 'app_database.g.dart';
     Collections,
     Attachments,
     SyncQueue,
+    AppMetadata,
   ],
 )
 class AppDatabase extends _$AppDatabase {

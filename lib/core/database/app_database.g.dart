@@ -682,6 +682,7 @@ class $PartnersTable extends Partners with TableInfo<$PartnersTable, Partner> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES users(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -2695,6 +2696,7 @@ class $ClientLocationsTable extends ClientLocations
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -3411,6 +3413,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES clients(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _locationIdMeta = const VerificationMeta(
     'locationId',
@@ -3422,6 +3425,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES client_locations(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -4327,6 +4331,7 @@ class $MaintenancePlansTable extends MaintenancePlans
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _locationIdMeta = const VerificationMeta(
     'locationId',
@@ -4338,6 +4343,7 @@ class $MaintenancePlansTable extends MaintenancePlans
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES client_locations(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -5140,6 +5146,8 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES maintenance_plans(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _scheduledDateMeta = const VerificationMeta(
     'scheduledDate',
@@ -7057,6 +7065,7 @@ class $PurchasesTable extends Purchases
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES suppliers(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _paidByPartnerIdMeta = const VerificationMeta(
     'paidByPartnerId',
@@ -7068,6 +7077,7 @@ class $PurchasesTable extends Purchases
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES partners(id)',
   );
   static const VerificationMeta _totalAmountCentsMeta = const VerificationMeta(
     'totalAmountCents',
@@ -7677,6 +7687,8 @@ class $StockMovementsTable extends StockMovements
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES inventory_items(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _movementTypeMeta = const VerificationMeta(
     'movementType',
@@ -7723,6 +7735,7 @@ class $StockMovementsTable extends StockMovements
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _visitIdMeta = const VerificationMeta(
     'visitId',
@@ -7734,6 +7747,7 @@ class $StockMovementsTable extends StockMovements
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _purchaseIdMeta = const VerificationMeta(
     'purchaseId',
@@ -7745,6 +7759,7 @@ class $StockMovementsTable extends StockMovements
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES purchases(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
@@ -9236,6 +9251,7 @@ class $ToolAssignmentsTable extends ToolAssignments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES tools(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _workerIdMeta = const VerificationMeta(
     'workerId',
@@ -9247,6 +9263,7 @@ class $ToolAssignmentsTable extends ToolAssignments
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES workers(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _projectIdMeta = const VerificationMeta(
     'projectId',
@@ -9258,6 +9275,7 @@ class $ToolAssignmentsTable extends ToolAssignments
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _assignedAtMeta = const VerificationMeta(
     'assignedAt',
@@ -9995,6 +10013,7 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
@@ -10015,6 +10034,7 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _visitIdMeta = const VerificationMeta(
     'visitId',
@@ -10026,6 +10046,7 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _paymentTypeMeta = const VerificationMeta(
     'paymentType',
@@ -10801,6 +10822,7 @@ class $LaborPaymentsTable extends LaborPayments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _amountCentsMeta = const VerificationMeta(
     'amountCents',
@@ -10832,6 +10854,7 @@ class $LaborPaymentsTable extends LaborPayments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES partners(id)',
   );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
@@ -11454,6 +11477,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES partners(id)',
   );
   static const VerificationMeta _projectIdMeta = const VerificationMeta(
     'projectId',
@@ -11465,6 +11489,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _visitIdMeta = const VerificationMeta(
     'visitId',
@@ -11476,6 +11501,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _splitModeMeta = const VerificationMeta(
     'splitMode',
@@ -12259,6 +12285,7 @@ class $CapitalMovementsTable extends CapitalMovements
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES partners(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
@@ -12858,6 +12885,7 @@ class $CollectionsTable extends Collections
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
   );
   static const VerificationMeta _projectIdMeta = const VerificationMeta(
     'projectId',
@@ -12869,6 +12897,7 @@ class $CollectionsTable extends Collections
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _visitIdMeta = const VerificationMeta(
     'visitId',
@@ -12880,6 +12909,7 @@ class $CollectionsTable extends Collections
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _amountCentsMeta = const VerificationMeta(
     'amountCents',
@@ -12912,6 +12942,7 @@ class $CollectionsTable extends Collections
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL REFERENCES partners(id)',
       );
   static const VerificationMeta _paymentMethodMeta = const VerificationMeta(
     'paymentMethod',
@@ -14764,6 +14795,266 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   }
 }
 
+class $AppMetadataTable extends AppMetadata
+    with TableInfo<$AppMetadataTable, AppMetadataData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppMetadataTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+    'key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<String> value = GeneratedColumn<String>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [key, value, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'app_metadata';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AppMetadataData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('key')) {
+      context.handle(
+        _keyMeta,
+        key.isAcceptableOrUnknown(data['key']!, _keyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_keyMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {key};
+  @override
+  AppMetadataData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppMetadataData(
+      key: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}key'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}value'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AppMetadataTable createAlias(String alias) {
+    return $AppMetadataTable(attachedDatabase, alias);
+  }
+}
+
+class AppMetadataData extends DataClass implements Insertable<AppMetadataData> {
+  final String key;
+  final String value;
+  final DateTime updatedAt;
+  const AppMetadataData({
+    required this.key,
+    required this.value,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['key'] = Variable<String>(key);
+    map['value'] = Variable<String>(value);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  AppMetadataCompanion toCompanion(bool nullToAbsent) {
+    return AppMetadataCompanion(
+      key: Value(key),
+      value: Value(value),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory AppMetadataData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppMetadataData(
+      key: serializer.fromJson<String>(json['key']),
+      value: serializer.fromJson<String>(json['value']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'key': serializer.toJson<String>(key),
+      'value': serializer.toJson<String>(value),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  AppMetadataData copyWith({String? key, String? value, DateTime? updatedAt}) =>
+      AppMetadataData(
+        key: key ?? this.key,
+        value: value ?? this.value,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  AppMetadataData copyWithCompanion(AppMetadataCompanion data) {
+    return AppMetadataData(
+      key: data.key.present ? data.key.value : this.key,
+      value: data.value.present ? data.value.value : this.value,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppMetadataData(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(key, value, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppMetadataData &&
+          other.key == this.key &&
+          other.value == this.value &&
+          other.updatedAt == this.updatedAt);
+}
+
+class AppMetadataCompanion extends UpdateCompanion<AppMetadataData> {
+  final Value<String> key;
+  final Value<String> value;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const AppMetadataCompanion({
+    this.key = const Value.absent(),
+    this.value = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AppMetadataCompanion.insert({
+    required String key,
+    required String value,
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : key = Value(key),
+       value = Value(value);
+  static Insertable<AppMetadataData> custom({
+    Expression<String>? key,
+    Expression<String>? value,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (key != null) 'key': key,
+      if (value != null) 'value': value,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AppMetadataCompanion copyWith({
+    Value<String>? key,
+    Value<String>? value,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return AppMetadataCompanion(
+      key: key ?? this.key,
+      value: value ?? this.value,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<String>(value.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppMetadataCompanion(')
+          ..write('key: $key, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -14797,6 +15088,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CollectionsTable collections = $CollectionsTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
+  late final $AppMetadataTable appMetadata = $AppMetadataTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -14823,7 +15115,186 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     collections,
     attachments,
     syncQueue,
+    appMetadata,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'users',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('partners', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('client_locations', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('projects', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'client_locations',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('projects', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('maintenance_plans', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'client_locations',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('maintenance_plans', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'maintenance_plans',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('maintenance_visits', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'suppliers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('purchases', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'inventory_items',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('stock_movements', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('stock_movements', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'maintenance_visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('stock_movements', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'purchases',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('stock_movements', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'tools',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('tool_assignments', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'workers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('tool_assignments', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('tool_assignments', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'workers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('work_logs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('work_logs', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'maintenance_visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('work_logs', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'workers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('labor_payments', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('expenses', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'maintenance_visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('expenses', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'partners',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('capital_movements', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'clients',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('collections', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('collections', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'maintenance_visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('collections', kind: UpdateKind.update)],
+    ),
+  ]);
 }
 
 typedef $$UsersTableCreateCompanionBuilder =
@@ -14856,6 +15327,30 @@ typedef $$UsersTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
+
+final class $$UsersTableReferences
+    extends BaseReferences<_$AppDatabase, $UsersTable, User> {
+  $$UsersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$PartnersTable, List<Partner>> _partnersRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.partners,
+    aliasName: $_aliasNameGenerator(db.users.id, db.partners.userId),
+  );
+
+  $$PartnersTableProcessedTableManager get partnersRefs {
+    final manager = $$PartnersTableTableManager(
+      $_db,
+      $_db.partners,
+    ).filter((f) => f.userId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_partnersRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
   $$UsersTableFilterComposer({
@@ -14919,6 +15414,31 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> partnersRefs(
+    Expression<bool> Function($$PartnersTableFilterComposer f) f,
+  ) {
+    final $$PartnersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.userId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableFilterComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$UsersTableOrderingComposer
@@ -15033,6 +15553,31 @@ class $$UsersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> partnersRefs<T extends Object>(
+    Expression<T> Function($$PartnersTableAnnotationComposer a) f,
+  ) {
+    final $$PartnersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.userId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$UsersTableTableManager
@@ -15046,9 +15591,9 @@ class $$UsersTableTableManager
           $$UsersTableAnnotationComposer,
           $$UsersTableCreateCompanionBuilder,
           $$UsersTableUpdateCompanionBuilder,
-          (User, BaseReferences<_$AppDatabase, $UsersTable, User>),
+          (User, $$UsersTableReferences),
           User,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool partnersRefs})
         > {
   $$UsersTableTableManager(_$AppDatabase db, $UsersTable table)
     : super(
@@ -15118,9 +15663,33 @@ class $$UsersTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) =>
+                    (e.readTable(table), $$UsersTableReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({partnersRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (partnersRefs) db.partners],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (partnersRefs)
+                    await $_getPrefetchedData<User, $UsersTable, Partner>(
+                      currentTable: table,
+                      referencedTable: $$UsersTableReferences
+                          ._partnersRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$UsersTableReferences(db, table, p0).partnersRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.userId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -15135,9 +15704,9 @@ typedef $$UsersTableProcessedTableManager =
       $$UsersTableAnnotationComposer,
       $$UsersTableCreateCompanionBuilder,
       $$UsersTableUpdateCompanionBuilder,
-      (User, BaseReferences<_$AppDatabase, $UsersTable, User>),
+      (User, $$UsersTableReferences),
       User,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool partnersRefs})
     >;
 typedef $$PartnersTableCreateCompanionBuilder =
     PartnersCompanion Function({
@@ -15170,6 +15739,136 @@ typedef $$PartnersTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$PartnersTableReferences
+    extends BaseReferences<_$AppDatabase, $PartnersTable, Partner> {
+  $$PartnersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $UsersTable _userIdTable(_$AppDatabase db) => db.users.createAlias(
+    $_aliasNameGenerator(db.partners.userId, db.users.id),
+  );
+
+  $$UsersTableProcessedTableManager? get userId {
+    final $_column = $_itemColumn<String>('user_id');
+    if ($_column == null) return null;
+    final manager = $$UsersTableTableManager(
+      $_db,
+      $_db.users,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_userIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$PurchasesTable, List<Purchase>>
+  _purchasesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.purchases,
+    aliasName: $_aliasNameGenerator(
+      db.partners.id,
+      db.purchases.paidByPartnerId,
+    ),
+  );
+
+  $$PurchasesTableProcessedTableManager get purchasesRefs {
+    final manager = $$PurchasesTableTableManager($_db, $_db.purchases).filter(
+      (f) => f.paidByPartnerId.id.sqlEquals($_itemColumn<String>('id')!),
+    );
+
+    final cache = $_typedResult.readTableOrNull(_purchasesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$LaborPaymentsTable, List<LaborPayment>>
+  _laborPaymentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.laborPayments,
+    aliasName: $_aliasNameGenerator(
+      db.partners.id,
+      db.laborPayments.paidByPartnerId,
+    ),
+  );
+
+  $$LaborPaymentsTableProcessedTableManager get laborPaymentsRefs {
+    final manager = $$LaborPaymentsTableTableManager($_db, $_db.laborPayments)
+        .filter(
+          (f) => f.paidByPartnerId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_laborPaymentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.expenses,
+    aliasName: $_aliasNameGenerator(
+      db.partners.id,
+      db.expenses.paidByPartnerId,
+    ),
+  );
+
+  $$ExpensesTableProcessedTableManager get expensesRefs {
+    final manager = $$ExpensesTableTableManager($_db, $_db.expenses).filter(
+      (f) => f.paidByPartnerId.id.sqlEquals($_itemColumn<String>('id')!),
+    );
+
+    final cache = $_typedResult.readTableOrNull(_expensesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CapitalMovementsTable, List<CapitalMovement>>
+  _capitalMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.capitalMovements,
+    aliasName: $_aliasNameGenerator(
+      db.partners.id,
+      db.capitalMovements.partnerId,
+    ),
+  );
+
+  $$CapitalMovementsTableProcessedTableManager get capitalMovementsRefs {
+    final manager = $$CapitalMovementsTableTableManager(
+      $_db,
+      $_db.capitalMovements,
+    ).filter((f) => f.partnerId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _capitalMovementsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CollectionsTable, List<Collection>>
+  _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.collections,
+    aliasName: $_aliasNameGenerator(
+      db.partners.id,
+      db.collections.receivedByPartnerId,
+    ),
+  );
+
+  $$CollectionsTableProcessedTableManager get collectionsRefs {
+    final manager = $$CollectionsTableTableManager($_db, $_db.collections)
+        .filter(
+          (f) =>
+              f.receivedByPartnerId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_collectionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$PartnersTableFilterComposer
     extends Composer<_$AppDatabase, $PartnersTable> {
   $$PartnersTableFilterComposer({
@@ -15181,11 +15880,6 @@ class $$PartnersTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -15233,6 +15927,154 @@ class $$PartnersTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$UsersTableFilterComposer get userId {
+    final $$UsersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.users,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsersTableFilterComposer(
+            $db: $db,
+            $table: $db.users,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> purchasesRefs(
+    Expression<bool> Function($$PurchasesTableFilterComposer f) f,
+  ) {
+    final $$PurchasesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.paidByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableFilterComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> laborPaymentsRefs(
+    Expression<bool> Function($$LaborPaymentsTableFilterComposer f) f,
+  ) {
+    final $$LaborPaymentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.laborPayments,
+      getReferencedColumn: (t) => t.paidByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LaborPaymentsTableFilterComposer(
+            $db: $db,
+            $table: $db.laborPayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> expensesRefs(
+    Expression<bool> Function($$ExpensesTableFilterComposer f) f,
+  ) {
+    final $$ExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.paidByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> capitalMovementsRefs(
+    Expression<bool> Function($$CapitalMovementsTableFilterComposer f) f,
+  ) {
+    final $$CapitalMovementsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.capitalMovements,
+      getReferencedColumn: (t) => t.partnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CapitalMovementsTableFilterComposer(
+            $db: $db,
+            $table: $db.capitalMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> collectionsRefs(
+    Expression<bool> Function($$CollectionsTableFilterComposer f) f,
+  ) {
+    final $$CollectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.receivedByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PartnersTableOrderingComposer
@@ -15246,11 +16088,6 @@ class $$PartnersTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -15298,6 +16135,29 @@ class $$PartnersTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$UsersTableOrderingComposer get userId {
+    final $$UsersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.users,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsersTableOrderingComposer(
+            $db: $db,
+            $table: $db.users,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$PartnersTableAnnotationComposer
@@ -15311,9 +16171,6 @@ class $$PartnersTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -15345,6 +16202,154 @@ class $$PartnersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$UsersTableAnnotationComposer get userId {
+    final $$UsersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.users,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.users,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> purchasesRefs<T extends Object>(
+    Expression<T> Function($$PurchasesTableAnnotationComposer a) f,
+  ) {
+    final $$PurchasesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.paidByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> laborPaymentsRefs<T extends Object>(
+    Expression<T> Function($$LaborPaymentsTableAnnotationComposer a) f,
+  ) {
+    final $$LaborPaymentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.laborPayments,
+      getReferencedColumn: (t) => t.paidByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LaborPaymentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.laborPayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> expensesRefs<T extends Object>(
+    Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
+  ) {
+    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.paidByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> capitalMovementsRefs<T extends Object>(
+    Expression<T> Function($$CapitalMovementsTableAnnotationComposer a) f,
+  ) {
+    final $$CapitalMovementsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.capitalMovements,
+      getReferencedColumn: (t) => t.partnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CapitalMovementsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.capitalMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> collectionsRefs<T extends Object>(
+    Expression<T> Function($$CollectionsTableAnnotationComposer a) f,
+  ) {
+    final $$CollectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.receivedByPartnerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PartnersTableTableManager
@@ -15358,9 +16363,16 @@ class $$PartnersTableTableManager
           $$PartnersTableAnnotationComposer,
           $$PartnersTableCreateCompanionBuilder,
           $$PartnersTableUpdateCompanionBuilder,
-          (Partner, BaseReferences<_$AppDatabase, $PartnersTable, Partner>),
+          (Partner, $$PartnersTableReferences),
           Partner,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool userId,
+            bool purchasesRefs,
+            bool laborPaymentsRefs,
+            bool expensesRefs,
+            bool capitalMovementsRefs,
+            bool collectionsRefs,
+          })
         > {
   $$PartnersTableTableManager(_$AppDatabase db, $PartnersTable table)
     : super(
@@ -15430,9 +16442,174 @@ class $$PartnersTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PartnersTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                userId = false,
+                purchasesRefs = false,
+                laborPaymentsRefs = false,
+                expensesRefs = false,
+                capitalMovementsRefs = false,
+                collectionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (purchasesRefs) db.purchases,
+                    if (laborPaymentsRefs) db.laborPayments,
+                    if (expensesRefs) db.expenses,
+                    if (capitalMovementsRefs) db.capitalMovements,
+                    if (collectionsRefs) db.collections,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (userId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.userId,
+                                    referencedTable: $$PartnersTableReferences
+                                        ._userIdTable(db),
+                                    referencedColumn: $$PartnersTableReferences
+                                        ._userIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (purchasesRefs)
+                        await $_getPrefetchedData<
+                          Partner,
+                          $PartnersTable,
+                          Purchase
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PartnersTableReferences
+                              ._purchasesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PartnersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).purchasesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.paidByPartnerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (laborPaymentsRefs)
+                        await $_getPrefetchedData<
+                          Partner,
+                          $PartnersTable,
+                          LaborPayment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PartnersTableReferences
+                              ._laborPaymentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PartnersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).laborPaymentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.paidByPartnerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (expensesRefs)
+                        await $_getPrefetchedData<
+                          Partner,
+                          $PartnersTable,
+                          Expense
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PartnersTableReferences
+                              ._expensesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PartnersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).expensesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.paidByPartnerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (capitalMovementsRefs)
+                        await $_getPrefetchedData<
+                          Partner,
+                          $PartnersTable,
+                          CapitalMovement
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PartnersTableReferences
+                              ._capitalMovementsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PartnersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).capitalMovementsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.partnerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (collectionsRefs)
+                        await $_getPrefetchedData<
+                          Partner,
+                          $PartnersTable,
+                          Collection
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PartnersTableReferences
+                              ._collectionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PartnersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).collectionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.receivedByPartnerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -15447,9 +16624,16 @@ typedef $$PartnersTableProcessedTableManager =
       $$PartnersTableAnnotationComposer,
       $$PartnersTableCreateCompanionBuilder,
       $$PartnersTableUpdateCompanionBuilder,
-      (Partner, BaseReferences<_$AppDatabase, $PartnersTable, Partner>),
+      (Partner, $$PartnersTableReferences),
       Partner,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool userId,
+        bool purchasesRefs,
+        bool laborPaymentsRefs,
+        bool expensesRefs,
+        bool capitalMovementsRefs,
+        bool collectionsRefs,
+      })
     >;
 typedef $$WorkersTableCreateCompanionBuilder =
     WorkersCompanion Function({
@@ -15483,6 +16667,68 @@ typedef $$WorkersTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
+
+final class $$WorkersTableReferences
+    extends BaseReferences<_$AppDatabase, $WorkersTable, Worker> {
+  $$WorkersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
+  _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.toolAssignments,
+    aliasName: $_aliasNameGenerator(db.workers.id, db.toolAssignments.workerId),
+  );
+
+  $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
+    final manager = $$ToolAssignmentsTableTableManager(
+      $_db,
+      $_db.toolAssignments,
+    ).filter((f) => f.workerId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _toolAssignmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$WorkLogsTable, List<WorkLog>> _workLogsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.workLogs,
+    aliasName: $_aliasNameGenerator(db.workers.id, db.workLogs.workerId),
+  );
+
+  $$WorkLogsTableProcessedTableManager get workLogsRefs {
+    final manager = $$WorkLogsTableTableManager(
+      $_db,
+      $_db.workLogs,
+    ).filter((f) => f.workerId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_workLogsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$LaborPaymentsTable, List<LaborPayment>>
+  _laborPaymentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.laborPayments,
+    aliasName: $_aliasNameGenerator(db.workers.id, db.laborPayments.workerId),
+  );
+
+  $$LaborPaymentsTableProcessedTableManager get laborPaymentsRefs {
+    final manager = $$LaborPaymentsTableTableManager(
+      $_db,
+      $_db.laborPayments,
+    ).filter((f) => f.workerId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_laborPaymentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$WorkersTableFilterComposer
     extends Composer<_$AppDatabase, $WorkersTable> {
@@ -15552,6 +16798,81 @@ class $$WorkersTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> toolAssignmentsRefs(
+    Expression<bool> Function($$ToolAssignmentsTableFilterComposer f) f,
+  ) {
+    final $$ToolAssignmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.workerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> workLogsRefs(
+    Expression<bool> Function($$WorkLogsTableFilterComposer f) f,
+  ) {
+    final $$WorkLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workLogs,
+      getReferencedColumn: (t) => t.workerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> laborPaymentsRefs(
+    Expression<bool> Function($$LaborPaymentsTableFilterComposer f) f,
+  ) {
+    final $$LaborPaymentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.laborPayments,
+      getReferencedColumn: (t) => t.workerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LaborPaymentsTableFilterComposer(
+            $db: $db,
+            $table: $db.laborPayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$WorkersTableOrderingComposer
@@ -15672,6 +16993,81 @@ class $$WorkersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> toolAssignmentsRefs<T extends Object>(
+    Expression<T> Function($$ToolAssignmentsTableAnnotationComposer a) f,
+  ) {
+    final $$ToolAssignmentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.workerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> workLogsRefs<T extends Object>(
+    Expression<T> Function($$WorkLogsTableAnnotationComposer a) f,
+  ) {
+    final $$WorkLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workLogs,
+      getReferencedColumn: (t) => t.workerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> laborPaymentsRefs<T extends Object>(
+    Expression<T> Function($$LaborPaymentsTableAnnotationComposer a) f,
+  ) {
+    final $$LaborPaymentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.laborPayments,
+      getReferencedColumn: (t) => t.workerId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LaborPaymentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.laborPayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$WorkersTableTableManager
@@ -15685,9 +17081,13 @@ class $$WorkersTableTableManager
           $$WorkersTableAnnotationComposer,
           $$WorkersTableCreateCompanionBuilder,
           $$WorkersTableUpdateCompanionBuilder,
-          (Worker, BaseReferences<_$AppDatabase, $WorkersTable, Worker>),
+          (Worker, $$WorkersTableReferences),
           Worker,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool toolAssignmentsRefs,
+            bool workLogsRefs,
+            bool laborPaymentsRefs,
+          })
         > {
   $$WorkersTableTableManager(_$AppDatabase db, $WorkersTable table)
     : super(
@@ -15761,9 +17161,96 @@ class $$WorkersTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$WorkersTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                toolAssignmentsRefs = false,
+                workLogsRefs = false,
+                laborPaymentsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (toolAssignmentsRefs) db.toolAssignments,
+                    if (workLogsRefs) db.workLogs,
+                    if (laborPaymentsRefs) db.laborPayments,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (toolAssignmentsRefs)
+                        await $_getPrefetchedData<
+                          Worker,
+                          $WorkersTable,
+                          ToolAssignment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$WorkersTableReferences
+                              ._toolAssignmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$WorkersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).toolAssignmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.workerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (workLogsRefs)
+                        await $_getPrefetchedData<
+                          Worker,
+                          $WorkersTable,
+                          WorkLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$WorkersTableReferences
+                              ._workLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$WorkersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).workLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.workerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (laborPaymentsRefs)
+                        await $_getPrefetchedData<
+                          Worker,
+                          $WorkersTable,
+                          LaborPayment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$WorkersTableReferences
+                              ._laborPaymentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$WorkersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).laborPaymentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.workerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -15778,9 +17265,13 @@ typedef $$WorkersTableProcessedTableManager =
       $$WorkersTableAnnotationComposer,
       $$WorkersTableCreateCompanionBuilder,
       $$WorkersTableUpdateCompanionBuilder,
-      (Worker, BaseReferences<_$AppDatabase, $WorkersTable, Worker>),
+      (Worker, $$WorkersTableReferences),
       Worker,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool toolAssignmentsRefs,
+        bool workLogsRefs,
+        bool laborPaymentsRefs,
+      })
     >;
 typedef $$ClientsTableCreateCompanionBuilder =
     ClientsCompanion Function({
@@ -15812,6 +17303,91 @@ typedef $$ClientsTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
+
+final class $$ClientsTableReferences
+    extends BaseReferences<_$AppDatabase, $ClientsTable, Client> {
+  $$ClientsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ClientLocationsTable, List<ClientLocation>>
+  _clientLocationsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.clientLocations,
+    aliasName: $_aliasNameGenerator(db.clients.id, db.clientLocations.clientId),
+  );
+
+  $$ClientLocationsTableProcessedTableManager get clientLocationsRefs {
+    final manager = $$ClientLocationsTableTableManager(
+      $_db,
+      $_db.clientLocations,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _clientLocationsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ProjectsTable, List<Project>> _projectsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.projects,
+    aliasName: $_aliasNameGenerator(db.clients.id, db.projects.clientId),
+  );
+
+  $$ProjectsTableProcessedTableManager get projectsRefs {
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_projectsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MaintenancePlansTable, List<MaintenancePlan>>
+  _maintenancePlansRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.maintenancePlans,
+    aliasName: $_aliasNameGenerator(
+      db.clients.id,
+      db.maintenancePlans.clientId,
+    ),
+  );
+
+  $$MaintenancePlansTableProcessedTableManager get maintenancePlansRefs {
+    final manager = $$MaintenancePlansTableTableManager(
+      $_db,
+      $_db.maintenancePlans,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _maintenancePlansRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CollectionsTable, List<Collection>>
+  _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.collections,
+    aliasName: $_aliasNameGenerator(db.clients.id, db.collections.clientId),
+  );
+
+  $$CollectionsTableProcessedTableManager get collectionsRefs {
+    final manager = $$CollectionsTableTableManager(
+      $_db,
+      $_db.collections,
+    ).filter((f) => f.clientId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_collectionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$ClientsTableFilterComposer
     extends Composer<_$AppDatabase, $ClientsTable> {
@@ -15876,6 +17452,106 @@ class $$ClientsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> clientLocationsRefs(
+    Expression<bool> Function($$ClientLocationsTableFilterComposer f) f,
+  ) {
+    final $$ClientLocationsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableFilterComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> projectsRefs(
+    Expression<bool> Function($$ProjectsTableFilterComposer f) f,
+  ) {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> maintenancePlansRefs(
+    Expression<bool> Function($$MaintenancePlansTableFilterComposer f) f,
+  ) {
+    final $$MaintenancePlansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> collectionsRefs(
+    Expression<bool> Function($$CollectionsTableFilterComposer f) f,
+  ) {
+    final $$CollectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ClientsTableOrderingComposer
@@ -15986,6 +17662,106 @@ class $$ClientsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> clientLocationsRefs<T extends Object>(
+    Expression<T> Function($$ClientLocationsTableAnnotationComposer a) f,
+  ) {
+    final $$ClientLocationsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> projectsRefs<T extends Object>(
+    Expression<T> Function($$ProjectsTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> maintenancePlansRefs<T extends Object>(
+    Expression<T> Function($$MaintenancePlansTableAnnotationComposer a) f,
+  ) {
+    final $$MaintenancePlansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> collectionsRefs<T extends Object>(
+    Expression<T> Function($$CollectionsTableAnnotationComposer a) f,
+  ) {
+    final $$CollectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.clientId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ClientsTableTableManager
@@ -15999,9 +17775,14 @@ class $$ClientsTableTableManager
           $$ClientsTableAnnotationComposer,
           $$ClientsTableCreateCompanionBuilder,
           $$ClientsTableUpdateCompanionBuilder,
-          (Client, BaseReferences<_$AppDatabase, $ClientsTable, Client>),
+          (Client, $$ClientsTableReferences),
           Client,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool clientLocationsRefs,
+            bool projectsRefs,
+            bool maintenancePlansRefs,
+            bool collectionsRefs,
+          })
         > {
   $$ClientsTableTableManager(_$AppDatabase db, $ClientsTable table)
     : super(
@@ -16071,9 +17852,119 @@ class $$ClientsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ClientsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                clientLocationsRefs = false,
+                projectsRefs = false,
+                maintenancePlansRefs = false,
+                collectionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (clientLocationsRefs) db.clientLocations,
+                    if (projectsRefs) db.projects,
+                    if (maintenancePlansRefs) db.maintenancePlans,
+                    if (collectionsRefs) db.collections,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (clientLocationsRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          ClientLocation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._clientLocationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).clientLocationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (projectsRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          Project
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._projectsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).projectsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (maintenancePlansRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          MaintenancePlan
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._maintenancePlansRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).maintenancePlansRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (collectionsRefs)
+                        await $_getPrefetchedData<
+                          Client,
+                          $ClientsTable,
+                          Collection
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientsTableReferences
+                              ._collectionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).collectionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.clientId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -16088,9 +17979,14 @@ typedef $$ClientsTableProcessedTableManager =
       $$ClientsTableAnnotationComposer,
       $$ClientsTableCreateCompanionBuilder,
       $$ClientsTableUpdateCompanionBuilder,
-      (Client, BaseReferences<_$AppDatabase, $ClientsTable, Client>),
+      (Client, $$ClientsTableReferences),
       Client,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool clientLocationsRefs,
+        bool projectsRefs,
+        bool maintenancePlansRefs,
+        bool collectionsRefs,
+      })
     >;
 typedef $$ClientLocationsTableCreateCompanionBuilder =
     ClientLocationsCompanion Function({
@@ -16125,6 +18021,80 @@ typedef $$ClientLocationsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$ClientLocationsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $ClientLocationsTable, ClientLocation> {
+  $$ClientLocationsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias(
+        $_aliasNameGenerator(db.clientLocations.clientId, db.clients.id),
+      );
+
+  $$ClientsTableProcessedTableManager get clientId {
+    final $_column = $_itemColumn<String>('client_id')!;
+
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$ProjectsTable, List<Project>> _projectsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.projects,
+    aliasName: $_aliasNameGenerator(
+      db.clientLocations.id,
+      db.projects.locationId,
+    ),
+  );
+
+  $$ProjectsTableProcessedTableManager get projectsRefs {
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.locationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_projectsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$MaintenancePlansTable, List<MaintenancePlan>>
+  _maintenancePlansRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.maintenancePlans,
+    aliasName: $_aliasNameGenerator(
+      db.clientLocations.id,
+      db.maintenancePlans.locationId,
+    ),
+  );
+
+  $$MaintenancePlansTableProcessedTableManager get maintenancePlansRefs {
+    final manager = $$MaintenancePlansTableTableManager(
+      $_db,
+      $_db.maintenancePlans,
+    ).filter((f) => f.locationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _maintenancePlansRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$ClientLocationsTableFilterComposer
     extends Composer<_$AppDatabase, $ClientLocationsTable> {
   $$ClientLocationsTableFilterComposer({
@@ -16136,11 +18106,6 @@ class $$ClientLocationsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get clientId => $composableBuilder(
-    column: $table.clientId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16193,6 +18158,79 @@ class $$ClientLocationsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> projectsRefs(
+    Expression<bool> Function($$ProjectsTableFilterComposer f) f,
+  ) {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.locationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> maintenancePlansRefs(
+    Expression<bool> Function($$MaintenancePlansTableFilterComposer f) f,
+  ) {
+    final $$MaintenancePlansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.locationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ClientLocationsTableOrderingComposer
@@ -16206,11 +18244,6 @@ class $$ClientLocationsTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get clientId => $composableBuilder(
-    column: $table.clientId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -16263,6 +18296,29 @@ class $$ClientLocationsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ClientLocationsTableAnnotationComposer
@@ -16276,9 +18332,6 @@ class $$ClientLocationsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get clientId =>
-      $composableBuilder(column: $table.clientId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -16309,6 +18362,79 @@ class $$ClientLocationsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> projectsRefs<T extends Object>(
+    Expression<T> Function($$ProjectsTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.locationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> maintenancePlansRefs<T extends Object>(
+    Expression<T> Function($$MaintenancePlansTableAnnotationComposer a) f,
+  ) {
+    final $$MaintenancePlansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.locationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ClientLocationsTableTableManager
@@ -16322,16 +18448,13 @@ class $$ClientLocationsTableTableManager
           $$ClientLocationsTableAnnotationComposer,
           $$ClientLocationsTableCreateCompanionBuilder,
           $$ClientLocationsTableUpdateCompanionBuilder,
-          (
-            ClientLocation,
-            BaseReferences<
-              _$AppDatabase,
-              $ClientLocationsTable,
-              ClientLocation
-            >,
-          ),
+          (ClientLocation, $$ClientLocationsTableReferences),
           ClientLocation,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool clientId,
+            bool projectsRefs,
+            bool maintenancePlansRefs,
+          })
         > {
   $$ClientLocationsTableTableManager(
     _$AppDatabase db,
@@ -16407,9 +18530,107 @@ class $$ClientLocationsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ClientLocationsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                clientId = false,
+                projectsRefs = false,
+                maintenancePlansRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (projectsRefs) db.projects,
+                    if (maintenancePlansRefs) db.maintenancePlans,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (clientId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.clientId,
+                                    referencedTable:
+                                        $$ClientLocationsTableReferences
+                                            ._clientIdTable(db),
+                                    referencedColumn:
+                                        $$ClientLocationsTableReferences
+                                            ._clientIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (projectsRefs)
+                        await $_getPrefetchedData<
+                          ClientLocation,
+                          $ClientLocationsTable,
+                          Project
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientLocationsTableReferences
+                              ._projectsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientLocationsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).projectsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.locationId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (maintenancePlansRefs)
+                        await $_getPrefetchedData<
+                          ClientLocation,
+                          $ClientLocationsTable,
+                          MaintenancePlan
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ClientLocationsTableReferences
+                              ._maintenancePlansRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ClientLocationsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).maintenancePlansRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.locationId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -16424,12 +18645,13 @@ typedef $$ClientLocationsTableProcessedTableManager =
       $$ClientLocationsTableAnnotationComposer,
       $$ClientLocationsTableCreateCompanionBuilder,
       $$ClientLocationsTableUpdateCompanionBuilder,
-      (
-        ClientLocation,
-        BaseReferences<_$AppDatabase, $ClientLocationsTable, ClientLocation>,
-      ),
+      (ClientLocation, $$ClientLocationsTableReferences),
       ClientLocation,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool clientId,
+        bool projectsRefs,
+        bool maintenancePlansRefs,
+      })
     >;
 typedef $$ProjectsTableCreateCompanionBuilder =
     ProjectsCompanion Function({
@@ -16472,6 +18694,147 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$ProjectsTableReferences
+    extends BaseReferences<_$AppDatabase, $ProjectsTable, Project> {
+  $$ProjectsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) => db.clients
+      .createAlias($_aliasNameGenerator(db.projects.clientId, db.clients.id));
+
+  $$ClientsTableProcessedTableManager? get clientId {
+    final $_column = $_itemColumn<String>('client_id');
+    if ($_column == null) return null;
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ClientLocationsTable _locationIdTable(_$AppDatabase db) =>
+      db.clientLocations.createAlias(
+        $_aliasNameGenerator(db.projects.locationId, db.clientLocations.id),
+      );
+
+  $$ClientLocationsTableProcessedTableManager? get locationId {
+    final $_column = $_itemColumn<String>('location_id');
+    if ($_column == null) return null;
+    final manager = $$ClientLocationsTableTableManager(
+      $_db,
+      $_db.clientLocations,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_locationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
+  _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.stockMovements,
+    aliasName: $_aliasNameGenerator(
+      db.projects.id,
+      db.stockMovements.projectId,
+    ),
+  );
+
+  $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
+    final manager = $$StockMovementsTableTableManager(
+      $_db,
+      $_db.stockMovements,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_stockMovementsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
+  _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.toolAssignments,
+    aliasName: $_aliasNameGenerator(
+      db.projects.id,
+      db.toolAssignments.projectId,
+    ),
+  );
+
+  $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
+    final manager = $$ToolAssignmentsTableTableManager(
+      $_db,
+      $_db.toolAssignments,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _toolAssignmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$WorkLogsTable, List<WorkLog>> _workLogsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.workLogs,
+    aliasName: $_aliasNameGenerator(db.projects.id, db.workLogs.projectId),
+  );
+
+  $$WorkLogsTableProcessedTableManager get workLogsRefs {
+    final manager = $$WorkLogsTableTableManager(
+      $_db,
+      $_db.workLogs,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_workLogsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.expenses,
+    aliasName: $_aliasNameGenerator(db.projects.id, db.expenses.projectId),
+  );
+
+  $$ExpensesTableProcessedTableManager get expensesRefs {
+    final manager = $$ExpensesTableTableManager(
+      $_db,
+      $_db.expenses,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_expensesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CollectionsTable, List<Collection>>
+  _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.collections,
+    aliasName: $_aliasNameGenerator(db.projects.id, db.collections.projectId),
+  );
+
+  $$CollectionsTableProcessedTableManager get collectionsRefs {
+    final manager = $$CollectionsTableTableManager(
+      $_db,
+      $_db.collections,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_collectionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$ProjectsTableFilterComposer
     extends Composer<_$AppDatabase, $ProjectsTable> {
   $$ProjectsTableFilterComposer({
@@ -16493,16 +18856,6 @@ class $$ProjectsTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get clientId => $composableBuilder(
-    column: $table.clientId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get locationId => $composableBuilder(
-    column: $table.locationId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16560,6 +18913,177 @@ class $$ProjectsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ClientLocationsTableFilterComposer get locationId {
+    final $$ClientLocationsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.locationId,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableFilterComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> stockMovementsRefs(
+    Expression<bool> Function($$StockMovementsTableFilterComposer f) f,
+  ) {
+    final $$StockMovementsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableFilterComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> toolAssignmentsRefs(
+    Expression<bool> Function($$ToolAssignmentsTableFilterComposer f) f,
+  ) {
+    final $$ToolAssignmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> workLogsRefs(
+    Expression<bool> Function($$WorkLogsTableFilterComposer f) f,
+  ) {
+    final $$WorkLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workLogs,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> expensesRefs(
+    Expression<bool> Function($$ExpensesTableFilterComposer f) f,
+  ) {
+    final $$ExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> collectionsRefs(
+    Expression<bool> Function($$CollectionsTableFilterComposer f) f,
+  ) {
+    final $$CollectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProjectsTableOrderingComposer
@@ -16583,16 +19107,6 @@ class $$ProjectsTableOrderingComposer
 
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get clientId => $composableBuilder(
-    column: $table.clientId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get locationId => $composableBuilder(
-    column: $table.locationId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -16650,6 +19164,52 @@ class $$ProjectsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ClientLocationsTableOrderingComposer get locationId {
+    final $$ClientLocationsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.locationId,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ProjectsTableAnnotationComposer
@@ -16669,14 +19229,6 @@ class $$ProjectsTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get clientId =>
-      $composableBuilder(column: $table.clientId, builder: (column) => column);
-
-  GeneratedColumn<String> get locationId => $composableBuilder(
-    column: $table.locationId,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -16720,6 +19272,177 @@ class $$ProjectsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ClientLocationsTableAnnotationComposer get locationId {
+    final $$ClientLocationsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.locationId,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> stockMovementsRefs<T extends Object>(
+    Expression<T> Function($$StockMovementsTableAnnotationComposer a) f,
+  ) {
+    final $$StockMovementsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> toolAssignmentsRefs<T extends Object>(
+    Expression<T> Function($$ToolAssignmentsTableAnnotationComposer a) f,
+  ) {
+    final $$ToolAssignmentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> workLogsRefs<T extends Object>(
+    Expression<T> Function($$WorkLogsTableAnnotationComposer a) f,
+  ) {
+    final $$WorkLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workLogs,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> expensesRefs<T extends Object>(
+    Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
+  ) {
+    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> collectionsRefs<T extends Object>(
+    Expression<T> Function($$CollectionsTableAnnotationComposer a) f,
+  ) {
+    final $$CollectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProjectsTableTableManager
@@ -16733,9 +19456,17 @@ class $$ProjectsTableTableManager
           $$ProjectsTableAnnotationComposer,
           $$ProjectsTableCreateCompanionBuilder,
           $$ProjectsTableUpdateCompanionBuilder,
-          (Project, BaseReferences<_$AppDatabase, $ProjectsTable, Project>),
+          (Project, $$ProjectsTableReferences),
           Project,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool clientId,
+            bool locationId,
+            bool stockMovementsRefs,
+            bool toolAssignmentsRefs,
+            bool workLogsRefs,
+            bool expensesRefs,
+            bool collectionsRefs,
+          })
         > {
   $$ProjectsTableTableManager(_$AppDatabase db, $ProjectsTable table)
     : super(
@@ -16825,9 +19556,188 @@ class $$ProjectsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ProjectsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                clientId = false,
+                locationId = false,
+                stockMovementsRefs = false,
+                toolAssignmentsRefs = false,
+                workLogsRefs = false,
+                expensesRefs = false,
+                collectionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (stockMovementsRefs) db.stockMovements,
+                    if (toolAssignmentsRefs) db.toolAssignments,
+                    if (workLogsRefs) db.workLogs,
+                    if (expensesRefs) db.expenses,
+                    if (collectionsRefs) db.collections,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (clientId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.clientId,
+                                    referencedTable: $$ProjectsTableReferences
+                                        ._clientIdTable(db),
+                                    referencedColumn: $$ProjectsTableReferences
+                                        ._clientIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (locationId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.locationId,
+                                    referencedTable: $$ProjectsTableReferences
+                                        ._locationIdTable(db),
+                                    referencedColumn: $$ProjectsTableReferences
+                                        ._locationIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (stockMovementsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          StockMovement
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._stockMovementsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).stockMovementsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (toolAssignmentsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          ToolAssignment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._toolAssignmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).toolAssignmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (workLogsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          WorkLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._workLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).workLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (expensesRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          Expense
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._expensesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).expensesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (collectionsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          Collection
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._collectionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).collectionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -16842,9 +19752,17 @@ typedef $$ProjectsTableProcessedTableManager =
       $$ProjectsTableAnnotationComposer,
       $$ProjectsTableCreateCompanionBuilder,
       $$ProjectsTableUpdateCompanionBuilder,
-      (Project, BaseReferences<_$AppDatabase, $ProjectsTable, Project>),
+      (Project, $$ProjectsTableReferences),
       Project,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool clientId,
+        bool locationId,
+        bool stockMovementsRefs,
+        bool toolAssignmentsRefs,
+        bool workLogsRefs,
+        bool expensesRefs,
+        bool collectionsRefs,
+      })
     >;
 typedef $$MaintenancePlansTableCreateCompanionBuilder =
     MaintenancePlansCompanion Function({
@@ -16883,6 +19801,81 @@ typedef $$MaintenancePlansTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$MaintenancePlansTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $MaintenancePlansTable, MaintenancePlan> {
+  $$MaintenancePlansTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias(
+        $_aliasNameGenerator(db.maintenancePlans.clientId, db.clients.id),
+      );
+
+  $$ClientsTableProcessedTableManager get clientId {
+    final $_column = $_itemColumn<String>('client_id')!;
+
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ClientLocationsTable _locationIdTable(_$AppDatabase db) =>
+      db.clientLocations.createAlias(
+        $_aliasNameGenerator(
+          db.maintenancePlans.locationId,
+          db.clientLocations.id,
+        ),
+      );
+
+  $$ClientLocationsTableProcessedTableManager? get locationId {
+    final $_column = $_itemColumn<String>('location_id');
+    if ($_column == null) return null;
+    final manager = $$ClientLocationsTableTableManager(
+      $_db,
+      $_db.clientLocations,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_locationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$MaintenanceVisitsTable, List<MaintenanceVisit>>
+  _maintenanceVisitsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.maintenanceVisits,
+        aliasName: $_aliasNameGenerator(
+          db.maintenancePlans.id,
+          db.maintenanceVisits.planId,
+        ),
+      );
+
+  $$MaintenanceVisitsTableProcessedTableManager get maintenanceVisitsRefs {
+    final manager = $$MaintenanceVisitsTableTableManager(
+      $_db,
+      $_db.maintenanceVisits,
+    ).filter((f) => f.planId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _maintenanceVisitsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$MaintenancePlansTableFilterComposer
     extends Composer<_$AppDatabase, $MaintenancePlansTable> {
   $$MaintenancePlansTableFilterComposer({
@@ -16899,16 +19892,6 @@ class $$MaintenancePlansTableFilterComposer
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get clientId => $composableBuilder(
-    column: $table.clientId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get locationId => $composableBuilder(
-    column: $table.locationId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16961,6 +19944,77 @@ class $$MaintenancePlansTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ClientLocationsTableFilterComposer get locationId {
+    final $$ClientLocationsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.locationId,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableFilterComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> maintenanceVisitsRefs(
+    Expression<bool> Function($$MaintenanceVisitsTableFilterComposer f) f,
+  ) {
+    final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.planId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MaintenancePlansTableOrderingComposer
@@ -16979,16 +20033,6 @@ class $$MaintenancePlansTableOrderingComposer
 
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get clientId => $composableBuilder(
-    column: $table.clientId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get locationId => $composableBuilder(
-    column: $table.locationId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -17041,6 +20085,52 @@ class $$MaintenancePlansTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ClientLocationsTableOrderingComposer get locationId {
+    final $$ClientLocationsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.locationId,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MaintenancePlansTableAnnotationComposer
@@ -17057,14 +20147,6 @@ class $$MaintenancePlansTableAnnotationComposer
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get clientId =>
-      $composableBuilder(column: $table.clientId, builder: (column) => column);
-
-  GeneratedColumn<String> get locationId => $composableBuilder(
-    column: $table.locationId,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -17105,6 +20187,78 @@ class $$MaintenancePlansTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ClientLocationsTableAnnotationComposer get locationId {
+    final $$ClientLocationsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.locationId,
+      referencedTable: $db.clientLocations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientLocationsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clientLocations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> maintenanceVisitsRefs<T extends Object>(
+    Expression<T> Function($$MaintenanceVisitsTableAnnotationComposer a) f,
+  ) {
+    final $$MaintenanceVisitsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.maintenanceVisits,
+          getReferencedColumn: (t) => t.planId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MaintenanceVisitsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.maintenanceVisits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$MaintenancePlansTableTableManager
@@ -17118,16 +20272,13 @@ class $$MaintenancePlansTableTableManager
           $$MaintenancePlansTableAnnotationComposer,
           $$MaintenancePlansTableCreateCompanionBuilder,
           $$MaintenancePlansTableUpdateCompanionBuilder,
-          (
-            MaintenancePlan,
-            BaseReferences<
-              _$AppDatabase,
-              $MaintenancePlansTable,
-              MaintenancePlan
-            >,
-          ),
+          (MaintenancePlan, $$MaintenancePlansTableReferences),
           MaintenancePlan,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool clientId,
+            bool locationId,
+            bool maintenanceVisitsRefs,
+          })
         > {
   $$MaintenancePlansTableTableManager(
     _$AppDatabase db,
@@ -17211,9 +20362,100 @@ class $$MaintenancePlansTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MaintenancePlansTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                clientId = false,
+                locationId = false,
+                maintenanceVisitsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (maintenanceVisitsRefs) db.maintenanceVisits,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (clientId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.clientId,
+                                    referencedTable:
+                                        $$MaintenancePlansTableReferences
+                                            ._clientIdTable(db),
+                                    referencedColumn:
+                                        $$MaintenancePlansTableReferences
+                                            ._clientIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (locationId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.locationId,
+                                    referencedTable:
+                                        $$MaintenancePlansTableReferences
+                                            ._locationIdTable(db),
+                                    referencedColumn:
+                                        $$MaintenancePlansTableReferences
+                                            ._locationIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (maintenanceVisitsRefs)
+                        await $_getPrefetchedData<
+                          MaintenancePlan,
+                          $MaintenancePlansTable,
+                          MaintenanceVisit
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenancePlansTableReferences
+                              ._maintenanceVisitsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenancePlansTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).maintenanceVisitsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.planId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -17228,12 +20470,13 @@ typedef $$MaintenancePlansTableProcessedTableManager =
       $$MaintenancePlansTableAnnotationComposer,
       $$MaintenancePlansTableCreateCompanionBuilder,
       $$MaintenancePlansTableUpdateCompanionBuilder,
-      (
-        MaintenancePlan,
-        BaseReferences<_$AppDatabase, $MaintenancePlansTable, MaintenancePlan>,
-      ),
+      (MaintenancePlan, $$MaintenancePlansTableReferences),
       MaintenancePlan,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool clientId,
+        bool locationId,
+        bool maintenanceVisitsRefs,
+      })
     >;
 typedef $$MaintenanceVisitsTableCreateCompanionBuilder =
     MaintenanceVisitsCompanion Function({
@@ -17264,6 +20507,128 @@ typedef $$MaintenanceVisitsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$MaintenanceVisitsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $MaintenanceVisitsTable,
+          MaintenanceVisit
+        > {
+  $$MaintenanceVisitsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MaintenancePlansTable _planIdTable(_$AppDatabase db) =>
+      db.maintenancePlans.createAlias(
+        $_aliasNameGenerator(
+          db.maintenanceVisits.planId,
+          db.maintenancePlans.id,
+        ),
+      );
+
+  $$MaintenancePlansTableProcessedTableManager get planId {
+    final $_column = $_itemColumn<String>('plan_id')!;
+
+    final manager = $$MaintenancePlansTableTableManager(
+      $_db,
+      $_db.maintenancePlans,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_planIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
+  _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.stockMovements,
+    aliasName: $_aliasNameGenerator(
+      db.maintenanceVisits.id,
+      db.stockMovements.visitId,
+    ),
+  );
+
+  $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
+    final manager = $$StockMovementsTableTableManager(
+      $_db,
+      $_db.stockMovements,
+    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_stockMovementsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$WorkLogsTable, List<WorkLog>> _workLogsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.workLogs,
+    aliasName: $_aliasNameGenerator(
+      db.maintenanceVisits.id,
+      db.workLogs.visitId,
+    ),
+  );
+
+  $$WorkLogsTableProcessedTableManager get workLogsRefs {
+    final manager = $$WorkLogsTableTableManager(
+      $_db,
+      $_db.workLogs,
+    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_workLogsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.expenses,
+    aliasName: $_aliasNameGenerator(
+      db.maintenanceVisits.id,
+      db.expenses.visitId,
+    ),
+  );
+
+  $$ExpensesTableProcessedTableManager get expensesRefs {
+    final manager = $$ExpensesTableTableManager(
+      $_db,
+      $_db.expenses,
+    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_expensesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CollectionsTable, List<Collection>>
+  _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.collections,
+    aliasName: $_aliasNameGenerator(
+      db.maintenanceVisits.id,
+      db.collections.visitId,
+    ),
+  );
+
+  $$CollectionsTableProcessedTableManager get collectionsRefs {
+    final manager = $$CollectionsTableTableManager(
+      $_db,
+      $_db.collections,
+    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_collectionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$MaintenanceVisitsTableFilterComposer
     extends Composer<_$AppDatabase, $MaintenanceVisitsTable> {
   $$MaintenanceVisitsTableFilterComposer({
@@ -17275,11 +20640,6 @@ class $$MaintenanceVisitsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get planId => $composableBuilder(
-    column: $table.planId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -17322,6 +20682,129 @@ class $$MaintenanceVisitsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$MaintenancePlansTableFilterComposer get planId {
+    final $$MaintenancePlansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> stockMovementsRefs(
+    Expression<bool> Function($$StockMovementsTableFilterComposer f) f,
+  ) {
+    final $$StockMovementsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableFilterComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> workLogsRefs(
+    Expression<bool> Function($$WorkLogsTableFilterComposer f) f,
+  ) {
+    final $$WorkLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workLogs,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> expensesRefs(
+    Expression<bool> Function($$ExpensesTableFilterComposer f) f,
+  ) {
+    final $$ExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> collectionsRefs(
+    Expression<bool> Function($$CollectionsTableFilterComposer f) f,
+  ) {
+    final $$CollectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MaintenanceVisitsTableOrderingComposer
@@ -17335,11 +20818,6 @@ class $$MaintenanceVisitsTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get planId => $composableBuilder(
-    column: $table.planId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -17382,6 +20860,29 @@ class $$MaintenanceVisitsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$MaintenancePlansTableOrderingComposer get planId {
+    final $$MaintenancePlansTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MaintenanceVisitsTableAnnotationComposer
@@ -17395,9 +20896,6 @@ class $$MaintenanceVisitsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get planId =>
-      $composableBuilder(column: $table.planId, builder: (column) => column);
 
   GeneratedColumn<DateTime> get scheduledDate => $composableBuilder(
     column: $table.scheduledDate,
@@ -17428,6 +20926,129 @@ class $$MaintenanceVisitsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$MaintenancePlansTableAnnotationComposer get planId {
+    final $$MaintenancePlansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> stockMovementsRefs<T extends Object>(
+    Expression<T> Function($$StockMovementsTableAnnotationComposer a) f,
+  ) {
+    final $$StockMovementsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> workLogsRefs<T extends Object>(
+    Expression<T> Function($$WorkLogsTableAnnotationComposer a) f,
+  ) {
+    final $$WorkLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.workLogs,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> expensesRefs<T extends Object>(
+    Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
+  ) {
+    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> collectionsRefs<T extends Object>(
+    Expression<T> Function($$CollectionsTableAnnotationComposer a) f,
+  ) {
+    final $$CollectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MaintenanceVisitsTableTableManager
@@ -17441,16 +21062,15 @@ class $$MaintenanceVisitsTableTableManager
           $$MaintenanceVisitsTableAnnotationComposer,
           $$MaintenanceVisitsTableCreateCompanionBuilder,
           $$MaintenanceVisitsTableUpdateCompanionBuilder,
-          (
-            MaintenanceVisit,
-            BaseReferences<
-              _$AppDatabase,
-              $MaintenanceVisitsTable,
-              MaintenanceVisit
-            >,
-          ),
+          (MaintenanceVisit, $$MaintenanceVisitsTableReferences),
           MaintenanceVisit,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool planId,
+            bool stockMovementsRefs,
+            bool workLogsRefs,
+            bool expensesRefs,
+            bool collectionsRefs,
+          })
         > {
   $$MaintenanceVisitsTableTableManager(
     _$AppDatabase db,
@@ -17521,9 +21141,153 @@ class $$MaintenanceVisitsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MaintenanceVisitsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                planId = false,
+                stockMovementsRefs = false,
+                workLogsRefs = false,
+                expensesRefs = false,
+                collectionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (stockMovementsRefs) db.stockMovements,
+                    if (workLogsRefs) db.workLogs,
+                    if (expensesRefs) db.expenses,
+                    if (collectionsRefs) db.collections,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (planId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.planId,
+                                    referencedTable:
+                                        $$MaintenanceVisitsTableReferences
+                                            ._planIdTable(db),
+                                    referencedColumn:
+                                        $$MaintenanceVisitsTableReferences
+                                            ._planIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (stockMovementsRefs)
+                        await $_getPrefetchedData<
+                          MaintenanceVisit,
+                          $MaintenanceVisitsTable,
+                          StockMovement
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenanceVisitsTableReferences
+                              ._stockMovementsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenanceVisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).stockMovementsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (workLogsRefs)
+                        await $_getPrefetchedData<
+                          MaintenanceVisit,
+                          $MaintenanceVisitsTable,
+                          WorkLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenanceVisitsTableReferences
+                              ._workLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenanceVisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).workLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (expensesRefs)
+                        await $_getPrefetchedData<
+                          MaintenanceVisit,
+                          $MaintenanceVisitsTable,
+                          Expense
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenanceVisitsTableReferences
+                              ._expensesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenanceVisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).expensesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (collectionsRefs)
+                        await $_getPrefetchedData<
+                          MaintenanceVisit,
+                          $MaintenanceVisitsTable,
+                          Collection
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenanceVisitsTableReferences
+                              ._collectionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenanceVisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).collectionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -17538,16 +21302,15 @@ typedef $$MaintenanceVisitsTableProcessedTableManager =
       $$MaintenanceVisitsTableAnnotationComposer,
       $$MaintenanceVisitsTableCreateCompanionBuilder,
       $$MaintenanceVisitsTableUpdateCompanionBuilder,
-      (
-        MaintenanceVisit,
-        BaseReferences<
-          _$AppDatabase,
-          $MaintenanceVisitsTable,
-          MaintenanceVisit
-        >,
-      ),
+      (MaintenanceVisit, $$MaintenanceVisitsTableReferences),
       MaintenanceVisit,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool planId,
+        bool stockMovementsRefs,
+        bool workLogsRefs,
+        bool expensesRefs,
+        bool collectionsRefs,
+      })
     >;
 typedef $$InventoryItemsTableCreateCompanionBuilder =
     InventoryItemsCompanion Function({
@@ -17581,6 +21344,36 @@ typedef $$InventoryItemsTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
+
+final class $$InventoryItemsTableReferences
+    extends BaseReferences<_$AppDatabase, $InventoryItemsTable, InventoryItem> {
+  $$InventoryItemsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
+  _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.stockMovements,
+    aliasName: $_aliasNameGenerator(
+      db.inventoryItems.id,
+      db.stockMovements.itemId,
+    ),
+  );
+
+  $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
+    final manager = $$StockMovementsTableTableManager(
+      $_db,
+      $_db.stockMovements,
+    ).filter((f) => f.itemId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_stockMovementsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$InventoryItemsTableFilterComposer
     extends Composer<_$AppDatabase, $InventoryItemsTable> {
@@ -17650,6 +21443,31 @@ class $$InventoryItemsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> stockMovementsRefs(
+    Expression<bool> Function($$StockMovementsTableFilterComposer f) f,
+  ) {
+    final $$StockMovementsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.itemId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableFilterComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$InventoryItemsTableOrderingComposer
@@ -17770,6 +21588,31 @@ class $$InventoryItemsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> stockMovementsRefs<T extends Object>(
+    Expression<T> Function($$StockMovementsTableAnnotationComposer a) f,
+  ) {
+    final $$StockMovementsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.itemId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$InventoryItemsTableTableManager
@@ -17783,12 +21626,9 @@ class $$InventoryItemsTableTableManager
           $$InventoryItemsTableAnnotationComposer,
           $$InventoryItemsTableCreateCompanionBuilder,
           $$InventoryItemsTableUpdateCompanionBuilder,
-          (
-            InventoryItem,
-            BaseReferences<_$AppDatabase, $InventoryItemsTable, InventoryItem>,
-          ),
+          (InventoryItem, $$InventoryItemsTableReferences),
           InventoryItem,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool stockMovementsRefs})
         > {
   $$InventoryItemsTableTableManager(
     _$AppDatabase db,
@@ -17864,9 +21704,45 @@ class $$InventoryItemsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$InventoryItemsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({stockMovementsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (stockMovementsRefs) db.stockMovements,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (stockMovementsRefs)
+                    await $_getPrefetchedData<
+                      InventoryItem,
+                      $InventoryItemsTable,
+                      StockMovement
+                    >(
+                      currentTable: table,
+                      referencedTable: $$InventoryItemsTableReferences
+                          ._stockMovementsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$InventoryItemsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).stockMovementsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.itemId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -17881,12 +21757,9 @@ typedef $$InventoryItemsTableProcessedTableManager =
       $$InventoryItemsTableAnnotationComposer,
       $$InventoryItemsTableCreateCompanionBuilder,
       $$InventoryItemsTableUpdateCompanionBuilder,
-      (
-        InventoryItem,
-        BaseReferences<_$AppDatabase, $InventoryItemsTable, InventoryItem>,
-      ),
+      (InventoryItem, $$InventoryItemsTableReferences),
       InventoryItem,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool stockMovementsRefs})
     >;
 typedef $$SuppliersTableCreateCompanionBuilder =
     SuppliersCompanion Function({
@@ -17916,6 +21789,29 @@ typedef $$SuppliersTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
+
+final class $$SuppliersTableReferences
+    extends BaseReferences<_$AppDatabase, $SuppliersTable, Supplier> {
+  $$SuppliersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$PurchasesTable, List<Purchase>>
+  _purchasesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.purchases,
+    aliasName: $_aliasNameGenerator(db.suppliers.id, db.purchases.supplierId),
+  );
+
+  $$PurchasesTableProcessedTableManager get purchasesRefs {
+    final manager = $$PurchasesTableTableManager(
+      $_db,
+      $_db.purchases,
+    ).filter((f) => f.supplierId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_purchasesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$SuppliersTableFilterComposer
     extends Composer<_$AppDatabase, $SuppliersTable> {
@@ -17975,6 +21871,31 @@ class $$SuppliersTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> purchasesRefs(
+    Expression<bool> Function($$PurchasesTableFilterComposer f) f,
+  ) {
+    final $$PurchasesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.supplierId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableFilterComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$SuppliersTableOrderingComposer
@@ -18075,6 +21996,31 @@ class $$SuppliersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> purchasesRefs<T extends Object>(
+    Expression<T> Function($$PurchasesTableAnnotationComposer a) f,
+  ) {
+    final $$PurchasesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.supplierId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$SuppliersTableTableManager
@@ -18088,9 +22034,9 @@ class $$SuppliersTableTableManager
           $$SuppliersTableAnnotationComposer,
           $$SuppliersTableCreateCompanionBuilder,
           $$SuppliersTableUpdateCompanionBuilder,
-          (Supplier, BaseReferences<_$AppDatabase, $SuppliersTable, Supplier>),
+          (Supplier, $$SuppliersTableReferences),
           Supplier,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool purchasesRefs})
         > {
   $$SuppliersTableTableManager(_$AppDatabase db, $SuppliersTable table)
     : super(
@@ -18156,9 +22102,43 @@ class $$SuppliersTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SuppliersTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({purchasesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (purchasesRefs) db.purchases],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (purchasesRefs)
+                    await $_getPrefetchedData<
+                      Supplier,
+                      $SuppliersTable,
+                      Purchase
+                    >(
+                      currentTable: table,
+                      referencedTable: $$SuppliersTableReferences
+                          ._purchasesRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$SuppliersTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).purchasesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.supplierId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -18173,9 +22153,9 @@ typedef $$SuppliersTableProcessedTableManager =
       $$SuppliersTableAnnotationComposer,
       $$SuppliersTableCreateCompanionBuilder,
       $$SuppliersTableUpdateCompanionBuilder,
-      (Supplier, BaseReferences<_$AppDatabase, $SuppliersTable, Supplier>),
+      (Supplier, $$SuppliersTableReferences),
       Supplier,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool purchasesRefs})
     >;
 typedef $$PurchasesTableCreateCompanionBuilder =
     PurchasesCompanion Function({
@@ -18206,6 +22186,70 @@ typedef $$PurchasesTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$PurchasesTableReferences
+    extends BaseReferences<_$AppDatabase, $PurchasesTable, Purchase> {
+  $$PurchasesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $SuppliersTable _supplierIdTable(_$AppDatabase db) =>
+      db.suppliers.createAlias(
+        $_aliasNameGenerator(db.purchases.supplierId, db.suppliers.id),
+      );
+
+  $$SuppliersTableProcessedTableManager? get supplierId {
+    final $_column = $_itemColumn<String>('supplier_id');
+    if ($_column == null) return null;
+    final manager = $$SuppliersTableTableManager(
+      $_db,
+      $_db.suppliers,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_supplierIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
+      db.partners.createAlias(
+        $_aliasNameGenerator(db.purchases.paidByPartnerId, db.partners.id),
+      );
+
+  $$PartnersTableProcessedTableManager get paidByPartnerId {
+    final $_column = $_itemColumn<String>('paid_by_partner_id')!;
+
+    final manager = $$PartnersTableTableManager(
+      $_db,
+      $_db.partners,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_paidByPartnerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
+  _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.stockMovements,
+    aliasName: $_aliasNameGenerator(
+      db.purchases.id,
+      db.stockMovements.purchaseId,
+    ),
+  );
+
+  $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
+    final manager = $$StockMovementsTableTableManager(
+      $_db,
+      $_db.stockMovements,
+    ).filter((f) => f.purchaseId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_stockMovementsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$PurchasesTableFilterComposer
     extends Composer<_$AppDatabase, $PurchasesTable> {
   $$PurchasesTableFilterComposer({
@@ -18217,16 +22261,6 @@ class $$PurchasesTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get supplierId => $composableBuilder(
-    column: $table.supplierId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -18264,6 +22298,77 @@ class $$PurchasesTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$SuppliersTableFilterComposer get supplierId {
+    final $$SuppliersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.supplierId,
+      referencedTable: $db.suppliers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SuppliersTableFilterComposer(
+            $db: $db,
+            $table: $db.suppliers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableFilterComposer get paidByPartnerId {
+    final $$PartnersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableFilterComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> stockMovementsRefs(
+    Expression<bool> Function($$StockMovementsTableFilterComposer f) f,
+  ) {
+    final $$StockMovementsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.purchaseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableFilterComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PurchasesTableOrderingComposer
@@ -18277,16 +22382,6 @@ class $$PurchasesTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get supplierId => $composableBuilder(
-    column: $table.supplierId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -18324,6 +22419,52 @@ class $$PurchasesTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$SuppliersTableOrderingComposer get supplierId {
+    final $$SuppliersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.supplierId,
+      referencedTable: $db.suppliers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SuppliersTableOrderingComposer(
+            $db: $db,
+            $table: $db.suppliers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableOrderingComposer get paidByPartnerId {
+    final $$PartnersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableOrderingComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$PurchasesTableAnnotationComposer
@@ -18337,16 +22478,6 @@ class $$PurchasesTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get supplierId => $composableBuilder(
-    column: $table.supplierId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<int> get totalAmountCents => $composableBuilder(
     column: $table.totalAmountCents,
@@ -18372,6 +22503,77 @@ class $$PurchasesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$SuppliersTableAnnotationComposer get supplierId {
+    final $$SuppliersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.supplierId,
+      referencedTable: $db.suppliers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SuppliersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.suppliers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableAnnotationComposer get paidByPartnerId {
+    final $$PartnersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> stockMovementsRefs<T extends Object>(
+    Expression<T> Function($$StockMovementsTableAnnotationComposer a) f,
+  ) {
+    final $$StockMovementsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.stockMovements,
+      getReferencedColumn: (t) => t.purchaseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockMovementsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PurchasesTableTableManager
@@ -18385,9 +22587,13 @@ class $$PurchasesTableTableManager
           $$PurchasesTableAnnotationComposer,
           $$PurchasesTableCreateCompanionBuilder,
           $$PurchasesTableUpdateCompanionBuilder,
-          (Purchase, BaseReferences<_$AppDatabase, $PurchasesTable, Purchase>),
+          (Purchase, $$PurchasesTableReferences),
           Purchase,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool supplierId,
+            bool paidByPartnerId,
+            bool stockMovementsRefs,
+          })
         > {
   $$PurchasesTableTableManager(_$AppDatabase db, $PurchasesTable table)
     : super(
@@ -18453,9 +22659,96 @@ class $$PurchasesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PurchasesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                supplierId = false,
+                paidByPartnerId = false,
+                stockMovementsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (stockMovementsRefs) db.stockMovements,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (supplierId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.supplierId,
+                                    referencedTable: $$PurchasesTableReferences
+                                        ._supplierIdTable(db),
+                                    referencedColumn: $$PurchasesTableReferences
+                                        ._supplierIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (paidByPartnerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.paidByPartnerId,
+                                    referencedTable: $$PurchasesTableReferences
+                                        ._paidByPartnerIdTable(db),
+                                    referencedColumn: $$PurchasesTableReferences
+                                        ._paidByPartnerIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (stockMovementsRefs)
+                        await $_getPrefetchedData<
+                          Purchase,
+                          $PurchasesTable,
+                          StockMovement
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PurchasesTableReferences
+                              ._stockMovementsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PurchasesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).stockMovementsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.purchaseId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
         ),
       );
 }
@@ -18470,9 +22763,13 @@ typedef $$PurchasesTableProcessedTableManager =
       $$PurchasesTableAnnotationComposer,
       $$PurchasesTableCreateCompanionBuilder,
       $$PurchasesTableUpdateCompanionBuilder,
-      (Purchase, BaseReferences<_$AppDatabase, $PurchasesTable, Purchase>),
+      (Purchase, $$PurchasesTableReferences),
       Purchase,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool supplierId,
+        bool paidByPartnerId,
+        bool stockMovementsRefs,
+      })
     >;
 typedef $$StockMovementsTableCreateCompanionBuilder =
     StockMovementsCompanion Function({
@@ -18511,6 +22808,94 @@ typedef $$StockMovementsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$StockMovementsTableReferences
+    extends BaseReferences<_$AppDatabase, $StockMovementsTable, StockMovement> {
+  $$StockMovementsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $InventoryItemsTable _itemIdTable(_$AppDatabase db) =>
+      db.inventoryItems.createAlias(
+        $_aliasNameGenerator(db.stockMovements.itemId, db.inventoryItems.id),
+      );
+
+  $$InventoryItemsTableProcessedTableManager get itemId {
+    final $_column = $_itemColumn<String>('item_id')!;
+
+    final manager = $$InventoryItemsTableTableManager(
+      $_db,
+      $_db.inventoryItems,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_itemIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias(
+        $_aliasNameGenerator(db.stockMovements.projectId, db.projects.id),
+      );
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
+      db.maintenanceVisits.createAlias(
+        $_aliasNameGenerator(
+          db.stockMovements.visitId,
+          db.maintenanceVisits.id,
+        ),
+      );
+
+  $$MaintenanceVisitsTableProcessedTableManager? get visitId {
+    final $_column = $_itemColumn<String>('visit_id');
+    if ($_column == null) return null;
+    final manager = $$MaintenanceVisitsTableTableManager(
+      $_db,
+      $_db.maintenanceVisits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PurchasesTable _purchaseIdTable(_$AppDatabase db) =>
+      db.purchases.createAlias(
+        $_aliasNameGenerator(db.stockMovements.purchaseId, db.purchases.id),
+      );
+
+  $$PurchasesTableProcessedTableManager? get purchaseId {
+    final $_column = $_itemColumn<String>('purchase_id');
+    if ($_column == null) return null;
+    final manager = $$PurchasesTableTableManager(
+      $_db,
+      $_db.purchases,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_purchaseIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$StockMovementsTableFilterComposer
     extends Composer<_$AppDatabase, $StockMovementsTable> {
   $$StockMovementsTableFilterComposer({
@@ -18522,11 +22907,6 @@ class $$StockMovementsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get itemId => $composableBuilder(
-    column: $table.itemId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -18542,21 +22922,6 @@ class $$StockMovementsTableFilterComposer
 
   ColumnFilters<int> get unitCostCents => $composableBuilder(
     column: $table.unitCostCents,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get visitId => $composableBuilder(
-    column: $table.visitId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get purchaseId => $composableBuilder(
-    column: $table.purchaseId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -18589,6 +22954,98 @@ class $$StockMovementsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$InventoryItemsTableFilterComposer get itemId {
+    final $$InventoryItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.itemId,
+      referencedTable: $db.inventoryItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InventoryItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.inventoryItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableFilterComposer get visitId {
+    final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PurchasesTableFilterComposer get purchaseId {
+    final $$PurchasesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.purchaseId,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableFilterComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$StockMovementsTableOrderingComposer
@@ -18605,11 +23062,6 @@ class $$StockMovementsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get itemId => $composableBuilder(
-    column: $table.itemId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get movementType => $composableBuilder(
     column: $table.movementType,
     builder: (column) => ColumnOrderings(column),
@@ -18622,21 +23074,6 @@ class $$StockMovementsTableOrderingComposer
 
   ColumnOrderings<int> get unitCostCents => $composableBuilder(
     column: $table.unitCostCents,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get visitId => $composableBuilder(
-    column: $table.visitId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get purchaseId => $composableBuilder(
-    column: $table.purchaseId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -18669,6 +23106,98 @@ class $$StockMovementsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$InventoryItemsTableOrderingComposer get itemId {
+    final $$InventoryItemsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.itemId,
+      referencedTable: $db.inventoryItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InventoryItemsTableOrderingComposer(
+            $db: $db,
+            $table: $db.inventoryItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableOrderingComposer get visitId {
+    final $$MaintenanceVisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PurchasesTableOrderingComposer get purchaseId {
+    final $$PurchasesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.purchaseId,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableOrderingComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$StockMovementsTableAnnotationComposer
@@ -18683,9 +23212,6 @@ class $$StockMovementsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get itemId =>
-      $composableBuilder(column: $table.itemId, builder: (column) => column);
-
   GeneratedColumn<String> get movementType => $composableBuilder(
     column: $table.movementType,
     builder: (column) => column,
@@ -18696,17 +23222,6 @@ class $$StockMovementsTableAnnotationComposer
 
   GeneratedColumn<int> get unitCostCents => $composableBuilder(
     column: $table.unitCostCents,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get projectId =>
-      $composableBuilder(column: $table.projectId, builder: (column) => column);
-
-  GeneratedColumn<String> get visitId =>
-      $composableBuilder(column: $table.visitId, builder: (column) => column);
-
-  GeneratedColumn<String> get purchaseId => $composableBuilder(
-    column: $table.purchaseId,
     builder: (column) => column,
   );
 
@@ -18727,6 +23242,99 @@ class $$StockMovementsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$InventoryItemsTableAnnotationComposer get itemId {
+    final $$InventoryItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.itemId,
+      referencedTable: $db.inventoryItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InventoryItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.inventoryItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableAnnotationComposer get visitId {
+    final $$MaintenanceVisitsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.visitId,
+          referencedTable: $db.maintenanceVisits,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MaintenanceVisitsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.maintenanceVisits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$PurchasesTableAnnotationComposer get purchaseId {
+    final $$PurchasesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.purchaseId,
+      referencedTable: $db.purchases,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PurchasesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.purchases,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$StockMovementsTableTableManager
@@ -18740,12 +23348,14 @@ class $$StockMovementsTableTableManager
           $$StockMovementsTableAnnotationComposer,
           $$StockMovementsTableCreateCompanionBuilder,
           $$StockMovementsTableUpdateCompanionBuilder,
-          (
-            StockMovement,
-            BaseReferences<_$AppDatabase, $StockMovementsTable, StockMovement>,
-          ),
+          (StockMovement, $$StockMovementsTableReferences),
           StockMovement,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool itemId,
+            bool projectId,
+            bool visitId,
+            bool purchaseId,
+          })
         > {
   $$StockMovementsTableTableManager(
     _$AppDatabase db,
@@ -18829,9 +23439,107 @@ class $$StockMovementsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$StockMovementsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                itemId = false,
+                projectId = false,
+                visitId = false,
+                purchaseId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (itemId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.itemId,
+                                    referencedTable:
+                                        $$StockMovementsTableReferences
+                                            ._itemIdTable(db),
+                                    referencedColumn:
+                                        $$StockMovementsTableReferences
+                                            ._itemIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (projectId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.projectId,
+                                    referencedTable:
+                                        $$StockMovementsTableReferences
+                                            ._projectIdTable(db),
+                                    referencedColumn:
+                                        $$StockMovementsTableReferences
+                                            ._projectIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (visitId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.visitId,
+                                    referencedTable:
+                                        $$StockMovementsTableReferences
+                                            ._visitIdTable(db),
+                                    referencedColumn:
+                                        $$StockMovementsTableReferences
+                                            ._visitIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (purchaseId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.purchaseId,
+                                    referencedTable:
+                                        $$StockMovementsTableReferences
+                                            ._purchaseIdTable(db),
+                                    referencedColumn:
+                                        $$StockMovementsTableReferences
+                                            ._purchaseIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
         ),
       );
 }
@@ -18846,12 +23554,14 @@ typedef $$StockMovementsTableProcessedTableManager =
       $$StockMovementsTableAnnotationComposer,
       $$StockMovementsTableCreateCompanionBuilder,
       $$StockMovementsTableUpdateCompanionBuilder,
-      (
-        StockMovement,
-        BaseReferences<_$AppDatabase, $StockMovementsTable, StockMovement>,
-      ),
+      (StockMovement, $$StockMovementsTableReferences),
       StockMovement,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool itemId,
+        bool projectId,
+        bool visitId,
+        bool purchaseId,
+      })
     >;
 typedef $$ToolsTableCreateCompanionBuilder =
     ToolsCompanion Function({
@@ -18887,6 +23597,31 @@ typedef $$ToolsTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
+
+final class $$ToolsTableReferences
+    extends BaseReferences<_$AppDatabase, $ToolsTable, Tool> {
+  $$ToolsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
+  _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.toolAssignments,
+    aliasName: $_aliasNameGenerator(db.tools.id, db.toolAssignments.toolId),
+  );
+
+  $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
+    final manager = $$ToolAssignmentsTableTableManager(
+      $_db,
+      $_db.toolAssignments,
+    ).filter((f) => f.toolId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _toolAssignmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$ToolsTableFilterComposer extends Composer<_$AppDatabase, $ToolsTable> {
   $$ToolsTableFilterComposer({
@@ -18960,6 +23695,31 @@ class $$ToolsTableFilterComposer extends Composer<_$AppDatabase, $ToolsTable> {
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> toolAssignmentsRefs(
+    Expression<bool> Function($$ToolAssignmentsTableFilterComposer f) f,
+  ) {
+    final $$ToolAssignmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.toolId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ToolsTableOrderingComposer
@@ -19094,6 +23854,31 @@ class $$ToolsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> toolAssignmentsRefs<T extends Object>(
+    Expression<T> Function($$ToolAssignmentsTableAnnotationComposer a) f,
+  ) {
+    final $$ToolAssignmentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.toolId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ToolsTableTableManager
@@ -19107,9 +23892,9 @@ class $$ToolsTableTableManager
           $$ToolsTableAnnotationComposer,
           $$ToolsTableCreateCompanionBuilder,
           $$ToolsTableUpdateCompanionBuilder,
-          (Tool, BaseReferences<_$AppDatabase, $ToolsTable, Tool>),
+          (Tool, $$ToolsTableReferences),
           Tool,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool toolAssignmentsRefs})
         > {
   $$ToolsTableTableManager(_$AppDatabase db, $ToolsTable table)
     : super(
@@ -19187,9 +23972,42 @@ class $$ToolsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) =>
+                    (e.readTable(table), $$ToolsTableReferences(db, table, e)),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({toolAssignmentsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (toolAssignmentsRefs) db.toolAssignments,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (toolAssignmentsRefs)
+                    await $_getPrefetchedData<
+                      Tool,
+                      $ToolsTable,
+                      ToolAssignment
+                    >(
+                      currentTable: table,
+                      referencedTable: $$ToolsTableReferences
+                          ._toolAssignmentsRefsTable(db),
+                      managerFromTypedResult: (p0) => $$ToolsTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).toolAssignmentsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.toolId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -19204,9 +24022,9 @@ typedef $$ToolsTableProcessedTableManager =
       $$ToolsTableAnnotationComposer,
       $$ToolsTableCreateCompanionBuilder,
       $$ToolsTableUpdateCompanionBuilder,
-      (Tool, BaseReferences<_$AppDatabase, $ToolsTable, Tool>),
+      (Tool, $$ToolsTableReferences),
       Tool,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool toolAssignmentsRefs})
     >;
 typedef $$ToolAssignmentsTableCreateCompanionBuilder =
     ToolAssignmentsCompanion Function({
@@ -19243,6 +24061,72 @@ typedef $$ToolAssignmentsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$ToolAssignmentsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $ToolAssignmentsTable, ToolAssignment> {
+  $$ToolAssignmentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ToolsTable _toolIdTable(_$AppDatabase db) => db.tools.createAlias(
+    $_aliasNameGenerator(db.toolAssignments.toolId, db.tools.id),
+  );
+
+  $$ToolsTableProcessedTableManager get toolId {
+    final $_column = $_itemColumn<String>('tool_id')!;
+
+    final manager = $$ToolsTableTableManager(
+      $_db,
+      $_db.tools,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_toolIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $WorkersTable _workerIdTable(_$AppDatabase db) =>
+      db.workers.createAlias(
+        $_aliasNameGenerator(db.toolAssignments.workerId, db.workers.id),
+      );
+
+  $$WorkersTableProcessedTableManager? get workerId {
+    final $_column = $_itemColumn<String>('worker_id');
+    if ($_column == null) return null;
+    final manager = $$WorkersTableTableManager(
+      $_db,
+      $_db.workers,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_workerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias(
+        $_aliasNameGenerator(db.toolAssignments.projectId, db.projects.id),
+      );
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$ToolAssignmentsTableFilterComposer
     extends Composer<_$AppDatabase, $ToolAssignmentsTable> {
   $$ToolAssignmentsTableFilterComposer({
@@ -19254,21 +24138,6 @@ class $$ToolAssignmentsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get toolId => $composableBuilder(
-    column: $table.toolId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get workerId => $composableBuilder(
-    column: $table.workerId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectId => $composableBuilder(
-    column: $table.projectId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19316,6 +24185,75 @@ class $$ToolAssignmentsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ToolsTableFilterComposer get toolId {
+    final $$ToolsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.toolId,
+      referencedTable: $db.tools,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolsTableFilterComposer(
+            $db: $db,
+            $table: $db.tools,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$WorkersTableFilterComposer get workerId {
+    final $$WorkersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableFilterComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ToolAssignmentsTableOrderingComposer
@@ -19329,21 +24267,6 @@ class $$ToolAssignmentsTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get toolId => $composableBuilder(
-    column: $table.toolId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get workerId => $composableBuilder(
-    column: $table.workerId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectId => $composableBuilder(
-    column: $table.projectId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -19391,6 +24314,75 @@ class $$ToolAssignmentsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ToolsTableOrderingComposer get toolId {
+    final $$ToolsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.toolId,
+      referencedTable: $db.tools,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolsTableOrderingComposer(
+            $db: $db,
+            $table: $db.tools,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$WorkersTableOrderingComposer get workerId {
+    final $$WorkersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableOrderingComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ToolAssignmentsTableAnnotationComposer
@@ -19404,15 +24396,6 @@ class $$ToolAssignmentsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get toolId =>
-      $composableBuilder(column: $table.toolId, builder: (column) => column);
-
-  GeneratedColumn<String> get workerId =>
-      $composableBuilder(column: $table.workerId, builder: (column) => column);
-
-  GeneratedColumn<String> get projectId =>
-      $composableBuilder(column: $table.projectId, builder: (column) => column);
 
   GeneratedColumn<DateTime> get assignedAt => $composableBuilder(
     column: $table.assignedAt,
@@ -19448,6 +24431,75 @@ class $$ToolAssignmentsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$ToolsTableAnnotationComposer get toolId {
+    final $$ToolsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.toolId,
+      referencedTable: $db.tools,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tools,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$WorkersTableAnnotationComposer get workerId {
+    final $$WorkersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ToolAssignmentsTableTableManager
@@ -19461,16 +24513,9 @@ class $$ToolAssignmentsTableTableManager
           $$ToolAssignmentsTableAnnotationComposer,
           $$ToolAssignmentsTableCreateCompanionBuilder,
           $$ToolAssignmentsTableUpdateCompanionBuilder,
-          (
-            ToolAssignment,
-            BaseReferences<
-              _$AppDatabase,
-              $ToolAssignmentsTable,
-              ToolAssignment
-            >,
-          ),
+          (ToolAssignment, $$ToolAssignmentsTableReferences),
           ToolAssignment,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool toolId, bool workerId, bool projectId})
         > {
   $$ToolAssignmentsTableTableManager(
     _$AppDatabase db,
@@ -19550,9 +24595,87 @@ class $$ToolAssignmentsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ToolAssignmentsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({toolId = false, workerId = false, projectId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (toolId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.toolId,
+                                    referencedTable:
+                                        $$ToolAssignmentsTableReferences
+                                            ._toolIdTable(db),
+                                    referencedColumn:
+                                        $$ToolAssignmentsTableReferences
+                                            ._toolIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (workerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.workerId,
+                                    referencedTable:
+                                        $$ToolAssignmentsTableReferences
+                                            ._workerIdTable(db),
+                                    referencedColumn:
+                                        $$ToolAssignmentsTableReferences
+                                            ._workerIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (projectId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.projectId,
+                                    referencedTable:
+                                        $$ToolAssignmentsTableReferences
+                                            ._projectIdTable(db),
+                                    referencedColumn:
+                                        $$ToolAssignmentsTableReferences
+                                            ._projectIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
         ),
       );
 }
@@ -19567,12 +24690,9 @@ typedef $$ToolAssignmentsTableProcessedTableManager =
       $$ToolAssignmentsTableAnnotationComposer,
       $$ToolAssignmentsTableCreateCompanionBuilder,
       $$ToolAssignmentsTableUpdateCompanionBuilder,
-      (
-        ToolAssignment,
-        BaseReferences<_$AppDatabase, $ToolAssignmentsTable, ToolAssignment>,
-      ),
+      (ToolAssignment, $$ToolAssignmentsTableReferences),
       ToolAssignment,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool toolId, bool workerId, bool projectId})
     >;
 typedef $$WorkLogsTableCreateCompanionBuilder =
     WorkLogsCompanion Function({
@@ -19611,6 +24731,64 @@ typedef $$WorkLogsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$WorkLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $WorkLogsTable, WorkLog> {
+  $$WorkLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $WorkersTable _workerIdTable(_$AppDatabase db) => db.workers
+      .createAlias($_aliasNameGenerator(db.workLogs.workerId, db.workers.id));
+
+  $$WorkersTableProcessedTableManager get workerId {
+    final $_column = $_itemColumn<String>('worker_id')!;
+
+    final manager = $$WorkersTableTableManager(
+      $_db,
+      $_db.workers,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_workerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) => db.projects
+      .createAlias($_aliasNameGenerator(db.workLogs.projectId, db.projects.id));
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
+      db.maintenanceVisits.createAlias(
+        $_aliasNameGenerator(db.workLogs.visitId, db.maintenanceVisits.id),
+      );
+
+  $$MaintenanceVisitsTableProcessedTableManager? get visitId {
+    final $_column = $_itemColumn<String>('visit_id');
+    if ($_column == null) return null;
+    final manager = $$MaintenanceVisitsTableTableManager(
+      $_db,
+      $_db.maintenanceVisits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$WorkLogsTableFilterComposer
     extends Composer<_$AppDatabase, $WorkLogsTable> {
   $$WorkLogsTableFilterComposer({
@@ -19625,23 +24803,8 @@ class $$WorkLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get workerId => $composableBuilder(
-    column: $table.workerId,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get visitId => $composableBuilder(
-    column: $table.visitId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19689,6 +24852,75 @@ class $$WorkLogsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$WorkersTableFilterComposer get workerId {
+    final $$WorkersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableFilterComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableFilterComposer get visitId {
+    final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$WorkLogsTableOrderingComposer
@@ -19705,23 +24937,8 @@ class $$WorkLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get workerId => $composableBuilder(
-    column: $table.workerId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get visitId => $composableBuilder(
-    column: $table.visitId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -19769,6 +24986,75 @@ class $$WorkLogsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$WorkersTableOrderingComposer get workerId {
+    final $$WorkersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableOrderingComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableOrderingComposer get visitId {
+    final $$MaintenanceVisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$WorkLogsTableAnnotationComposer
@@ -19783,17 +25069,8 @@ class $$WorkLogsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get workerId =>
-      $composableBuilder(column: $table.workerId, builder: (column) => column);
-
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
-
-  GeneratedColumn<String> get projectId =>
-      $composableBuilder(column: $table.projectId, builder: (column) => column);
-
-  GeneratedColumn<String> get visitId =>
-      $composableBuilder(column: $table.visitId, builder: (column) => column);
 
   GeneratedColumn<String> get paymentType => $composableBuilder(
     column: $table.paymentType,
@@ -19829,6 +25106,76 @@ class $$WorkLogsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$WorkersTableAnnotationComposer get workerId {
+    final $$WorkersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableAnnotationComposer get visitId {
+    final $$MaintenanceVisitsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.visitId,
+          referencedTable: $db.maintenanceVisits,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MaintenanceVisitsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.maintenanceVisits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
 }
 
 class $$WorkLogsTableTableManager
@@ -19842,9 +25189,9 @@ class $$WorkLogsTableTableManager
           $$WorkLogsTableAnnotationComposer,
           $$WorkLogsTableCreateCompanionBuilder,
           $$WorkLogsTableUpdateCompanionBuilder,
-          (WorkLog, BaseReferences<_$AppDatabase, $WorkLogsTable, WorkLog>),
+          (WorkLog, $$WorkLogsTableReferences),
           WorkLog,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool workerId, bool projectId, bool visitId})
         > {
   $$WorkLogsTableTableManager(_$AppDatabase db, $WorkLogsTable table)
     : super(
@@ -19926,9 +25273,81 @@ class $$WorkLogsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$WorkLogsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({workerId = false, projectId = false, visitId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (workerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.workerId,
+                                    referencedTable: $$WorkLogsTableReferences
+                                        ._workerIdTable(db),
+                                    referencedColumn: $$WorkLogsTableReferences
+                                        ._workerIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (projectId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.projectId,
+                                    referencedTable: $$WorkLogsTableReferences
+                                        ._projectIdTable(db),
+                                    referencedColumn: $$WorkLogsTableReferences
+                                        ._projectIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (visitId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.visitId,
+                                    referencedTable: $$WorkLogsTableReferences
+                                        ._visitIdTable(db),
+                                    referencedColumn: $$WorkLogsTableReferences
+                                        ._visitIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
         ),
       );
 }
@@ -19943,9 +25362,9 @@ typedef $$WorkLogsTableProcessedTableManager =
       $$WorkLogsTableAnnotationComposer,
       $$WorkLogsTableCreateCompanionBuilder,
       $$WorkLogsTableUpdateCompanionBuilder,
-      (WorkLog, BaseReferences<_$AppDatabase, $WorkLogsTable, WorkLog>),
+      (WorkLog, $$WorkLogsTableReferences),
       WorkLog,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool workerId, bool projectId, bool visitId})
     >;
 typedef $$LaborPaymentsTableCreateCompanionBuilder =
     LaborPaymentsCompanion Function({
@@ -19976,6 +25395,53 @@ typedef $$LaborPaymentsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$LaborPaymentsTableReferences
+    extends BaseReferences<_$AppDatabase, $LaborPaymentsTable, LaborPayment> {
+  $$LaborPaymentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $WorkersTable _workerIdTable(_$AppDatabase db) =>
+      db.workers.createAlias(
+        $_aliasNameGenerator(db.laborPayments.workerId, db.workers.id),
+      );
+
+  $$WorkersTableProcessedTableManager get workerId {
+    final $_column = $_itemColumn<String>('worker_id')!;
+
+    final manager = $$WorkersTableTableManager(
+      $_db,
+      $_db.workers,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_workerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
+      db.partners.createAlias(
+        $_aliasNameGenerator(db.laborPayments.paidByPartnerId, db.partners.id),
+      );
+
+  $$PartnersTableProcessedTableManager get paidByPartnerId {
+    final $_column = $_itemColumn<String>('paid_by_partner_id')!;
+
+    final manager = $$PartnersTableTableManager(
+      $_db,
+      $_db.partners,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_paidByPartnerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$LaborPaymentsTableFilterComposer
     extends Composer<_$AppDatabase, $LaborPaymentsTable> {
   $$LaborPaymentsTableFilterComposer({
@@ -19990,11 +25456,6 @@ class $$LaborPaymentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get workerId => $composableBuilder(
-    column: $table.workerId,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnFilters(column),
@@ -20002,11 +25463,6 @@ class $$LaborPaymentsTableFilterComposer
 
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20034,6 +25490,52 @@ class $$LaborPaymentsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$WorkersTableFilterComposer get workerId {
+    final $$WorkersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableFilterComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableFilterComposer get paidByPartnerId {
+    final $$PartnersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableFilterComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$LaborPaymentsTableOrderingComposer
@@ -20050,11 +25552,6 @@ class $$LaborPaymentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get workerId => $composableBuilder(
-    column: $table.workerId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnOrderings(column),
@@ -20062,11 +25559,6 @@ class $$LaborPaymentsTableOrderingComposer
 
   ColumnOrderings<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -20094,6 +25586,52 @@ class $$LaborPaymentsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$WorkersTableOrderingComposer get workerId {
+    final $$WorkersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableOrderingComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableOrderingComposer get paidByPartnerId {
+    final $$PartnersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableOrderingComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$LaborPaymentsTableAnnotationComposer
@@ -20108,9 +25646,6 @@ class $$LaborPaymentsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get workerId =>
-      $composableBuilder(column: $table.workerId, builder: (column) => column);
-
   GeneratedColumn<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => column,
@@ -20118,11 +25653,6 @@ class $$LaborPaymentsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
-
-  GeneratedColumn<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -20138,6 +25668,52 @@ class $$LaborPaymentsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$WorkersTableAnnotationComposer get workerId {
+    final $$WorkersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.workerId,
+      referencedTable: $db.workers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableAnnotationComposer get paidByPartnerId {
+    final $$PartnersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$LaborPaymentsTableTableManager
@@ -20151,12 +25727,9 @@ class $$LaborPaymentsTableTableManager
           $$LaborPaymentsTableAnnotationComposer,
           $$LaborPaymentsTableCreateCompanionBuilder,
           $$LaborPaymentsTableUpdateCompanionBuilder,
-          (
-            LaborPayment,
-            BaseReferences<_$AppDatabase, $LaborPaymentsTable, LaborPayment>,
-          ),
+          (LaborPayment, $$LaborPaymentsTableReferences),
           LaborPayment,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool workerId, bool paidByPartnerId})
         > {
   $$LaborPaymentsTableTableManager(_$AppDatabase db, $LaborPaymentsTable table)
     : super(
@@ -20222,9 +25795,67 @@ class $$LaborPaymentsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$LaborPaymentsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({workerId = false, paidByPartnerId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (workerId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.workerId,
+                                referencedTable: $$LaborPaymentsTableReferences
+                                    ._workerIdTable(db),
+                                referencedColumn: $$LaborPaymentsTableReferences
+                                    ._workerIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (paidByPartnerId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.paidByPartnerId,
+                                referencedTable: $$LaborPaymentsTableReferences
+                                    ._paidByPartnerIdTable(db),
+                                referencedColumn: $$LaborPaymentsTableReferences
+                                    ._paidByPartnerIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -20239,12 +25870,9 @@ typedef $$LaborPaymentsTableProcessedTableManager =
       $$LaborPaymentsTableAnnotationComposer,
       $$LaborPaymentsTableCreateCompanionBuilder,
       $$LaborPaymentsTableUpdateCompanionBuilder,
-      (
-        LaborPayment,
-        BaseReferences<_$AppDatabase, $LaborPaymentsTable, LaborPayment>,
-      ),
+      (LaborPayment, $$LaborPaymentsTableReferences),
       LaborPayment,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool workerId, bool paidByPartnerId})
     >;
 typedef $$ExpensesTableCreateCompanionBuilder =
     ExpensesCompanion Function({
@@ -20285,6 +25913,66 @@ typedef $$ExpensesTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$ExpensesTableReferences
+    extends BaseReferences<_$AppDatabase, $ExpensesTable, Expense> {
+  $$ExpensesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
+      db.partners.createAlias(
+        $_aliasNameGenerator(db.expenses.paidByPartnerId, db.partners.id),
+      );
+
+  $$PartnersTableProcessedTableManager get paidByPartnerId {
+    final $_column = $_itemColumn<String>('paid_by_partner_id')!;
+
+    final manager = $$PartnersTableTableManager(
+      $_db,
+      $_db.partners,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_paidByPartnerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) => db.projects
+      .createAlias($_aliasNameGenerator(db.expenses.projectId, db.projects.id));
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
+      db.maintenanceVisits.createAlias(
+        $_aliasNameGenerator(db.expenses.visitId, db.maintenanceVisits.id),
+      );
+
+  $$MaintenanceVisitsTableProcessedTableManager? get visitId {
+    final $_column = $_itemColumn<String>('visit_id');
+    if ($_column == null) return null;
+    final manager = $$MaintenanceVisitsTableTableManager(
+      $_db,
+      $_db.maintenanceVisits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$ExpensesTableFilterComposer
     extends Composer<_$AppDatabase, $ExpensesTable> {
   $$ExpensesTableFilterComposer({
@@ -20316,21 +26004,6 @@ class $$ExpensesTableFilterComposer
 
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get visitId => $composableBuilder(
-    column: $table.visitId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20368,6 +26041,75 @@ class $$ExpensesTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PartnersTableFilterComposer get paidByPartnerId {
+    final $$PartnersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableFilterComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableFilterComposer get visitId {
+    final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ExpensesTableOrderingComposer
@@ -20401,21 +26143,6 @@ class $$ExpensesTableOrderingComposer
 
   ColumnOrderings<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get visitId => $composableBuilder(
-    column: $table.visitId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -20453,6 +26180,75 @@ class $$ExpensesTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$PartnersTableOrderingComposer get paidByPartnerId {
+    final $$PartnersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableOrderingComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableOrderingComposer get visitId {
+    final $$MaintenanceVisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ExpensesTableAnnotationComposer
@@ -20481,17 +26277,6 @@ class $$ExpensesTableAnnotationComposer
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
 
-  GeneratedColumn<String> get paidByPartnerId => $composableBuilder(
-    column: $table.paidByPartnerId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get projectId =>
-      $composableBuilder(column: $table.projectId, builder: (column) => column);
-
-  GeneratedColumn<String> get visitId =>
-      $composableBuilder(column: $table.visitId, builder: (column) => column);
-
   GeneratedColumn<String> get splitMode =>
       $composableBuilder(column: $table.splitMode, builder: (column) => column);
 
@@ -20514,6 +26299,76 @@ class $$ExpensesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$PartnersTableAnnotationComposer get paidByPartnerId {
+    final $$PartnersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.paidByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableAnnotationComposer get visitId {
+    final $$MaintenanceVisitsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.visitId,
+          referencedTable: $db.maintenanceVisits,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MaintenanceVisitsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.maintenanceVisits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
 }
 
 class $$ExpensesTableTableManager
@@ -20527,9 +26382,13 @@ class $$ExpensesTableTableManager
           $$ExpensesTableAnnotationComposer,
           $$ExpensesTableCreateCompanionBuilder,
           $$ExpensesTableUpdateCompanionBuilder,
-          (Expense, BaseReferences<_$AppDatabase, $ExpensesTable, Expense>),
+          (Expense, $$ExpensesTableReferences),
           Expense,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool paidByPartnerId,
+            bool projectId,
+            bool visitId,
+          })
         > {
   $$ExpensesTableTableManager(_$AppDatabase db, $ExpensesTable table)
     : super(
@@ -20615,9 +26474,81 @@ class $$ExpensesTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ExpensesTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({paidByPartnerId = false, projectId = false, visitId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (paidByPartnerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.paidByPartnerId,
+                                    referencedTable: $$ExpensesTableReferences
+                                        ._paidByPartnerIdTable(db),
+                                    referencedColumn: $$ExpensesTableReferences
+                                        ._paidByPartnerIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (projectId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.projectId,
+                                    referencedTable: $$ExpensesTableReferences
+                                        ._projectIdTable(db),
+                                    referencedColumn: $$ExpensesTableReferences
+                                        ._projectIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (visitId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.visitId,
+                                    referencedTable: $$ExpensesTableReferences
+                                        ._visitIdTable(db),
+                                    referencedColumn: $$ExpensesTableReferences
+                                        ._visitIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
         ),
       );
 }
@@ -20632,9 +26563,13 @@ typedef $$ExpensesTableProcessedTableManager =
       $$ExpensesTableAnnotationComposer,
       $$ExpensesTableCreateCompanionBuilder,
       $$ExpensesTableUpdateCompanionBuilder,
-      (Expense, BaseReferences<_$AppDatabase, $ExpensesTable, Expense>),
+      (Expense, $$ExpensesTableReferences),
       Expense,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool paidByPartnerId,
+        bool projectId,
+        bool visitId,
+      })
     >;
 typedef $$CapitalMovementsTableCreateCompanionBuilder =
     CapitalMovementsCompanion Function({
@@ -20665,6 +26600,35 @@ typedef $$CapitalMovementsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$CapitalMovementsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $CapitalMovementsTable, CapitalMovement> {
+  $$CapitalMovementsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $PartnersTable _partnerIdTable(_$AppDatabase db) =>
+      db.partners.createAlias(
+        $_aliasNameGenerator(db.capitalMovements.partnerId, db.partners.id),
+      );
+
+  $$PartnersTableProcessedTableManager get partnerId {
+    final $_column = $_itemColumn<String>('partner_id')!;
+
+    final manager = $$PartnersTableTableManager(
+      $_db,
+      $_db.partners,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_partnerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$CapitalMovementsTableFilterComposer
     extends Composer<_$AppDatabase, $CapitalMovementsTable> {
   $$CapitalMovementsTableFilterComposer({
@@ -20676,11 +26640,6 @@ class $$CapitalMovementsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get partnerId => $composableBuilder(
-    column: $table.partnerId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20723,6 +26682,29 @@ class $$CapitalMovementsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$PartnersTableFilterComposer get partnerId {
+    final $$PartnersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.partnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableFilterComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CapitalMovementsTableOrderingComposer
@@ -20736,11 +26718,6 @@ class $$CapitalMovementsTableOrderingComposer
   });
   ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get partnerId => $composableBuilder(
-    column: $table.partnerId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -20783,6 +26760,29 @@ class $$CapitalMovementsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$PartnersTableOrderingComposer get partnerId {
+    final $$PartnersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.partnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableOrderingComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CapitalMovementsTableAnnotationComposer
@@ -20796,9 +26796,6 @@ class $$CapitalMovementsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get partnerId =>
-      $composableBuilder(column: $table.partnerId, builder: (column) => column);
 
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
@@ -20825,6 +26822,29 @@ class $$CapitalMovementsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$PartnersTableAnnotationComposer get partnerId {
+    final $$PartnersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.partnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CapitalMovementsTableTableManager
@@ -20838,16 +26858,9 @@ class $$CapitalMovementsTableTableManager
           $$CapitalMovementsTableAnnotationComposer,
           $$CapitalMovementsTableCreateCompanionBuilder,
           $$CapitalMovementsTableUpdateCompanionBuilder,
-          (
-            CapitalMovement,
-            BaseReferences<
-              _$AppDatabase,
-              $CapitalMovementsTable,
-              CapitalMovement
-            >,
-          ),
+          (CapitalMovement, $$CapitalMovementsTableReferences),
           CapitalMovement,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool partnerId})
         > {
   $$CapitalMovementsTableTableManager(
     _$AppDatabase db,
@@ -20915,9 +26928,56 @@ class $$CapitalMovementsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$CapitalMovementsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({partnerId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (partnerId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.partnerId,
+                                referencedTable:
+                                    $$CapitalMovementsTableReferences
+                                        ._partnerIdTable(db),
+                                referencedColumn:
+                                    $$CapitalMovementsTableReferences
+                                        ._partnerIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -20932,12 +26992,9 @@ typedef $$CapitalMovementsTableProcessedTableManager =
       $$CapitalMovementsTableAnnotationComposer,
       $$CapitalMovementsTableCreateCompanionBuilder,
       $$CapitalMovementsTableUpdateCompanionBuilder,
-      (
-        CapitalMovement,
-        BaseReferences<_$AppDatabase, $CapitalMovementsTable, CapitalMovement>,
-      ),
+      (CapitalMovement, $$CapitalMovementsTableReferences),
       CapitalMovement,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool partnerId})
     >;
 typedef $$CollectionsTableCreateCompanionBuilder =
     CollectionsCompanion Function({
@@ -20974,6 +27031,90 @@ typedef $$CollectionsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$CollectionsTableReferences
+    extends BaseReferences<_$AppDatabase, $CollectionsTable, Collection> {
+  $$CollectionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias(
+        $_aliasNameGenerator(db.collections.clientId, db.clients.id),
+      );
+
+  $$ClientsTableProcessedTableManager get clientId {
+    final $_column = $_itemColumn<String>('client_id')!;
+
+    final manager = $$ClientsTableTableManager(
+      $_db,
+      $_db.clients,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_clientIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias(
+        $_aliasNameGenerator(db.collections.projectId, db.projects.id),
+      );
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
+      db.maintenanceVisits.createAlias(
+        $_aliasNameGenerator(db.collections.visitId, db.maintenanceVisits.id),
+      );
+
+  $$MaintenanceVisitsTableProcessedTableManager? get visitId {
+    final $_column = $_itemColumn<String>('visit_id');
+    if ($_column == null) return null;
+    final manager = $$MaintenanceVisitsTableTableManager(
+      $_db,
+      $_db.maintenanceVisits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PartnersTable _receivedByPartnerIdTable(_$AppDatabase db) =>
+      db.partners.createAlias(
+        $_aliasNameGenerator(
+          db.collections.receivedByPartnerId,
+          db.partners.id,
+        ),
+      );
+
+  $$PartnersTableProcessedTableManager get receivedByPartnerId {
+    final $_column = $_itemColumn<String>('received_by_partner_id')!;
+
+    final manager = $$PartnersTableTableManager(
+      $_db,
+      $_db.partners,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_receivedByPartnerIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
 class $$CollectionsTableFilterComposer
     extends Composer<_$AppDatabase, $CollectionsTable> {
   $$CollectionsTableFilterComposer({
@@ -20988,21 +27129,6 @@ class $$CollectionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get clientId => $composableBuilder(
-    column: $table.clientId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get visitId => $composableBuilder(
-    column: $table.visitId,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnFilters(column),
@@ -21010,11 +27136,6 @@ class $$CollectionsTableFilterComposer
 
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get receivedByPartnerId => $composableBuilder(
-    column: $table.receivedByPartnerId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -21047,6 +27168,98 @@ class $$CollectionsTableFilterComposer
     column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$ClientsTableFilterComposer get clientId {
+    final $$ClientsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableFilterComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableFilterComposer get visitId {
+    final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableFilterComposer get receivedByPartnerId {
+    final $$PartnersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receivedByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableFilterComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CollectionsTableOrderingComposer
@@ -21063,21 +27276,6 @@ class $$CollectionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get clientId => $composableBuilder(
-    column: $table.clientId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get visitId => $composableBuilder(
-    column: $table.visitId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnOrderings(column),
@@ -21085,11 +27283,6 @@ class $$CollectionsTableOrderingComposer
 
   ColumnOrderings<DateTime> get date => $composableBuilder(
     column: $table.date,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get receivedByPartnerId => $composableBuilder(
-    column: $table.receivedByPartnerId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -21122,6 +27315,98 @@ class $$CollectionsTableOrderingComposer
     column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$ClientsTableOrderingComposer get clientId {
+    final $$ClientsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableOrderingComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableOrderingComposer get visitId {
+    final $$MaintenanceVisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PartnersTableOrderingComposer get receivedByPartnerId {
+    final $$PartnersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receivedByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableOrderingComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CollectionsTableAnnotationComposer
@@ -21136,15 +27421,6 @@ class $$CollectionsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get clientId =>
-      $composableBuilder(column: $table.clientId, builder: (column) => column);
-
-  GeneratedColumn<String> get projectId =>
-      $composableBuilder(column: $table.projectId, builder: (column) => column);
-
-  GeneratedColumn<String> get visitId =>
-      $composableBuilder(column: $table.visitId, builder: (column) => column);
-
   GeneratedColumn<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => column,
@@ -21152,11 +27428,6 @@ class $$CollectionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
-
-  GeneratedColumn<String> get receivedByPartnerId => $composableBuilder(
-    column: $table.receivedByPartnerId,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<String> get paymentMethod => $composableBuilder(
     column: $table.paymentMethod,
@@ -21177,6 +27448,99 @@ class $$CollectionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$ClientsTableAnnotationComposer get clientId {
+    final $$ClientsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.clientId,
+      referencedTable: $db.clients,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ClientsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.clients,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenanceVisitsTableAnnotationComposer get visitId {
+    final $$MaintenanceVisitsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.visitId,
+          referencedTable: $db.maintenanceVisits,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MaintenanceVisitsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.maintenanceVisits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+
+  $$PartnersTableAnnotationComposer get receivedByPartnerId {
+    final $$PartnersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receivedByPartnerId,
+      referencedTable: $db.partners,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PartnersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.partners,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$CollectionsTableTableManager
@@ -21190,12 +27554,14 @@ class $$CollectionsTableTableManager
           $$CollectionsTableAnnotationComposer,
           $$CollectionsTableCreateCompanionBuilder,
           $$CollectionsTableUpdateCompanionBuilder,
-          (
-            Collection,
-            BaseReferences<_$AppDatabase, $CollectionsTable, Collection>,
-          ),
+          (Collection, $$CollectionsTableReferences),
           Collection,
-          PrefetchHooks Function()
+          PrefetchHooks Function({
+            bool clientId,
+            bool projectId,
+            bool visitId,
+            bool receivedByPartnerId,
+          })
         > {
   $$CollectionsTableTableManager(_$AppDatabase db, $CollectionsTable table)
     : super(
@@ -21273,9 +27639,107 @@ class $$CollectionsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$CollectionsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback:
+              ({
+                clientId = false,
+                projectId = false,
+                visitId = false,
+                receivedByPartnerId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (clientId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.clientId,
+                                    referencedTable:
+                                        $$CollectionsTableReferences
+                                            ._clientIdTable(db),
+                                    referencedColumn:
+                                        $$CollectionsTableReferences
+                                            ._clientIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (projectId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.projectId,
+                                    referencedTable:
+                                        $$CollectionsTableReferences
+                                            ._projectIdTable(db),
+                                    referencedColumn:
+                                        $$CollectionsTableReferences
+                                            ._projectIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (visitId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.visitId,
+                                    referencedTable:
+                                        $$CollectionsTableReferences
+                                            ._visitIdTable(db),
+                                    referencedColumn:
+                                        $$CollectionsTableReferences
+                                            ._visitIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (receivedByPartnerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.receivedByPartnerId,
+                                    referencedTable:
+                                        $$CollectionsTableReferences
+                                            ._receivedByPartnerIdTable(db),
+                                    referencedColumn:
+                                        $$CollectionsTableReferences
+                                            ._receivedByPartnerIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
         ),
       );
 }
@@ -21290,12 +27754,14 @@ typedef $$CollectionsTableProcessedTableManager =
       $$CollectionsTableAnnotationComposer,
       $$CollectionsTableCreateCompanionBuilder,
       $$CollectionsTableUpdateCompanionBuilder,
-      (
-        Collection,
-        BaseReferences<_$AppDatabase, $CollectionsTable, Collection>,
-      ),
+      (Collection, $$CollectionsTableReferences),
       Collection,
-      PrefetchHooks Function()
+      PrefetchHooks Function({
+        bool clientId,
+        bool projectId,
+        bool visitId,
+        bool receivedByPartnerId,
+      })
     >;
 typedef $$AttachmentsTableCreateCompanionBuilder =
     AttachmentsCompanion Function({
@@ -21872,6 +28338,168 @@ typedef $$SyncQueueTableProcessedTableManager =
       SyncQueueData,
       PrefetchHooks Function()
     >;
+typedef $$AppMetadataTableCreateCompanionBuilder =
+    AppMetadataCompanion Function({
+      required String key,
+      required String value,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+typedef $$AppMetadataTableUpdateCompanionBuilder =
+    AppMetadataCompanion Function({
+      Value<String> key,
+      Value<String> value,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$AppMetadataTableFilterComposer
+    extends Composer<_$AppDatabase, $AppMetadataTable> {
+  $$AppMetadataTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppMetadataTableOrderingComposer
+    extends Composer<_$AppDatabase, $AppMetadataTable> {
+  $$AppMetadataTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get key => $composableBuilder(
+    column: $table.key,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppMetadataTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AppMetadataTable> {
+  $$AppMetadataTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumn<String> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$AppMetadataTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppMetadataTable,
+          AppMetadataData,
+          $$AppMetadataTableFilterComposer,
+          $$AppMetadataTableOrderingComposer,
+          $$AppMetadataTableAnnotationComposer,
+          $$AppMetadataTableCreateCompanionBuilder,
+          $$AppMetadataTableUpdateCompanionBuilder,
+          (
+            AppMetadataData,
+            BaseReferences<_$AppDatabase, $AppMetadataTable, AppMetadataData>,
+          ),
+          AppMetadataData,
+          PrefetchHooks Function()
+        > {
+  $$AppMetadataTableTableManager(_$AppDatabase db, $AppMetadataTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppMetadataTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppMetadataTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppMetadataTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> key = const Value.absent(),
+                Value<String> value = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AppMetadataCompanion(
+                key: key,
+                value: value,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String key,
+                required String value,
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AppMetadataCompanion.insert(
+                key: key,
+                value: value,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppMetadataTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppMetadataTable,
+      AppMetadataData,
+      $$AppMetadataTableFilterComposer,
+      $$AppMetadataTableOrderingComposer,
+      $$AppMetadataTableAnnotationComposer,
+      $$AppMetadataTableCreateCompanionBuilder,
+      $$AppMetadataTableUpdateCompanionBuilder,
+      (
+        AppMetadataData,
+        BaseReferences<_$AppDatabase, $AppMetadataTable, AppMetadataData>,
+      ),
+      AppMetadataData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -21918,4 +28546,6 @@ class $AppDatabaseManager {
       $$AttachmentsTableTableManager(_db, _db.attachments);
   $$SyncQueueTableTableManager get syncQueue =>
       $$SyncQueueTableTableManager(_db, _db.syncQueue);
+  $$AppMetadataTableTableManager get appMetadata =>
+      $$AppMetadataTableTableManager(_db, _db.appMetadata);
 }

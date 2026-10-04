@@ -79,9 +79,11 @@ class DataMigrationService {
 
   Future<MigrationResult> migrateIfNeeded({String? overrideJsonStr}) async {
     try {
-      // 1. Verificar idempotencia: si la base de datos ya contiene socios o clientes, omitir
-      final existingPartners = await db.select(db.partners).get();
-      if (existingPartners.isNotEmpty) {
+      // 1. Verificar señal explícita y confiable de migración completada
+      final statusRecord = await (db.select(
+        db.appMetadata,
+      )..where((t) => t.key.equals('v1_migration_status'))).getSingleOrNull();
+      if (statusRecord != null && statusRecord.value == 'completed') {
         return const MigrationResult(success: true, alreadyMigrated: true);
       }
 
@@ -382,6 +384,18 @@ class DataMigrationService {
             }
           }
         }
+
+        // Marcar señal explícita de migración completada dentro de la transacción
+        await db
+            .into(db.appMetadata)
+            .insert(
+              AppMetadataCompanion.insert(
+                key: 'v1_migration_status',
+                value: 'completed',
+                updatedAt: Value(DateTime.now()),
+              ),
+              mode: InsertMode.insertOrReplace,
+            );
       });
 
       return MigrationResult(
@@ -557,6 +571,17 @@ class DataMigrationService {
               splitMode: const Value('equitativo'),
               splitRatiosJson: const Value('{"s1":1.0,"s2":1.0}'),
             ),
+          );
+
+      await db
+          .into(db.appMetadata)
+          .insert(
+            AppMetadataCompanion.insert(
+              key: 'v1_migration_status',
+              value: 'completed',
+              updatedAt: Value(DateTime.now()),
+            ),
+            mode: InsertMode.insertOrReplace,
           );
     });
   }

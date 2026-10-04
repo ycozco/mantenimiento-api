@@ -22,7 +22,9 @@ class Users extends Table {
 // --- PARTNERS (SOCIOS) ---
 class Partners extends Table {
   TextColumn get id => text()();
-  TextColumn get userId => text().nullable().references(Users, #id)();
+  TextColumn get userId => text().nullable().customConstraint(
+    'REFERENCES users(id) ON DELETE SET NULL',
+  )();
   TextColumn get name => text()();
   TextColumn get phone => text().nullable()();
   RealColumn get equityPercentage => real().withDefault(const Constant(50.0))();
@@ -79,8 +81,9 @@ class Clients extends Table {
 // --- CLIENT LOCATIONS (SEDES/DIRECCIONES DEL CLIENTE) ---
 class ClientLocations extends Table {
   TextColumn get id => text()();
-  TextColumn get clientId =>
-      text().references(Clients, #id, onDelete: KeyAction.cascade)();
+  TextColumn get clientId => text().customConstraint(
+    'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
+  )();
   TextColumn get name => text().withDefault(const Constant('Principal'))();
   TextColumn get address => text()();
   TextColumn get district => text().nullable()();
@@ -101,12 +104,11 @@ class Projects extends Table {
   TextColumn get id => text()();
   TextColumn get code => text().nullable()();
   TextColumn get name => text()();
-  TextColumn get clientId =>
-      text().nullable().references(Clients, #id, onDelete: KeyAction.setNull)();
-  TextColumn get locationId => text().nullable().references(
-    ClientLocations,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get clientId => text().nullable().customConstraint(
+    'REFERENCES clients(id) ON DELETE SET NULL',
+  )();
+  TextColumn get locationId => text().nullable().customConstraint(
+    'REFERENCES client_locations(id) ON DELETE SET NULL',
   )();
   TextColumn get description => text().nullable()();
   IntColumn get budgetAmountCents => integer().withDefault(const Constant(0))();
@@ -129,12 +131,11 @@ class Projects extends Table {
 class MaintenancePlans extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
-  TextColumn get clientId =>
-      text().references(Clients, #id, onDelete: KeyAction.cascade)();
-  TextColumn get locationId => text().nullable().references(
-    ClientLocations,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get clientId => text().customConstraint(
+    'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
+  )();
+  TextColumn get locationId => text().nullable().customConstraint(
+    'REFERENCES client_locations(id) ON DELETE SET NULL',
   )();
   TextColumn get description => text().nullable()();
   TextColumn get frequencyType => text().withDefault(const Constant('unMes'))();
@@ -156,8 +157,9 @@ class MaintenancePlans extends Table {
 // --- MAINTENANCE VISITS (HISTORIAL DE VISITAS) ---
 class MaintenanceVisits extends Table {
   TextColumn get id => text()();
-  TextColumn get planId =>
-      text().references(MaintenancePlans, #id, onDelete: KeyAction.cascade)();
+  TextColumn get planId => text().customConstraint(
+    'NOT NULL REFERENCES maintenance_plans(id) ON DELETE CASCADE',
+  )();
   DateTimeColumn get scheduledDate => dateTime()();
   DateTimeColumn get completedDate => dateTime().nullable()();
   TextColumn get status => text().withDefault(const Constant('scheduled'))();
@@ -210,12 +212,11 @@ class Suppliers extends Table {
 // --- PURCHASES (COMPRAS DE INSUMOS) ---
 class Purchases extends Table {
   TextColumn get id => text()();
-  TextColumn get supplierId => text().nullable().references(
-    Suppliers,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get supplierId => text().nullable().customConstraint(
+    'REFERENCES suppliers(id) ON DELETE SET NULL',
   )();
-  TextColumn get paidByPartnerId => text().references(Partners, #id)();
+  TextColumn get paidByPartnerId =>
+      text().customConstraint('NOT NULL REFERENCES partners(id)')();
   IntColumn get totalAmountCents => integer()();
   DateTimeColumn get date => dateTime()();
   TextColumn get invoiceNumber => text().nullable()();
@@ -231,26 +232,21 @@ class Purchases extends Table {
 // --- STOCK MOVEMENTS (LEDGER DE INVENTARIO) ---
 class StockMovements extends Table {
   TextColumn get id => text()();
-  TextColumn get itemId =>
-      text().references(InventoryItems, #id, onDelete: KeyAction.cascade)();
+  TextColumn get itemId => text().customConstraint(
+    'NOT NULL REFERENCES inventory_items(id) ON DELETE CASCADE',
+  )();
   TextColumn get movementType =>
       text().withDefault(const Constant('consumption'))();
   RealColumn get quantity => real()();
   IntColumn get unitCostCents => integer().withDefault(const Constant(0))();
-  TextColumn get projectId => text().nullable().references(
-    Projects,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
   )();
-  TextColumn get visitId => text().nullable().references(
-    MaintenanceVisits,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get visitId => text().nullable().customConstraint(
+    'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   )();
-  TextColumn get purchaseId => text().nullable().references(
-    Purchases,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get purchaseId => text().nullable().customConstraint(
+    'REFERENCES purchases(id) ON DELETE SET NULL',
   )();
   DateTimeColumn get date => dateTime().withDefault(currentDateAndTime)();
   TextColumn get notes => text().nullable()();
@@ -288,14 +284,14 @@ class Tools extends Table {
 // --- TOOL ASSIGNMENTS (HISTORIAL DE CUSTODIA) ---
 class ToolAssignments extends Table {
   TextColumn get id => text()();
-  TextColumn get toolId =>
-      text().references(Tools, #id, onDelete: KeyAction.cascade)();
-  TextColumn get workerId =>
-      text().nullable().references(Workers, #id, onDelete: KeyAction.setNull)();
-  TextColumn get projectId => text().nullable().references(
-    Projects,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get toolId => text().customConstraint(
+    'NOT NULL REFERENCES tools(id) ON DELETE CASCADE',
+  )();
+  TextColumn get workerId => text().nullable().customConstraint(
+    'REFERENCES workers(id) ON DELETE SET NULL',
+  )();
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
   )();
   DateTimeColumn get assignedAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get returnedAt => dateTime().nullable()();
@@ -314,18 +310,15 @@ class ToolAssignments extends Table {
 // --- WORK LOGS (JORNADAS LABORALES) ---
 class WorkLogs extends Table {
   TextColumn get id => text()();
-  TextColumn get workerId =>
-      text().references(Workers, #id, onDelete: KeyAction.cascade)();
-  DateTimeColumn get date => dateTime()();
-  TextColumn get projectId => text().nullable().references(
-    Projects,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get workerId => text().customConstraint(
+    'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
   )();
-  TextColumn get visitId => text().nullable().references(
-    MaintenanceVisits,
-    #id,
-    onDelete: KeyAction.setNull,
+  DateTimeColumn get date => dateTime()();
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
+  )();
+  TextColumn get visitId => text().nullable().customConstraint(
+    'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   )();
   TextColumn get paymentType => text().withDefault(const Constant('daily'))();
   RealColumn get unitsWorked => real().withDefault(const Constant(1.0))();
@@ -344,11 +337,13 @@ class WorkLogs extends Table {
 // --- LABOR PAYMENTS (PAGOS DE JORNALES A OBREROS) ---
 class LaborPayments extends Table {
   TextColumn get id => text()();
-  TextColumn get workerId =>
-      text().references(Workers, #id, onDelete: KeyAction.cascade)();
+  TextColumn get workerId => text().customConstraint(
+    'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
+  )();
   IntColumn get amountCents => integer()();
   DateTimeColumn get date => dateTime()();
-  TextColumn get paidByPartnerId => text().references(Partners, #id)();
+  TextColumn get paidByPartnerId =>
+      text().customConstraint('NOT NULL REFERENCES partners(id)')();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
@@ -366,16 +361,13 @@ class Expenses extends Table {
   TextColumn get category => text().withDefault(const Constant('otro'))();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
   DateTimeColumn get date => dateTime()();
-  TextColumn get paidByPartnerId => text().references(Partners, #id)();
-  TextColumn get projectId => text().nullable().references(
-    Projects,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get paidByPartnerId =>
+      text().customConstraint('NOT NULL REFERENCES partners(id)')();
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
   )();
-  TextColumn get visitId => text().nullable().references(
-    MaintenanceVisits,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get visitId => text().nullable().customConstraint(
+    'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   )();
   TextColumn get splitMode =>
       text().withDefault(const Constant('equitativo'))();
@@ -393,8 +385,9 @@ class Expenses extends Table {
 // --- CAPITAL MOVEMENTS (APORTES / RETIROS DE CAPITAL) ---
 class CapitalMovements extends Table {
   TextColumn get id => text()();
-  TextColumn get partnerId =>
-      text().references(Partners, #id, onDelete: KeyAction.cascade)();
+  TextColumn get partnerId => text().customConstraint(
+    'NOT NULL REFERENCES partners(id) ON DELETE CASCADE',
+  )();
   TextColumn get type => text().withDefault(const Constant('investment'))();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
   DateTimeColumn get date => dateTime()();
@@ -411,21 +404,19 @@ class CapitalMovements extends Table {
 // --- COLLECTIONS (COBROS A CLIENTES) ---
 class Collections extends Table {
   TextColumn get id => text()();
-  TextColumn get clientId =>
-      text().references(Clients, #id, onDelete: KeyAction.cascade)();
-  TextColumn get projectId => text().nullable().references(
-    Projects,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get clientId => text().customConstraint(
+    'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
   )();
-  TextColumn get visitId => text().nullable().references(
-    MaintenanceVisits,
-    #id,
-    onDelete: KeyAction.setNull,
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
+  )();
+  TextColumn get visitId => text().nullable().customConstraint(
+    'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   )();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
   DateTimeColumn get date => dateTime()();
-  TextColumn get receivedByPartnerId => text().references(Partners, #id)();
+  TextColumn get receivedByPartnerId =>
+      text().customConstraint('NOT NULL REFERENCES partners(id)')();
   TextColumn get paymentMethod => text().withDefault(const Constant('cash'))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -465,4 +456,14 @@ class SyncQueue extends Table {
   DateTimeColumn get queuedAt => dateTime().withDefault(currentDateAndTime)();
   IntColumn get attempts => integer().withDefault(const Constant(0))();
   TextColumn get lastError => text().nullable()();
+}
+
+// --- APP METADATA (METADATOS Y CONTROL DE MIGRACIONES) ---
+class AppMetadata extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {key};
 }
