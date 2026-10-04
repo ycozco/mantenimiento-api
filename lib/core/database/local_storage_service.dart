@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/socio.dart';
@@ -11,11 +11,21 @@ import '../models/mantenimiento.dart';
 import '../models/obra.dart';
 import '../models/gasto.dart';
 import '../notifications/notification_service.dart';
+import 'app_database.dart';
+import 'data_migration_service.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
-  factory LocalStorageService() => _instance;
+  factory LocalStorageService({AppDatabase? database}) {
+    if (database != null) {
+      _instance._db = database;
+    }
+    return _instance;
+  }
   LocalStorageService._internal();
+
+  AppDatabase? _db;
+  AppDatabase get db => _db ??= AppDatabase();
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];
@@ -34,152 +44,484 @@ class LocalStorageService extends ChangeNotifier {
 
   Future<void> init() async {
     if (_initialized) return;
-    await _loadFromLocal();
+
+    // 1. Ejecutar migración automática de JSON si es necesario
+    final migrationService = DataMigrationService(db);
+    await migrationService.migrateIfNeeded();
+
+    // 2. Cargar datos desde SQLite
+    await _reloadAllFromDb();
     _initialized = true;
     notifyListeners();
   }
 
-  // Archivo local de persistencia
-  Future<File?> _getLocalFile() async {
-    if (kIsWeb) return null;
+  Future<void> _reloadAllFromDb() async {
     try {
-      final dir = await getApplicationDocumentsDirectory();
-      return File('${dir.path}/mantenimiento_data.json');
-    } catch (e) {
-      debugPrint('Error obteniendo directorio local: $e');
-      return null;
+      // Socios (Partners)
+      final partnerRows = await (db.select(
+        db.partners,
+      )..where((tbl) => tbl.deletedAt.isNull())).get();
+      _socios = partnerRows
+          .map(
+            (p) => Socio(
+              id: p.id,
+              nombre: p.name,
+              telefono: p.phone,
+              colorValue: p.avatarColor,
+            ),
+          )
+          .toList();
+
+      // Clientes & Ubicaciones
+      final clientRows = await (db.select(
+        db.clients,
+      )..where((tbl) => tbl.deletedAt.isNull())).get();
+      final locationRows = await (db.select(
+        db.clientLocations,
+      )..where((tbl) => tbl.deletedAt.isNull())).get();
+      final Map<String, String> locationMap = {
+        for (var loc in locationRows) loc.clientId: loc.address,
+      };
+
+      _clientes = clientRows
+          .map(
+            (c) => Cliente(
+              id: c.id,
+              nombre: c.name,
+              telefono: c.phone,
+              direccion: locationMap[c.id] ?? '',
+              notas: c.notes,
+            ),
+          )
+          .toList();
+
+      final clientsMap = {for (var c in _clientes) c.id: c.nombre};
+
+      // Obras (Projects)
+      final projectRows = await (db.select(
+        db.projects,
+      )..where((tbl) => tbl.deletedAt.isNull())).get();
+      _obras = projectRows.map((p) {
+        List<String> assigned = [];
+        try {
+          final decoded = jsonDecode(p.assignedPartnerIdsJson);
+          if (decoded is List) {
+            assigned = decoded.map((e) => e.toString()).toList();
+          }
+        } catch (_) {}
+
+        return Obra(
+          id: p.id,
+          nombre: p.name,
+          clienteId: p.clientId,
+          clienteNombre: p.clientId != null ? clientsMap[p.clientId!] : null,
+          ubicacion: p.clientId != null ? locationMap[p.clientId!] : null,
+          descripcion: p.description,
+          presupuesto: p.budgetAmountCents / 100.0,
+          fechaInicio: p.startDate,
+          fechaFin: p.actualEndDate,
+          estado: EstadoObraExt.fromString(p.status),
+          sociosAsignados: assigned,
+        );
+      }).toList();
+
+      // Mantenimientos (Plans + Visits)
+      final planRows = await (db.select(
+        db.maintenancePlans,
+      )..where((tbl) => tbl.deletedAt.isNull())).get();
+      final visitRows = await (db.select(
+        db.maintenanceVisits,
+      )..where((tbl) => tbl.deletedAt.isNull())).get();
+      final Map<String, MaintenanceVisit> visitMap = {
+        for (var v in visitRows) v.planId: v,
+      };
+
+      _mantenimientos = planRows.map((plan) {
+        final visit = visitMap[plan.id];
+        List<String> respons = [];
+        try {
+          final decoded = jsonDecode(plan.assignedPartnerIdsJson);
+          if (decoded is List) {
+            respons = decoded.map((e) => e.toString()).toList();
+          }
+        } catch (_) {}
+
+        return Mantenimiento(
+          id: plan.id,
+          clienteId: plan.clientId,
+          clienteNombre: clientsMap[plan.clientId] ?? 'Cliente',
+          titulo: plan.title,
+          descripcion: plan.description,
+          tipoFrecuencia: TipoFrecuenciaExt.fromString(plan.frequencyType),
+          diasPersonalizados: plan.intervalDays,
+          fechaProximo:
+              visit?.scheduledDate ??
+              DateTime.now().add(Duration(days: plan.intervalDays)),
+          fechaUltimo: visit?.completedDate,
+          responsablesIds: respons,
+          activo: plan.isActive,
+          completado: visit?.status == 'completed',
+        );
+      }).toList();
+
+      // Gastos (Expenses)
+      final expenseRows =
+          await (db.select(db.expenses)
+                ..where((tbl) => tbl.deletedAt.isNull())
+                ..orderBy([(t) => OrderingTerm.desc(t.date)]))
+              .get();
+
+      final obrasMap = {for (var o in _obras) o.id: o.nombre};
+
+      _gastos = expenseRows.map((e) {
+        Map<String, double> participaciones = {};
+        try {
+          final decoded = jsonDecode(e.splitRatiosJson);
+          if (decoded is Map) {
+            participaciones = decoded.map(
+              (k, v) => MapEntry(k.toString(), (v as num).toDouble()),
+            );
+          }
+        } catch (_) {}
+
+        return Gasto(
+          id: e.id,
+          concepto: e.concept,
+          categoria: CategoriaGastoExt.fromString(e.category),
+          montoTotal: e.amountCents / 100.0,
+          fecha: e.date,
+          pagadoPorSocioId: e.paidByPartnerId,
+          obraId: e.projectId,
+          obraNombre: e.projectId != null ? obrasMap[e.projectId!] : null,
+          tipoReparto: TipoRepartoExt.fromString(e.splitMode),
+          participaciones: participaciones,
+          nota: e.notes,
+        );
+      }).toList();
+    } catch (e, stack) {
+      debugPrint('Error recargando datos de SQLite: $e\n$stack');
     }
   }
 
-  Future<void> _loadFromLocal() async {
-    try {
-      String? jsonStr;
-      final file = await _getLocalFile();
-      if (file != null && await file.exists()) {
-        jsonStr = await file.readAsString();
-      }
+  // --- CRUD SOCIOS ---
+  Future<void> agregarSocio(Socio socio) async {
+    await db
+        .into(db.partners)
+        .insert(
+          PartnersCompanion.insert(
+            id: socio.id,
+            name: socio.nombre,
+            phone: Value(socio.telefono),
+            avatarColor: Value(socio.colorValue),
+            equityPercentage: const Value(50.0),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
 
-      // Respaldo en SharedPreferences si no se encontró en archivo
-      if (jsonStr == null || jsonStr.isEmpty) {
-        final prefs = await SharedPreferences.getInstance();
-        jsonStr = prefs.getString('mantenimiento_backup_key');
-      }
+  Future<void> editarSocio(Socio socio) async {
+    await (db.update(db.partners)..where((t) => t.id.equals(socio.id))).write(
+      PartnersCompanion(
+        name: Value(socio.nombre),
+        phone: Value(socio.telefono),
+        avatarColor: Value(socio.colorValue),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
 
-      if (jsonStr != null && jsonStr.isNotEmpty) {
-        _deserialize(jsonStr);
-      } else {
-        _seedInitialData();
+  Future<void> eliminarSocio(String socioId) async {
+    if (_socios.length <= 1) return; // Mantener al menos 1
+    await (db.update(db.partners)..where((t) => t.id.equals(socioId))).write(
+      PartnersCompanion(deletedAt: Value(DateTime.now())),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  // --- CRUD CLIENTES ---
+  Future<void> agregarCliente(Cliente cliente) async {
+    await db.transaction(() async {
+      await db
+          .into(db.clients)
+          .insert(
+            ClientsCompanion.insert(
+              id: cliente.id,
+              name: cliente.nombre,
+              phone: Value(cliente.telefono),
+              notes: Value(cliente.notas),
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+
+      await db
+          .into(db.clientLocations)
+          .insert(
+            ClientLocationsCompanion.insert(
+              id: '${cliente.id}_loc_main',
+              clientId: cliente.id,
+              name: const Value('Principal'),
+              address:
+                  cliente.direccion != null && cliente.direccion!.isNotEmpty
+                  ? cliente.direccion!
+                  : 'Dirección principal',
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+    });
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  Future<void> editarCliente(Cliente cliente) async {
+    await db.transaction(() async {
+      await (db.update(
+        db.clients,
+      )..where((t) => t.id.equals(cliente.id))).write(
+        ClientsCompanion(
+          name: Value(cliente.nombre),
+          phone: Value(cliente.telefono),
+          notes: Value(cliente.notas),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+      if (cliente.direccion != null) {
+        await (db.update(
+          db.clientLocations,
+        )..where((t) => t.clientId.equals(cliente.id))).write(
+          ClientLocationsCompanion(
+            address: Value(cliente.direccion!),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
       }
-    } catch (e) {
-      debugPrint('Error cargando datos locales: $e');
-      _seedInitialData();
+    });
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  Future<void> eliminarCliente(String clienteId) async {
+    await (db.update(db.clients)..where((t) => t.id.equals(clienteId))).write(
+      ClientsCompanion(deletedAt: Value(DateTime.now())),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  // --- CRUD MANTENIMIENTOS ---
+  Future<void> agregarMantenimiento(Mantenimiento m) async {
+    await db.transaction(() async {
+      await db
+          .into(db.maintenancePlans)
+          .insert(
+            MaintenancePlansCompanion.insert(
+              id: m.id,
+              title: m.titulo,
+              clientId: m.clienteId,
+              locationId: Value('${m.clienteId}_loc_main'),
+              description: Value(m.descripcion),
+              frequencyType: Value(m.tipoFrecuencia.name),
+              intervalDays: Value(m.diasIntervalo),
+              assignedPartnerIdsJson: Value(jsonEncode(m.responsablesIds)),
+              isActive: Value(m.activo),
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+
+      await db
+          .into(db.maintenanceVisits)
+          .insert(
+            MaintenanceVisitsCompanion.insert(
+              id: '${m.id}_visit_active',
+              planId: m.id,
+              scheduledDate: m.fechaProximo,
+              completedDate: Value(m.fechaUltimo),
+              status: Value(m.completado ? 'completed' : 'scheduled'),
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+    });
+
+    await _reloadAllFromDb();
+    await NotificationService().programarAlertasMantenimiento(m);
+    notifyListeners();
+  }
+
+  Future<void> editarMantenimiento(Mantenimiento m) async {
+    await db.transaction(() async {
+      await (db.update(
+        db.maintenancePlans,
+      )..where((t) => t.id.equals(m.id))).write(
+        MaintenancePlansCompanion(
+          title: Value(m.titulo),
+          clientId: Value(m.clienteId),
+          description: Value(m.descripcion),
+          frequencyType: Value(m.tipoFrecuencia.name),
+          intervalDays: Value(m.diasIntervalo),
+          assignedPartnerIdsJson: Value(jsonEncode(m.responsablesIds)),
+          isActive: Value(m.activo),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+      await (db.update(
+        db.maintenanceVisits,
+      )..where((t) => t.planId.equals(m.id))).write(
+        MaintenanceVisitsCompanion(
+          scheduledDate: Value(m.fechaProximo),
+          completedDate: Value(m.fechaUltimo),
+          status: Value(m.completado ? 'completed' : 'scheduled'),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+    });
+
+    await _reloadAllFromDb();
+    await NotificationService().programarAlertasMantenimiento(m);
+    notifyListeners();
+  }
+
+  Future<void> completarMantenimiento(String id) async {
+    final idx = _mantenimientos.indexWhere((item) => item.id == id);
+    if (idx != -1) {
+      final actual = _mantenimientos[idx];
+      final proximaFecha = actual.calcularProximoCiclo(DateTime.now());
+
+      await (db.update(
+        db.maintenanceVisits,
+      )..where((t) => t.planId.equals(id))).write(
+        MaintenanceVisitsCompanion(
+          completedDate: Value(DateTime.now()),
+          scheduledDate: Value(proximaFecha),
+          status: const Value('scheduled'),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+      await _reloadAllFromDb();
+      final actualizado = _mantenimientos.firstWhere((m) => m.id == id);
+      await NotificationService().programarAlertasMantenimiento(actualizado);
+      notifyListeners();
     }
   }
 
-  void _seedInitialData() {
-    _socios = [
-      const Socio(id: 's1', nombre: 'Socio 1 (Tú)', telefono: '', colorValue: 0xFFF59E0B),
-      const Socio(id: 's2', nombre: 'Socio 2', telefono: '', colorValue: 0xFF10B981),
-    ];
-
-    _clientes = [
-      const Cliente(
-        id: 'c1',
-        nombre: 'Residencial Los Álamos',
-        telefono: '555-0192',
-        direccion: 'Av. Principal #450',
-        notas: 'Revisión bombas de agua y tableros',
-      ),
-      const Cliente(
-        id: 'c2',
-        nombre: 'Clínica San Marcos',
-        telefono: '555-8821',
-        direccion: 'Calle Médicos 12',
-        notas: 'Aire acondicionado y generador',
-      ),
-    ];
-
-    final now = DateTime.now();
-    _mantenimientos = [
-      Mantenimiento(
-        id: 'm1',
-        clienteId: 'c1',
-        clienteNombre: 'Residencial Los Álamos',
-        titulo: 'Mantenimiento Preventivo Bombas',
-        tipoFrecuencia: TipoFrecuencia.unMesYMedio,
-        diasPersonalizados: 45,
-        fechaProximo: now.add(const Duration(days: 3)), // En 3 días (alerta activa)
-        responsablesIds: ['s1', 's2'],
-      ),
-      Mantenimiento(
-        id: 'm2',
-        clienteId: 'c2',
-        clienteNombre: 'Clínica San Marcos',
-        titulo: 'Inspección Eléctrica y Climas',
-        tipoFrecuencia: TipoFrecuencia.unMes,
-        diasPersonalizados: 30,
-        fechaProximo: now.add(const Duration(days: 7)), // En 1 semana
-        responsablesIds: ['s1'],
-      ),
-    ];
-
-    _obras = [
-      Obra(
-        id: 'o1',
-        nombre: 'Instalación Red Hidráulica Torre B',
-        clienteId: 'c1',
-        clienteNombre: 'Residencial Los Álamos',
-        presupuesto: 45000.0,
-        fechaInicio: now.subtract(const Duration(days: 10)),
-        sociosAsignados: ['s1', 's2'],
-      ),
-    ];
-
-    _gastos = [
-      Gasto(
-        id: 'g1',
-        concepto: 'Gasolina para camioneta de trabajo',
-        categoria: CategoriaGasto.gasolina,
-        montoTotal: 850.0,
-        fecha: now.subtract(const Duration(days: 2)),
-        pagadoPorSocioId: 's1',
-        tipoReparto: TipoReparto.equitativo,
-        participaciones: {'s1': 1.0, 's2': 1.0},
-        nota: 'Traslado a Los Álamos',
-      ),
-      Gasto(
-        id: 'g2',
-        concepto: 'Materiales tubería PVC y selladores',
-        categoria: CategoriaGasto.materialesObra,
-        montoTotal: 3400.0,
-        fecha: now.subtract(const Duration(days: 1)),
-        pagadoPorSocioId: 's2',
-        obraId: 'o1',
-        obraNombre: 'Instalación Red Hidráulica Torre B',
-        tipoReparto: TipoReparto.equitativo,
-        participaciones: {'s1': 1.0, 's2': 1.0},
-      ),
-    ];
-
-    _saveToLocal();
+  Future<void> eliminarMantenimiento(String id) async {
+    await NotificationService().cancelarAlertasMantenimiento(id);
+    await (db.update(db.maintenancePlans)..where((t) => t.id.equals(id))).write(
+      MaintenancePlansCompanion(deletedAt: Value(DateTime.now())),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
   }
 
-  Future<void> _saveToLocal() async {
-    try {
-      final jsonStr = _serialize();
-      final file = await _getLocalFile();
-      if (file != null) {
-        await file.writeAsString(jsonStr, flush: true);
-      }
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('mantenimiento_backup_key', jsonStr);
-    } catch (e) {
-      debugPrint('Error guardando localmente: $e');
-    }
+  // --- CRUD OBRAS ---
+  Future<void> agregarObra(Obra obra) async {
+    await db
+        .into(db.projects)
+        .insert(
+          ProjectsCompanion.insert(
+            id: obra.id,
+            name: obra.nombre,
+            clientId: Value(obra.clienteId),
+            locationId: Value(
+              obra.clienteId != null ? '${obra.clienteId}_loc_main' : null,
+            ),
+            description: Value(obra.descripcion),
+            budgetAmountCents: Value((obra.presupuesto * 100).round()),
+            startDate: obra.fechaInicio,
+            actualEndDate: Value(obra.fechaFin),
+            status: Value(obra.estado.name),
+            assignedPartnerIdsJson: Value(jsonEncode(obra.sociosAsignados)),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+    await _reloadAllFromDb();
+    notifyListeners();
   }
 
-  String _serialize() {
+  Future<void> editarObra(Obra obra) async {
+    await (db.update(db.projects)..where((t) => t.id.equals(obra.id))).write(
+      ProjectsCompanion(
+        name: Value(obra.nombre),
+        clientId: Value(obra.clienteId),
+        description: Value(obra.descripcion),
+        budgetAmountCents: Value((obra.presupuesto * 100).round()),
+        startDate: Value(obra.fechaInicio),
+        actualEndDate: Value(obra.fechaFin),
+        status: Value(obra.estado.name),
+        assignedPartnerIdsJson: Value(jsonEncode(obra.sociosAsignados)),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  Future<void> eliminarObra(String obraId) async {
+    await (db.update(db.projects)..where((t) => t.id.equals(obraId))).write(
+      ProjectsCompanion(deletedAt: Value(DateTime.now())),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  // --- CRUD GASTOS ---
+  Future<void> agregarGasto(Gasto gasto) async {
+    await db
+        .into(db.expenses)
+        .insert(
+          ExpensesCompanion.insert(
+            id: gasto.id,
+            concept: gasto.concepto,
+            category: Value(gasto.categoria.name),
+            amountCents: Value((gasto.montoTotal * 100).round()),
+            date: gasto.fecha,
+            paidByPartnerId: gasto.pagadoPorSocioId,
+            projectId: Value(gasto.obraId),
+            splitMode: Value(gasto.tipoReparto.name),
+            splitRatiosJson: Value(jsonEncode(gasto.participaciones)),
+            notes: Value(gasto.nota),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  Future<void> editarGasto(Gasto gasto) async {
+    await (db.update(db.expenses)..where((t) => t.id.equals(gasto.id))).write(
+      ExpensesCompanion(
+        concept: Value(gasto.concepto),
+        category: Value(gasto.categoria.name),
+        amountCents: Value((gasto.montoTotal * 100).round()),
+        date: Value(gasto.fecha),
+        paidByPartnerId: Value(gasto.pagadoPorSocioId),
+        projectId: Value(gasto.obraId),
+        splitMode: Value(gasto.tipoReparto.name),
+        splitRatiosJson: Value(jsonEncode(gasto.participaciones)),
+        notes: Value(gasto.nota),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  Future<void> eliminarGasto(String gastoId) async {
+    await (db.update(db.expenses)..where((t) => t.id.equals(gastoId))).write(
+      ExpensesCompanion(deletedAt: Value(DateTime.now())),
+    );
+    await _reloadAllFromDb();
+    notifyListeners();
+  }
+
+  // --- EXPORTAR / IMPORTAR RESPALDO JSON ---
+  String serializeToJson() {
     final Map<String, dynamic> data = {
       'version': 1,
       'updatedAt': DateTime.now().toIso8601String(),
@@ -192,164 +534,8 @@ class LocalStorageService extends ChangeNotifier {
     return jsonEncode(data);
   }
 
-  void _deserialize(String jsonStr) {
-    try {
-      final Map<String, dynamic> data = jsonDecode(jsonStr);
-      if (data['socios'] != null) {
-        _socios = (data['socios'] as List).map((e) => Socio.fromJson(e)).toList();
-      }
-      if (data['clientes'] != null) {
-        _clientes = (data['clientes'] as List).map((e) => Cliente.fromJson(e)).toList();
-      }
-      if (data['mantenimientos'] != null) {
-        _mantenimientos = (data['mantenimientos'] as List).map((e) => Mantenimiento.fromJson(e)).toList();
-      }
-      if (data['obras'] != null) {
-        _obras = (data['obras'] as List).map((e) => Obra.fromJson(e)).toList();
-      }
-      if (data['gastos'] != null) {
-        _gastos = (data['gastos'] as List).map((e) => Gasto.fromJson(e)).toList();
-      }
-    } catch (e) {
-      debugPrint('Error deserializando datos: $e');
-    }
-  }
-
-  // --- CRUD SOCIOS ---
-  Future<void> agregarSocio(Socio socio) async {
-    _socios.add(socio);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  Future<void> editarSocio(Socio socio) async {
-    final idx = _socios.indexWhere((s) => s.id == socio.id);
-    if (idx != -1) {
-      _socios[idx] = socio;
-      await _saveToLocal();
-      notifyListeners();
-    }
-  }
-
-  Future<void> eliminarSocio(String socioId) async {
-    if (_socios.length <= 1) return; // Mantener al menos 1
-    _socios.removeWhere((s) => s.id == socioId);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  // --- CRUD CLIENTES ---
-  Future<void> agregarCliente(Cliente cliente) async {
-    _clientes.add(cliente);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  Future<void> editarCliente(Cliente cliente) async {
-    final idx = _clientes.indexWhere((c) => c.id == cliente.id);
-    if (idx != -1) {
-      _clientes[idx] = cliente;
-      await _saveToLocal();
-      notifyListeners();
-    }
-  }
-
-  Future<void> eliminarCliente(String clienteId) async {
-    _clientes.removeWhere((c) => c.id == clienteId);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  // --- CRUD MANTENIMIENTOS ---
-  Future<void> agregarMantenimiento(Mantenimiento m) async {
-    _mantenimientos.add(m);
-    await _saveToLocal();
-    await NotificationService().programarAlertasMantenimiento(m);
-    notifyListeners();
-  }
-
-  Future<void> editarMantenimiento(Mantenimiento m) async {
-    final idx = _mantenimientos.indexWhere((item) => item.id == m.id);
-    if (idx != -1) {
-      _mantenimientos[idx] = m;
-      await _saveToLocal();
-      await NotificationService().programarAlertasMantenimiento(m);
-      notifyListeners();
-    }
-  }
-
-  Future<void> completarMantenimiento(String id) async {
-    final idx = _mantenimientos.indexWhere((item) => item.id == id);
-    if (idx != -1) {
-      final actual = _mantenimientos[idx];
-      // Programamos el siguiente ciclo automáticamente
-      final proximaFecha = actual.calcularProximoCiclo(DateTime.now());
-      final actualizado = actual.copyWith(
-        fechaUltimo: DateTime.now(),
-        fechaProximo: proximaFecha,
-        completado: false,
-      );
-      _mantenimientos[idx] = actualizado;
-      await _saveToLocal();
-      await NotificationService().programarAlertasMantenimiento(actualizado);
-      notifyListeners();
-    }
-  }
-
-  Future<void> eliminarMantenimiento(String id) async {
-    await NotificationService().cancelarAlertasMantenimiento(id);
-    _mantenimientos.removeWhere((m) => m.id == id);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  // --- CRUD OBRAS ---
-  Future<void> agregarObra(Obra obra) async {
-    _obras.add(obra);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  Future<void> editarObra(Obra obra) async {
-    final idx = _obras.indexWhere((o) => o.id == obra.id);
-    if (idx != -1) {
-      _obras[idx] = obra;
-      await _saveToLocal();
-      notifyListeners();
-    }
-  }
-
-  Future<void> eliminarObra(String obraId) async {
-    _obras.removeWhere((o) => o.id == obraId);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  // --- CRUD GASTOS ---
-  Future<void> agregarGasto(Gasto gasto) async {
-    _gastos.insert(0, gasto);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  Future<void> editarGasto(Gasto gasto) async {
-    final idx = _gastos.indexWhere((g) => g.id == gasto.id);
-    if (idx != -1) {
-      _gastos[idx] = gasto;
-      await _saveToLocal();
-      notifyListeners();
-    }
-  }
-
-  Future<void> eliminarGasto(String gastoId) async {
-    _gastos.removeWhere((g) => g.id == gastoId);
-    await _saveToLocal();
-    notifyListeners();
-  }
-
-  // --- EXPORTAR / IMPORTAR RESPALDO ---
   Future<void> exportarRespaldo() async {
-    final jsonContent = _serialize();
+    final jsonContent = serializeToJson();
     if (kIsWeb) {
       debugPrint('Exportar en web');
       return;
@@ -357,14 +543,17 @@ class LocalStorageService extends ChangeNotifier {
 
     try {
       final tempDir = await getTemporaryDirectory();
-      final backupFile = File('${tempDir.path}/mantenimiento_respaldo_${DateTime.now().millisecondsSinceEpoch}.json');
+      final backupFile = File(
+        '${tempDir.path}/mantenimiento_respaldo_${DateTime.now().millisecondsSinceEpoch}.json',
+      );
       await backupFile.writeAsString(jsonContent);
 
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(backupFile.path)],
           subject: 'Copia de Respaldo Mantenimientos y Gastos',
-          text: 'Copia local de seguridad generada desde la app de Mantenimiento.',
+          text:
+              'Copia local de seguridad generada desde la app de Mantenimiento.',
         ),
       );
     } catch (e) {
@@ -374,9 +563,21 @@ class LocalStorageService extends ChangeNotifier {
 
   Future<bool> importarRespaldoJson(String jsonStr) async {
     try {
-      _deserialize(jsonStr);
-      await _saveToLocal();
-      // Reprogramar alertas para todos los mantenimientos activos
+      final migrationService = DataMigrationService(db);
+      // Limpiar tablas para reemplazar con los datos importados
+      await db.transaction(() async {
+        await db.delete(db.expenses).go();
+        await db.delete(db.maintenanceVisits).go();
+        await db.delete(db.maintenancePlans).go();
+        await db.delete(db.projects).go();
+        await db.delete(db.clientLocations).go();
+        await db.delete(db.clients).go();
+        await db.delete(db.partners).go();
+
+        await migrationService.executeMigrationFromJson(jsonStr);
+      });
+
+      await _reloadAllFromDb();
       for (final m in _mantenimientos) {
         await NotificationService().programarAlertasMantenimiento(m);
       }

@@ -18,7 +18,8 @@ class GastosScreen extends StatefulWidget {
   State<GastosScreen> createState() => _GastosScreenState();
 }
 
-class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderStateMixin {
+class _GastosScreenState extends State<GastosScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -69,8 +70,14 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
           labelColor: Colors.white,
           unselectedLabelColor: Colors.grey,
           tabs: const [
-            Tab(icon: Icon(LucideIcons.receipt, size: 18), text: 'Gastos Registrados'),
-            Tab(icon: Icon(LucideIcons.scale, size: 18), text: 'Balance de Socios'),
+            Tab(
+              icon: Icon(LucideIcons.receipt, size: 18),
+              text: 'Gastos Registrados',
+            ),
+            Tab(
+              icon: Icon(LucideIcons.scale, size: 18),
+              text: 'Balance de Socios',
+            ),
           ],
         ),
       ),
@@ -78,7 +85,10 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
         backgroundColor: AppTheme.emeraldSuccess,
         foregroundColor: Colors.white,
         icon: const Icon(LucideIcons.plus, size: 20),
-        label: const Text('Registrar Gasto', style: TextStyle(fontWeight: FontWeight.bold)),
+        label: const Text(
+          'Registrar Gasto',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         onPressed: () {
           showDialog(
             context: context,
@@ -93,10 +103,7 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildGastosList(),
-          _buildBalanceTab(),
-        ],
+        children: [_buildGastosList(), _buildBalanceTab()],
       ),
     );
   }
@@ -113,13 +120,30 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
           children: [
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(color: AppTheme.slateCard, shape: BoxShape.circle),
-              child: const Icon(LucideIcons.receipt, size: 48, color: AppTheme.emeraldSuccess),
+              decoration: const BoxDecoration(
+                color: AppTheme.slateCard,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                LucideIcons.receipt,
+                size: 48,
+                color: AppTheme.emeraldSuccess,
+              ),
             ),
             const SizedBox(height: 16),
-            const Text('No hay gastos registrados aún', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+            const Text(
+              'No hay gastos registrados aún',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             const SizedBox(height: 8),
-            const Text('Registra gastos de gasolina, comidas o compras para dividirlos entre socios.', style: TextStyle(color: Colors.grey, fontSize: 13)),
+            const Text(
+              'Registra gastos de gasolina, comidas o compras para dividirlos entre socios.',
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            ),
           ],
         ),
       );
@@ -142,18 +166,38 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Total Gastado / Invertido', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  const Text(
+                    'Total Gastado / Invertido',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                   const SizedBox(height: 4),
-                  Text(currency.format(total), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text(
+                    currency.format(total),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppTheme.emeraldSuccess.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text('${gastos.length} gastos', style: const TextStyle(color: AppTheme.emeraldSuccess, fontWeight: FontWeight.bold, fontSize: 12)),
+                child: Text(
+                  '${gastos.length} gastos',
+                  style: const TextStyle(
+                    color: AppTheme.emeraldSuccess,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ],
           ),
@@ -167,22 +211,39 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
               final gasto = gastos[idx];
               final socioPagador = widget.storage.socios.firstWhere(
                 (s) => s.id == gasto.pagadoPorSocioId,
-                orElse: () => Socio(id: gasto.pagadoPorSocioId, nombre: 'Socio'),
+                orElse: () =>
+                    Socio(id: gasto.pagadoPorSocioId, nombre: 'Socio'),
               );
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Color(socioPagador.colorValue).withValues(alpha: 0.15),
+                      color: Color(
+                        socioPagador.colorValue,
+                      ).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_getIconoCategoria(gasto.categoria), color: Color(socioPagador.colorValue), size: 22),
+                    child: Icon(
+                      _getIconoCategoria(gasto.categoria),
+                      color: Color(socioPagador.colorValue),
+                      size: 22,
+                    ),
                   ),
-                  title: Text(gasto.concepto, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 15)),
+                  title: Text(
+                    gasto.concepto,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -190,29 +251,65 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
                       Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          const Text('Pagó: ', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          const Text(
+                            'Pagó: ',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
                           Text(
                             socioPagador.nombre,
-                            style: TextStyle(fontSize: 12, color: Color(socioPagador.colorValue), fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(socioPagador.colorValue),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(width: 6),
-                          Text('• ${DateFormat('dd/MM/yy').format(gasto.fecha)}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                          Text(
+                            '• ${DateFormat('dd/MM/yy').format(gasto.fecha)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       ),
                       if (gasto.obraNombre != null) ...[
                         const SizedBox(height: 2),
-                        Text('Obra: ${gasto.obraNombre}', style: const TextStyle(fontSize: 11, color: AppTheme.skyAccent)),
+                        Text(
+                          'Obra: ${gasto.obraNombre}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.skyAccent,
+                          ),
+                        ),
                       ],
                       const SizedBox(height: 2),
-                      Text('Reparto: ${gasto.tipoReparto.etiqueta}', style: const TextStyle(fontSize: 11, color: Colors.white54)),
+                      Text(
+                        'Reparto: ${gasto.tipoReparto.etiqueta}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white54,
+                        ),
+                      ),
                     ],
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(currency.format(gasto.montoTotal), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.emeraldSuccess)),
+                      Text(
+                        currency.format(gasto.montoTotal),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: AppTheme.emeraldSuccess,
+                        ),
+                      ),
                       IconButton(
-                        icon: const Icon(LucideIcons.trash, size: 16, color: Colors.grey),
+                        icon: const Icon(
+                          LucideIcons.trash,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
                         onPressed: () => _confirmarEliminarGasto(gasto.id),
                       ),
                     ],
@@ -229,8 +326,14 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
   Widget _buildBalanceTab() {
     final socios = widget.storage.socios;
     final gastos = widget.storage.gastos;
-    final resumenes = BalanceCalculator.calcularResumenes(socios: socios, gastos: gastos);
-    final deudas = BalanceCalculator.calcularDeudasSimplificadas(socios: socios, gastos: gastos);
+    final resumenes = BalanceCalculator.calcularResumenes(
+      socios: socios,
+      gastos: gastos,
+    );
+    final deudas = BalanceCalculator.calcularDeudasSimplificadas(
+      socios: socios,
+      gastos: gastos,
+    );
     final currency = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
 
     return SingleChildScrollView(
@@ -248,16 +351,29 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.emeraldSuccess.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppTheme.emeraldSuccess.withValues(alpha: 0.3),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
-                    Icon(LucideIcons.hand_coins, color: AppTheme.emeraldSuccess, size: 22),
+                    Icon(
+                      LucideIcons.hand_coins,
+                      color: AppTheme.emeraldSuccess,
+                      size: 22,
+                    ),
                     SizedBox(width: 10),
-                    Text('Liquidación Directa de Cuentas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                    Text(
+                      'Liquidación Directa de Cuentas',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -270,10 +386,17 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
                     ),
                     child: const Row(
                       children: [
-                        Icon(LucideIcons.circle_check, color: AppTheme.emeraldSuccess, size: 20),
+                        Icon(
+                          LucideIcons.circle_check,
+                          color: AppTheme.emeraldSuccess,
+                          size: 20,
+                        ),
                         SizedBox(width: 10),
                         Expanded(
-                          child: Text('¡Todas las cuentas están cuadradas! Nadie le debe a nadie.', style: TextStyle(color: Colors.white, fontSize: 13)),
+                          child: Text(
+                            '¡Todas las cuentas están cuadradas! Nadie le debe a nadie.',
+                            style: TextStyle(color: Colors.white, fontSize: 13),
+                          ),
                         ),
                       ],
                     ),
@@ -296,16 +419,49 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
                               spacing: 6,
                               runSpacing: 4,
                               children: [
-                                CircleAvatar(radius: 5, backgroundColor: Color(d.deudor.colorValue)),
-                                Text(d.deudor.nombre, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13)),
-                                const Text('→ paga a', style: TextStyle(color: Colors.grey, fontSize: 11)),
-                                CircleAvatar(radius: 5, backgroundColor: Color(d.acreedor.colorValue)),
-                                Text(d.acreedor.nombre, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13)),
+                                CircleAvatar(
+                                  radius: 5,
+                                  backgroundColor: Color(d.deudor.colorValue),
+                                ),
+                                Text(
+                                  d.deudor.nombre,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const Text(
+                                  '→ paga a',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                CircleAvatar(
+                                  radius: 5,
+                                  backgroundColor: Color(d.acreedor.colorValue),
+                                ),
+                                Text(
+                                  d.acreedor.nombre,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text(currency.format(d.monto), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.amberSafety, fontSize: 14)),
+                          Text(
+                            currency.format(d.monto),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.amberSafety,
+                              fontSize: 14,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -315,7 +471,14 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
           ),
 
           const SizedBox(height: 24),
-          const Text('Aporte y Cuota de Cada Socio', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+          const Text(
+            'Aporte y Cuota de Cada Socio',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
           const SizedBox(height: 12),
 
           // Desglose por socio
@@ -341,17 +504,37 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(radius: 12, backgroundColor: Color(r.socio.colorValue)),
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: Color(r.socio.colorValue),
+                        ),
                         const SizedBox(width: 10),
-                        Text(r.socio.nombre, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+                        Text(
+                          r.socio.nombre,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: colorSaldo.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Text(textoSaldo, style: TextStyle(color: colorSaldo, fontWeight: FontWeight.bold, fontSize: 12)),
+                          child: Text(
+                            textoSaldo,
+                            style: TextStyle(
+                              color: colorSaldo,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -362,17 +545,43 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Puso de su bolsillo', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                            const Text(
+                              'Puso de su bolsillo',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
                             const SizedBox(height: 2),
-                            Text(currency.format(r.totalPagado), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text(
+                              currency.format(r.totalPagado),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const Text('Cuota que le correspondía', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                            const Text(
+                              'Cuota que le correspondía',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
                             const SizedBox(height: 2),
-                            Text(currency.format(r.totalDeberiaPagar), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70)),
+                            Text(
+                              currency.format(r.totalDeberiaPagar),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white70,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -393,11 +602,19 @@ class _GastosScreenState extends State<GastosScreen> with SingleTickerProviderSt
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.slateSurface,
         title: const Text('Eliminar Gasto'),
-        content: const Text('¿Deseas eliminar este registro de gasto? El balance se recalculará automáticamente.'),
+        content: const Text(
+          '¿Deseas eliminar este registro de gasto? El balance se recalculará automáticamente.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar', style: TextStyle(color: Colors.grey))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.coralUrgent, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.coralUrgent,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(ctx);
               widget.storage.eliminarGasto(id);

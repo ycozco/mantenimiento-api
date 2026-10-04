@@ -23,7 +23,8 @@ class MantenimientoFormDialog extends StatefulWidget {
   });
 
   @override
-  State<MantenimientoFormDialog> createState() => _MantenimientoFormDialogState();
+  State<MantenimientoFormDialog> createState() =>
+      _MantenimientoFormDialogState();
 }
 
 class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
@@ -44,7 +45,9 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
     final m = widget.mantenimientoExistente;
     _tituloCtrl = TextEditingController(text: m?.titulo ?? '');
     _descCtrl = TextEditingController(text: m?.descripcion ?? '');
-    _diasCustomCtrl = TextEditingController(text: (m?.diasPersonalizados ?? 15).toString());
+    _diasCustomCtrl = TextEditingController(
+      text: (m?.diasPersonalizados ?? 15).toString(),
+    );
 
     if (m != null) {
       _clienteIdSeleccionado = m.clienteId;
@@ -116,14 +119,24 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                         color: AppTheme.amberSafety.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(LucideIcons.calendar_clock, color: AppTheme.amberSafety, size: 20),
+                      child: const Icon(
+                        LucideIcons.calendar_clock,
+                        color: AppTheme.amberSafety,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        widget.mantenimientoExistente == null ? 'Nuevo Mantenimiento' : 'Editar Mantenimiento',
+                        widget.mantenimientoExistente == null
+                            ? 'Nuevo Mantenimiento'
+                            : 'Editar Mantenimiento',
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -139,7 +152,14 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Selector de Cliente
-                        const Text('Cliente', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Cliente',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         if (widget.clientes.isEmpty)
                           Container(
@@ -148,23 +168,38 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                               color: AppTheme.slateCard,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text('No hay clientes registrados aún. Se creará uno por defecto.', style: TextStyle(fontSize: 13, color: Colors.amber)),
+                            child: const Text(
+                              'No hay clientes registrados aún. Se creará uno por defecto.',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.amber,
+                              ),
+                            ),
                           )
                         else
                           DropdownButtonFormField<String>(
                             initialValue: _clienteIdSeleccionado,
                             dropdownColor: AppTheme.slateSurface,
                             decoration: const InputDecoration(
-                              prefixIcon: Icon(LucideIcons.user, size: 18, color: Colors.grey),
+                              prefixIcon: Icon(
+                                LucideIcons.user,
+                                size: 18,
+                                color: Colors.grey,
+                              ),
                             ),
                             items: widget.clientes.map((c) {
-                              return DropdownMenuItem(value: c.id, child: Text(c.nombre));
+                              return DropdownMenuItem(
+                                value: c.id,
+                                child: Text(c.nombre),
+                              );
                             }).toList(),
                             onChanged: (val) {
                               if (val != null) {
                                 setState(() {
                                   _clienteIdSeleccionado = val;
-                                  _clienteNombre = widget.clientes.firstWhere((c) => c.id == val).nombre;
+                                  _clienteNombre = widget.clientes
+                                      .firstWhere((c) => c.id == val)
+                                      .nombre;
                                 });
                               }
                             },
@@ -172,37 +207,77 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                         const SizedBox(height: 16),
 
                         // Título del Mantenimiento
-                        const Text('Título / Servicio', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Título / Servicio',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _tituloCtrl,
-                          validator: (val) => val == null || val.trim().isEmpty ? 'Ingresa un título' : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? 'Ingresa un título'
+                              : null,
                           decoration: const InputDecoration(
-                            hintText: 'Ej. Revisión Bombas, Cambio Filtros, Tableros',
-                            prefixIcon: Icon(LucideIcons.wrench, size: 18, color: Colors.grey),
+                            hintText:
+                                'Ej. Revisión Bombas, Cambio Filtros, Tableros',
+                            prefixIcon: Icon(
+                              LucideIcons.wrench,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
 
                         // Selector de Frecuencia
-                        const Text('Frecuencia del Mantenimiento', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Frecuencia del Mantenimiento',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            _buildFrecuenciaChip(TipoFrecuencia.unMes, '1 Mes (30d)'),
-                            _buildFrecuenciaChip(TipoFrecuencia.unMesYMedio, '1.5 Meses (45d)'),
-                            _buildFrecuenciaChip(TipoFrecuencia.dosMeses, '2 Meses (60d)'),
-                            _buildFrecuenciaChip(TipoFrecuencia.personalizado, 'Personalizado'),
+                            _buildFrecuenciaChip(
+                              TipoFrecuencia.unMes,
+                              '1 Mes (30d)',
+                            ),
+                            _buildFrecuenciaChip(
+                              TipoFrecuencia.unMesYMedio,
+                              '1.5 Meses (45d)',
+                            ),
+                            _buildFrecuenciaChip(
+                              TipoFrecuencia.dosMeses,
+                              '2 Meses (60d)',
+                            ),
+                            _buildFrecuenciaChip(
+                              TipoFrecuencia.personalizado,
+                              'Personalizado',
+                            ),
                           ],
                         ),
 
-                        if (_tipoFrecuencia == TipoFrecuencia.personalizado) ...[
+                        if (_tipoFrecuencia ==
+                            TipoFrecuencia.personalizado) ...[
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              const Text('Cada cuántos días: ', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                              const Text(
+                                'Cada cuántos días: ',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 13,
+                                ),
+                              ),
                               const SizedBox(width: 8),
                               SizedBox(
                                 width: 80,
@@ -213,17 +288,28 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                                     final d = int.tryParse(val);
                                     if (d != null && d > 0) {
                                       setState(() {
-                                        _fechaProximo = DateTime.now().add(Duration(days: d));
+                                        _fechaProximo = DateTime.now().add(
+                                          Duration(days: d),
+                                        );
                                       });
                                     }
                                   },
                                   decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 8,
+                                    ),
                                   ),
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Text('días', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                              const Text(
+                                'días',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -231,16 +317,30 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                         const SizedBox(height: 16),
 
                         // Fecha Próxima
-                        const Text('Fecha del Próximo Mantenimiento', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Fecha del Próximo Mantenimiento',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         InkWell(
                           onTap: () async {
                             final picked = await showDatePicker(
                               context: context,
                               initialDate: _fechaProximo,
-                              firstDate: DateTime.now().subtract(const Duration(days: 30)),
-                              lastDate: DateTime.now().add(const Duration(days: 730)),
-                              builder: (ctx, child) => Theme(data: AppTheme.darkTheme, child: child!),
+                              firstDate: DateTime.now().subtract(
+                                const Duration(days: 30),
+                              ),
+                              lastDate: DateTime.now().add(
+                                const Duration(days: 730),
+                              ),
+                              builder: (ctx, child) => Theme(
+                                data: AppTheme.darkTheme,
+                                child: child!,
+                              ),
                             );
                             if (picked != null) {
                               setState(() => _fechaProximo = picked);
@@ -248,22 +348,41 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                           },
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFF1E293B),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFF334155)),
+                              border: Border.all(
+                                color: const Color(0xFF334155),
+                              ),
                             ),
                             child: Row(
                               children: [
-                                const Icon(LucideIcons.calendar, size: 18, color: AppTheme.amberSafety),
+                                const Icon(
+                                  LucideIcons.calendar,
+                                  size: 18,
+                                  color: AppTheme.amberSafety,
+                                ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  DateFormat('EEEE dd MMMM, yyyy', 'es').format(_fechaProximo),
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                  DateFormat(
+                                    'EEEE dd MMMM, yyyy',
+                                    'es',
+                                  ).format(_fechaProximo),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 const Spacer(),
-                                const Icon(LucideIcons.chevron_down, size: 16, color: Colors.grey),
+                                const Icon(
+                                  LucideIcons.chevron_down,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
                               ],
                             ),
                           ),
@@ -272,7 +391,14 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                         const SizedBox(height: 16),
 
                         // Socios Asignados
-                        const Text('Socios Responsables (2 o más)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Socios Responsables (2 o más)',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -282,7 +408,9 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                             return FilterChip(
                               label: Text(s.nombre),
                               selected: sel,
-                              selectedColor: Color(s.colorValue).withValues(alpha: 0.3),
+                              selectedColor: Color(
+                                s.colorValue,
+                              ).withValues(alpha: 0.3),
                               checkmarkColor: Color(s.colorValue),
                               avatar: CircleAvatar(
                                 radius: 8,
@@ -306,13 +434,21 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                         const SizedBox(height: 16),
 
                         // Notas adicionales
-                        const Text('Notas / Descripción', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Notas / Descripción',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _descCtrl,
                           maxLines: 2,
                           decoration: const InputDecoration(
-                            hintText: 'Detalles técnicos, herramientas a llevar, etc.',
+                            hintText:
+                                'Detalles técnicos, herramientas a llevar, etc.',
                           ),
                         ),
                       ],
@@ -325,20 +461,28 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           final nuevo = Mantenimiento(
-                            id: widget.mantenimientoExistente?.id ?? const Uuid().v4(),
+                            id:
+                                widget.mantenimientoExistente?.id ??
+                                const Uuid().v4(),
                             clienteId: _clienteIdSeleccionado ?? 'c_default',
-                            clienteNombre: _clienteNombre.isNotEmpty ? _clienteNombre : 'Cliente General',
+                            clienteNombre: _clienteNombre.isNotEmpty
+                                ? _clienteNombre
+                                : 'Cliente General',
                             titulo: _tituloCtrl.text.trim(),
                             descripcion: _descCtrl.text.trim(),
                             tipoFrecuencia: _tipoFrecuencia,
-                            diasPersonalizados: int.tryParse(_diasCustomCtrl.text) ?? 30,
+                            diasPersonalizados:
+                                int.tryParse(_diasCustomCtrl.text) ?? 30,
                             fechaProximo: _fechaProximo,
                             responsablesIds: _sociosSeleccionados.toList(),
                           );

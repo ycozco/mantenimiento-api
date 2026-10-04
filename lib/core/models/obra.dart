@@ -1,9 +1,4 @@
-enum EstadoObra {
-  planificada,
-  enProgreso,
-  finalizada,
-  pausada,
-}
+enum EstadoObra { planificada, enProgreso, finalizada, pausada }
 
 extension EstadoObraExt on EstadoObra {
   String get etiqueta {
@@ -84,9 +79,15 @@ class Obra {
     descripcion: json['descripcion'] as String?,
     presupuesto: (json['presupuesto'] as num?)?.toDouble() ?? 0.0,
     fechaInicio: DateTime.parse(json['fechaInicio'] as String),
-    fechaFin: json['fechaFin'] != null ? DateTime.parse(json['fechaFin'] as String) : null,
+    fechaFin: json['fechaFin'] != null
+        ? DateTime.parse(json['fechaFin'] as String)
+        : null,
     estado: EstadoObraExt.fromString(json['estado'] as String? ?? 'enProgreso'),
-    sociosAsignados: (json['sociosAsignados'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+    sociosAsignados:
+        (json['sociosAsignados'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [],
   );
 
   Obra copyWith({

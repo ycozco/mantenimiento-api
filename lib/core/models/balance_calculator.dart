@@ -40,7 +40,8 @@ class BalanceCalculator {
 
     for (final gasto in gastos) {
       if (pagadoPor.containsKey(gasto.pagadoPorSocioId)) {
-        pagadoPor[gasto.pagadoPorSocioId] = (pagadoPor[gasto.pagadoPorSocioId] ?? 0.0) + gasto.montoTotal;
+        pagadoPor[gasto.pagadoPorSocioId] =
+            (pagadoPor[gasto.pagadoPorSocioId] ?? 0.0) + gasto.montoTotal;
       }
 
       for (final socio in socios) {
@@ -72,7 +73,9 @@ class BalanceCalculator {
 
     for (final r in resumenes) {
       if (r.saldoNeto < -0.01) {
-        deudores.add(MapEntry(r.socio.id, -r.saldoNeto)); // guardar como positivo para restar
+        deudores.add(
+          MapEntry(r.socio.id, -r.saldoNeto),
+        ); // guardar como positivo para restar
       } else if (r.saldoNeto > 0.01) {
         acreedores.add(MapEntry(r.socio.id, r.saldoNeto));
       }

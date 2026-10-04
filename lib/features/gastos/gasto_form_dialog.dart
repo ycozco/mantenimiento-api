@@ -51,7 +51,9 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
     super.initState();
     final g = widget.gastoExistente;
     _conceptoCtrl = TextEditingController(text: g?.concepto ?? '');
-    _montoCtrl = TextEditingController(text: g != null ? g.montoTotal.toStringAsFixed(2) : '');
+    _montoCtrl = TextEditingController(
+      text: g != null ? g.montoTotal.toStringAsFixed(2) : '',
+    );
     _notaCtrl = TextEditingController(text: g?.nota ?? '');
 
     if (g != null) {
@@ -73,7 +75,9 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
 
     for (final s in widget.socios) {
       final valor = _participaciones[s.id] ?? 0.0;
-      _customControllers[s.id] = TextEditingController(text: valor > 0 ? valor.toStringAsFixed(0) : '');
+      _customControllers[s.id] = TextEditingController(
+        text: valor > 0 ? valor.toStringAsFixed(0) : '',
+      );
     }
   }
 
@@ -132,14 +136,24 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                         color: AppTheme.emeraldSuccess.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(LucideIcons.receipt, color: AppTheme.emeraldSuccess, size: 20),
+                      child: const Icon(
+                        LucideIcons.receipt,
+                        color: AppTheme.emeraldSuccess,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        widget.gastoExistente == null ? 'Registrar Gasto / Inversión' : 'Editar Gasto',
+                        widget.gastoExistente == null
+                            ? 'Registrar Gasto / Inversión'
+                            : 'Editar Gasto',
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -155,14 +169,28 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Concepto
-                        const Text('Concepto del Gasto', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Concepto del Gasto',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _conceptoCtrl,
-                          validator: (val) => val == null || val.trim().isEmpty ? 'Ingresa el concepto' : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? 'Ingresa el concepto'
+                              : null,
                           decoration: const InputDecoration(
-                            hintText: 'Ej. Gasolina camioneta, Cemento obra B, Almuerzo',
-                            prefixIcon: Icon(LucideIcons.file_text, size: 18, color: Colors.grey),
+                            hintText:
+                                'Ej. Gasolina camioneta, Cemento obra B, Almuerzo',
+                            prefixIcon: Icon(
+                              LucideIcons.file_text,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -175,18 +203,34 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Monto Total (\$)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                                  const Text(
+                                    'Monto Total (\$)',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: Color(0xFF94A3B8),
+                                    ),
+                                  ),
                                   const SizedBox(height: 6),
                                   TextFormField(
                                     controller: _montoCtrl,
-                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
                                     validator: (val) {
                                       final d = double.tryParse(val ?? '');
-                                      if (d == null || d <= 0) return 'Monto válido';
+                                      if (d == null || d <= 0) {
+                                        return 'Monto válido';
+                                      }
                                       return null;
                                     },
                                     decoration: const InputDecoration(
-                                      prefixIcon: Icon(LucideIcons.dollar_sign, size: 18, color: AppTheme.emeraldSuccess),
+                                      prefixIcon: Icon(
+                                        LucideIcons.dollar_sign,
+                                        size: 18,
+                                        color: AppTheme.emeraldSuccess,
+                                      ),
                                       hintText: '0.00',
                                     ),
                                   ),
@@ -199,7 +243,14 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Categoría', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                                  const Text(
+                                    'Categoría',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: Color(0xFF94A3B8),
+                                    ),
+                                  ),
                                   const SizedBox(height: 6),
                                   DropdownButtonFormField<CategoriaGasto>(
                                     initialValue: _categoria,
@@ -211,15 +262,29 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                                         value: cat,
                                         child: Row(
                                           children: [
-                                            Icon(_getIconoCategoria(cat), size: 16, color: AppTheme.amberSafety),
+                                            Icon(
+                                              _getIconoCategoria(cat),
+                                              size: 16,
+                                              color: AppTheme.amberSafety,
+                                            ),
                                             const SizedBox(width: 8),
-                                            Flexible(child: Text(cat.etiqueta, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12))),
+                                            Flexible(
+                                              child: Text(
+                                                cat.etiqueta,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       );
                                     }).toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() => _categoria = val);
+                                      if (val != null) {
+                                        setState(() => _categoria = val);
+                                      }
                                     },
                                   ),
                                 ],
@@ -230,20 +295,34 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                         const SizedBox(height: 16),
 
                         // Pagado Por
-                        const Text('¿Quién Pagó el Gasto?', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          '¿Quién Pagó el Gasto?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
                           initialValue: _pagadoPorSocioId,
                           dropdownColor: AppTheme.slateSurface,
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(LucideIcons.wallet, size: 18, color: AppTheme.emeraldSuccess),
+                            prefixIcon: Icon(
+                              LucideIcons.wallet,
+                              size: 18,
+                              color: AppTheme.emeraldSuccess,
+                            ),
                           ),
                           items: widget.socios.map((s) {
                             return DropdownMenuItem(
                               value: s.id,
                               child: Row(
                                 children: [
-                                  CircleAvatar(radius: 6, backgroundColor: Color(s.colorValue)),
+                                  CircleAvatar(
+                                    radius: 6,
+                                    backgroundColor: Color(s.colorValue),
+                                  ),
                                   const SizedBox(width: 8),
                                   Text(s.nombre),
                                 ],
@@ -251,30 +330,58 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                             );
                           }).toList(),
                           onChanged: (val) {
-                            if (val != null) setState(() => _pagadoPorSocioId = val);
+                            if (val != null) {
+                              setState(() => _pagadoPorSocioId = val);
+                            }
                           },
                         ),
                         const SizedBox(height: 16),
 
                         // Vinculado a Obra (opcional)
-                        const Text('Vincular a Obra (Opcional)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Vincular a Obra (Opcional)',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
                           initialValue: _obraId,
                           dropdownColor: AppTheme.slateSurface,
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(LucideIcons.hard_hat, size: 18, color: AppTheme.skyAccent),
+                            prefixIcon: Icon(
+                              LucideIcons.hard_hat,
+                              size: 18,
+                              color: AppTheme.skyAccent,
+                            ),
                           ),
                           items: [
-                            const DropdownMenuItem(value: null, child: Text('Gasto General / Sin obra')),
-                            ...widget.obras.map((o) => DropdownMenuItem(value: o.id, child: Text(o.nombre))),
+                            const DropdownMenuItem(
+                              value: null,
+                              child: Text('Gasto General / Sin obra'),
+                            ),
+                            ...widget.obras.map(
+                              (o) => DropdownMenuItem(
+                                value: o.id,
+                                child: Text(o.nombre),
+                              ),
+                            ),
                           ],
                           onChanged: (val) => setState(() => _obraId = val),
                         ),
                         const SizedBox(height: 16),
 
                         // Tipo de Reparto
-                        const Text('¿Cómo se Comparte este Gasto?', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          '¿Cómo se Comparte este Gasto?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -285,22 +392,36 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                               selected: _tipoReparto == TipoReparto.equitativo,
                               selectedColor: AppTheme.amberSafety,
                               labelStyle: TextStyle(
-                                color: _tipoReparto == TipoReparto.equitativo ? const Color(0xFF0F172A) : Colors.white70,
-                                fontWeight: _tipoReparto == TipoReparto.equitativo ? FontWeight.bold : FontWeight.normal,
+                                color: _tipoReparto == TipoReparto.equitativo
+                                    ? const Color(0xFF0F172A)
+                                    : Colors.white70,
+                                fontWeight:
+                                    _tipoReparto == TipoReparto.equitativo
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                                 fontSize: 12,
                               ),
-                              onSelected: (_) => setState(() => _tipoReparto = TipoReparto.equitativo),
+                              onSelected: (_) => setState(
+                                () => _tipoReparto = TipoReparto.equitativo,
+                              ),
                             ),
                             ChoiceChip(
                               label: const Text('Por Partes / Porcentaje'),
                               selected: _tipoReparto == TipoReparto.porPartes,
                               selectedColor: AppTheme.amberSafety,
                               labelStyle: TextStyle(
-                                color: _tipoReparto == TipoReparto.porPartes ? const Color(0xFF0F172A) : Colors.white70,
-                                fontWeight: _tipoReparto == TipoReparto.porPartes ? FontWeight.bold : FontWeight.normal,
+                                color: _tipoReparto == TipoReparto.porPartes
+                                    ? const Color(0xFF0F172A)
+                                    : Colors.white70,
+                                fontWeight:
+                                    _tipoReparto == TipoReparto.porPartes
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                                 fontSize: 12,
                               ),
-                              onSelected: (_) => setState(() => _tipoReparto = TipoReparto.porPartes),
+                              onSelected: (_) => setState(
+                                () => _tipoReparto = TipoReparto.porPartes,
+                              ),
                             ),
                           ],
                         ),
@@ -321,19 +442,38 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                                 _tipoReparto == TipoReparto.equitativo
                                     ? 'Socios que comparten el gasto en partes iguales:'
                                     : 'Porcentaje (%) asignado a cada socio:',
-                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               ...widget.socios.map((s) {
-                                final participa = _participaciones.containsKey(s.id);
+                                final participa = _participaciones.containsKey(
+                                  s.id,
+                                );
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
                                   child: Row(
                                     children: [
-                                      CircleAvatar(radius: 6, backgroundColor: Color(s.colorValue)),
+                                      CircleAvatar(
+                                        radius: 6,
+                                        backgroundColor: Color(s.colorValue),
+                                      ),
                                       const SizedBox(width: 8),
-                                      Expanded(child: Text(s.nombre, style: const TextStyle(fontSize: 13, color: Colors.white))),
-                                      if (_tipoReparto == TipoReparto.equitativo)
+                                      Expanded(
+                                        child: Text(
+                                          s.nombre,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      if (_tipoReparto ==
+                                          TipoReparto.equitativo)
                                         Checkbox(
                                           value: participa,
                                           activeColor: AppTheme.amberSafety,
@@ -343,7 +483,8 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                                               if (val == true) {
                                                 _participaciones[s.id] = 1.0;
                                               } else {
-                                                if (_participaciones.length > 1) {
+                                                if (_participaciones.length >
+                                                    1) {
                                                   _participaciones.remove(s.id);
                                                 }
                                               }
@@ -354,14 +495,20 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                                         SizedBox(
                                           width: 80,
                                           child: TextFormField(
-                                            controller: _customControllers[s.id],
+                                            controller:
+                                                _customControllers[s.id],
                                             keyboardType: TextInputType.number,
                                             decoration: const InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 6,
+                                                  ),
                                               suffixText: '%',
                                             ),
                                             onChanged: (val) {
-                                              final d = double.tryParse(val) ?? 0.0;
+                                              final d =
+                                                  double.tryParse(val) ?? 0.0;
                                               _participaciones[s.id] = d;
                                             },
                                           ),
@@ -376,12 +523,20 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                         const SizedBox(height: 16),
 
                         // Nota opcional
-                        const Text('Notas / Factura / Detalle', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Notas / Factura / Detalle',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _notaCtrl,
                           decoration: const InputDecoration(
-                            hintText: 'Número de ticket, litros de gasolina, etc.',
+                            hintText:
+                                'Número de ticket, litros de gasolina, etc.',
                           ),
                         ),
                       ],
@@ -394,17 +549,25 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.emeraldSuccess, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.emeraldSuccess,
+                        foregroundColor: Colors.white,
+                      ),
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           final monto = double.tryParse(_montoCtrl.text) ?? 0.0;
                           String? nombreObra;
                           if (_obraId != null) {
-                            final o = widget.obras.where((item) => item.id == _obraId).firstOrNull;
+                            final o = widget.obras
+                                .where((item) => item.id == _obraId)
+                                .firstOrNull;
                             nombreObra = o?.nombre;
                           }
 
@@ -414,7 +577,8 @@ class _GastoFormDialogState extends State<GastoFormDialog> {
                             categoria: _categoria,
                             montoTotal: monto,
                             fecha: _fecha,
-                            pagadoPorSocioId: _pagadoPorSocioId ?? widget.socios.first.id,
+                            pagadoPorSocioId:
+                                _pagadoPorSocioId ?? widget.socios.first.id,
                             obraId: _obraId,
                             obraNombre: nombreObra,
                             tipoReparto: _tipoReparto,

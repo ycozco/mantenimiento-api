@@ -38,7 +38,10 @@ class _ObrasScreenState extends State<ObrasScreen> {
         backgroundColor: AppTheme.skyAccent,
         foregroundColor: Colors.white,
         icon: const Icon(LucideIcons.plus, size: 20),
-        label: const Text('Nueva Obra', style: TextStyle(fontWeight: FontWeight.bold)),
+        label: const Text(
+          'Nueva Obra',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         onPressed: () {
           showDialog(
             context: context,
@@ -57,8 +60,13 @@ class _ObrasScreenState extends State<ObrasScreen> {
               itemCount: obras.length,
               itemBuilder: (ctx, idx) {
                 final obra = obras[idx];
-                final gastosObra = gastos.where((g) => g.obraId == obra.id).toList();
-                final totalGastado = gastosObra.fold(0.0, (acc, g) => acc + g.montoTotal);
+                final gastosObra = gastos
+                    .where((g) => g.obraId == obra.id)
+                    .toList();
+                final totalGastado = gastosObra.fold(
+                  0.0,
+                  (acc, g) => acc + g.montoTotal,
+                );
 
                 return _buildObraCard(obra, totalGastado, gastosObra.length);
               },
@@ -101,27 +109,41 @@ class _ObrasScreenState extends State<ObrasScreen> {
                     children: [
                       Text(
                         obra.nombre,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                       if (obra.clienteNombre != null) ...[
                         const SizedBox(height: 2),
                         Text(
                           'Cliente: ${obra.clienteNombre}',
-                          style: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
                         ),
                       ],
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: estadoColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     obra.estado.etiqueta,
-                    style: TextStyle(color: estadoColor, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: estadoColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -141,32 +163,59 @@ class _ObrasScreenState extends State<ObrasScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Inversión Realizada', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        const Text(
+                          'Inversión Realizada',
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
+                        ),
                         const SizedBox(height: 2),
                         Text(
                           currency.format(totalGastado),
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.amberSafety),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.amberSafety,
+                          ),
                         ),
-                        Text('$cantidadGastos gasto(s) registrados', style: const TextStyle(fontSize: 11, color: Colors.white54)),
+                        Text(
+                          '$cantidadGastos gasto(s) registrados',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.white54,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   if (obra.presupuesto > 0) ...[
-                    Container(width: 1, height: 35, color: const Color(0xFF334155)),
+                    Container(
+                      width: 1,
+                      height: 35,
+                      color: const Color(0xFF334155),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Presupuesto Total', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                          const Text(
+                            'Presupuesto Total',
+                            style: TextStyle(fontSize: 11, color: Colors.grey),
+                          ),
                           const SizedBox(height: 2),
                           Text(
                             currency.format(obra.presupuesto),
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                           Text(
                             '${((totalGastado / obra.presupuesto) * 100).toStringAsFixed(1)}% ejecutado',
-                            style: const TextStyle(fontSize: 11, color: AppTheme.skyAccent),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.skyAccent,
+                            ),
                           ),
                         ],
                       ),
@@ -189,7 +238,10 @@ class _ObrasScreenState extends State<ObrasScreen> {
                   children: [
                     Icon(LucideIcons.users, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
-                    Text('Socios:', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(
+                      'Socios:',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                 ),
                 ...obra.sociosAsignados.map((sid) {
@@ -202,7 +254,10 @@ class _ObrasScreenState extends State<ObrasScreen> {
                     padding: EdgeInsets.zero,
                     labelPadding: const EdgeInsets.symmetric(horizontal: 6),
                     visualDensity: VisualDensity.compact,
-                    avatar: CircleAvatar(radius: 6, backgroundColor: Color(s.colorValue)),
+                    avatar: CircleAvatar(
+                      radius: 6,
+                      backgroundColor: Color(s.colorValue),
+                    ),
                     label: Text(s.nombre, style: const TextStyle(fontSize: 11)),
                   );
                 }),
@@ -215,16 +270,27 @@ class _ObrasScreenState extends State<ObrasScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.amberSafety.withValues(alpha: 0.15),
+                      backgroundColor: AppTheme.amberSafety.withValues(
+                        alpha: 0.15,
+                      ),
                       foregroundColor: AppTheme.amberSafety,
-                      side: const BorderSide(color: AppTheme.amberSafety, width: 1),
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      side: const BorderSide(
+                        color: AppTheme.amberSafety,
+                        width: 1,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 8,
+                      ),
                     ),
                     icon: const Icon(LucideIcons.circle_plus, size: 16),
                     label: const Text(
                       'Gasto de Obra',
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     onPressed: () {
                       showDialog(
@@ -234,7 +300,8 @@ class _ObrasScreenState extends State<ObrasScreen> {
                           obras: widget.storage.obras,
                           mantenimientos: widget.storage.mantenimientos,
                           obraPreseleccionadaId: obra.id,
-                          onGuardar: (gasto) => widget.storage.agregarGasto(gasto),
+                          onGuardar: (gasto) =>
+                              widget.storage.agregarGasto(gasto),
                         ),
                       );
                     },
@@ -242,7 +309,11 @@ class _ObrasScreenState extends State<ObrasScreen> {
                 ),
                 const SizedBox(width: 8),
                 IconButton(
-                  icon: const Icon(LucideIcons.pencil, size: 18, color: Colors.grey),
+                  icon: const Icon(
+                    LucideIcons.pencil,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -250,13 +321,18 @@ class _ObrasScreenState extends State<ObrasScreen> {
                         obraExistente: obra,
                         clientes: widget.storage.clientes,
                         socios: widget.storage.socios,
-                        onGuardar: (actualizada) => widget.storage.editarObra(actualizada),
+                        onGuardar: (actualizada) =>
+                            widget.storage.editarObra(actualizada),
                       ),
                     );
                   },
                 ),
                 IconButton(
-                  icon: const Icon(LucideIcons.trash, size: 18, color: AppTheme.coralUrgent),
+                  icon: const Icon(
+                    LucideIcons.trash,
+                    size: 18,
+                    color: AppTheme.coralUrgent,
+                  ),
                   onPressed: () => _confirmarEliminar(obra.id),
                 ),
               ],
@@ -275,9 +351,15 @@ class _ObrasScreenState extends State<ObrasScreen> {
         title: const Text('Eliminar Obra'),
         content: const Text('¿Deseas eliminar este registro de obra?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar', style: TextStyle(color: Colors.grey))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.coralUrgent, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.coralUrgent,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(ctx);
               widget.storage.eliminarObra(id);
@@ -302,12 +384,20 @@ class _ObrasScreenState extends State<ObrasScreen> {
                 color: AppTheme.slateCard,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.hard_hat, size: 48, color: AppTheme.skyAccent),
+              child: const Icon(
+                LucideIcons.hard_hat,
+                size: 48,
+                color: AppTheme.skyAccent,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
               'No hay obras registradas',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 8),
             const Text(

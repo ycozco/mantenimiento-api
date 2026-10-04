@@ -73,7 +73,10 @@ void main() {
         ),
       ];
 
-      final resumenes = BalanceCalculator.calcularResumenes(socios: [s1, s2], gastos: gastos);
+      final resumenes = BalanceCalculator.calcularResumenes(
+        socios: [s1, s2],
+        gastos: gastos,
+      );
       final r1 = resumenes.firstWhere((r) => r.socio.id == 's1');
       final r2 = resumenes.firstWhere((r) => r.socio.id == 's2');
 
@@ -85,7 +88,10 @@ void main() {
       expect(r2.totalDeberiaPagar, 500.0);
       expect(r2.saldoNeto, -500.0); // Debe 500
 
-      final deudas = BalanceCalculator.calcularDeudasSimplificadas(socios: [s1, s2], gastos: gastos);
+      final deudas = BalanceCalculator.calcularDeudasSimplificadas(
+        socios: [s1, s2],
+        gastos: gastos,
+      );
       expect(deudas.length, 1);
       expect(deudas.first.deudor.id, 's2');
       expect(deudas.first.acreedor.id, 's1');
@@ -106,14 +112,20 @@ void main() {
         ),
       ];
 
-      final resumenes = BalanceCalculator.calcularResumenes(socios: [s1, s2], gastos: gastos);
+      final resumenes = BalanceCalculator.calcularResumenes(
+        socios: [s1, s2],
+        gastos: gastos,
+      );
       final r1 = resumenes.firstWhere((r) => r.socio.id == 's1');
       final r2 = resumenes.firstWhere((r) => r.socio.id == 's2');
 
       expect(r1.totalDeberiaPagar, 700.0);
       expect(r2.totalDeberiaPagar, 300.0);
 
-      final deudas = BalanceCalculator.calcularDeudasSimplificadas(socios: [s1, s2], gastos: gastos);
+      final deudas = BalanceCalculator.calcularDeudasSimplificadas(
+        socios: [s1, s2],
+        gastos: gastos,
+      );
       expect(deudas.first.deudor.id, 's1');
       expect(deudas.first.acreedor.id, 's2');
       expect(deudas.first.monto, 700.0);

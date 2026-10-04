@@ -38,8 +38,8 @@ extension CategoriaGastoExt on CategoriaGasto {
 
 enum TipoReparto {
   equitativo, // Partes iguales entre los participantes
-  porPartes,   // Porcentajes o proporciones (ej. 60% / 40%)
-  montoFijo,   // Montos exactos asignados a cada uno
+  porPartes, // Porcentajes o proporciones (ej. 60% / 40%)
+  montoFijo, // Montos exactos asignados a cada uno
 }
 
 extension TipoRepartoExt on TipoReparto {
@@ -106,7 +106,10 @@ class Gasto {
         return montoTotal / count;
       case TipoReparto.porPartes:
         final porcentaje = participaciones[socioId] ?? 0.0;
-        final totalPorcentajes = participaciones.values.fold(0.0, (a, b) => a + b);
+        final totalPorcentajes = participaciones.values.fold(
+          0.0,
+          (a, b) => a + b,
+        );
         if (totalPorcentajes <= 0) return 0.0;
         return (montoTotal * porcentaje) / totalPorcentajes;
       case TipoReparto.montoFijo:
@@ -132,17 +135,23 @@ class Gasto {
   factory Gasto.fromJson(Map<String, dynamic> json) => Gasto(
     id: json['id'] as String,
     concepto: json['concepto'] as String,
-    categoria: CategoriaGastoExt.fromString(json['categoria'] as String? ?? 'otro'),
+    categoria: CategoriaGastoExt.fromString(
+      json['categoria'] as String? ?? 'otro',
+    ),
     montoTotal: (json['montoTotal'] as num).toDouble(),
     fecha: DateTime.parse(json['fecha'] as String),
     pagadoPorSocioId: json['pagadoPorSocioId'] as String,
     obraId: json['obraId'] as String?,
     obraNombre: json['obraNombre'] as String?,
     mantenimientoId: json['mantenimientoId'] as String?,
-    tipoReparto: TipoRepartoExt.fromString(json['tipoReparto'] as String? ?? 'equitativo'),
-    participaciones: (json['participaciones'] as Map<String, dynamic>?)?.map(
-      (k, v) => MapEntry(k, (v as num).toDouble()),
-    ) ?? {},
+    tipoReparto: TipoRepartoExt.fromString(
+      json['tipoReparto'] as String? ?? 'equitativo',
+    ),
+    participaciones:
+        (json['participaciones'] as Map<String, dynamic>?)?.map(
+          (k, v) => MapEntry(k, (v as num).toDouble()),
+        ) ??
+        {},
     nota: json['nota'] as String?,
   );
 }

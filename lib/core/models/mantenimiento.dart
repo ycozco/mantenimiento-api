@@ -1,9 +1,4 @@
-enum TipoFrecuencia {
-  unMes,
-  unMesYMedio,
-  dosMeses,
-  personalizado,
-}
+enum TipoFrecuencia { unMes, unMesYMedio, dosMeses, personalizado }
 
 extension TipoFrecuenciaExt on TipoFrecuencia {
   String get etiqueta {
@@ -90,7 +85,11 @@ class Mantenimiento {
   int get diasRestantes {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final target = DateTime(fechaProximo.year, fechaProximo.month, fechaProximo.day);
+    final target = DateTime(
+      fechaProximo.year,
+      fechaProximo.month,
+      fechaProximo.day,
+    );
     return target.difference(today).inDays;
   }
 
@@ -125,11 +124,19 @@ class Mantenimiento {
     clienteNombre: json['clienteNombre'] as String? ?? 'Cliente',
     titulo: json['titulo'] as String,
     descripcion: json['descripcion'] as String?,
-    tipoFrecuencia: TipoFrecuenciaExt.fromString(json['tipoFrecuencia'] as String? ?? 'unMes'),
+    tipoFrecuencia: TipoFrecuenciaExt.fromString(
+      json['tipoFrecuencia'] as String? ?? 'unMes',
+    ),
     diasPersonalizados: json['diasPersonalizados'] as int? ?? 30,
     fechaProximo: DateTime.parse(json['fechaProximo'] as String),
-    fechaUltimo: json['fechaUltimo'] != null ? DateTime.parse(json['fechaUltimo'] as String) : null,
-    responsablesIds: (json['responsablesIds'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+    fechaUltimo: json['fechaUltimo'] != null
+        ? DateTime.parse(json['fechaUltimo'] as String)
+        : null,
+    responsablesIds:
+        (json['responsablesIds'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [],
     activo: json['activo'] as bool? ?? true,
     completado: json['completado'] as bool? ?? false,
   );

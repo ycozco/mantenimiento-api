@@ -28,14 +28,17 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
       if (_filtro == 'urgentes') return m.esUrgente && !m.estaVencido;
       if (_filtro == 'vencidos') return m.estaVencido;
       return true;
-    }).toList()
-      ..sort((a, b) => a.fechaProximo.compareTo(b.fechaProximo));
+    }).toList()..sort((a, b) => a.fechaProximo.compareTo(b.fechaProximo));
 
     return Scaffold(
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.calendar_clock, color: AppTheme.amberSafety, size: 24),
+            Icon(
+              LucideIcons.calendar_clock,
+              color: AppTheme.amberSafety,
+              size: 24,
+            ),
             SizedBox(width: 10),
             Text('Mantenimientos Programados'),
           ],
@@ -45,7 +48,10 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
         backgroundColor: AppTheme.amberSafety,
         foregroundColor: const Color(0xFF0F172A),
         icon: const Icon(LucideIcons.plus, size: 20),
-        label: const Text('Programar Mantenimiento', style: TextStyle(fontWeight: FontWeight.bold)),
+        label: const Text(
+          'Programar Mantenimiento',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         onPressed: () {
           showDialog(
             context: context,
@@ -110,12 +116,20 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
       ),
       child: Row(
         children: [
-          const Icon(LucideIcons.bell_ring, color: AppTheme.amberSafety, size: 20),
+          const Icon(
+            LucideIcons.bell_ring,
+            color: AppTheme.amberSafety,
+            size: 20,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               '$urgentes mantenimiento(s) con alertas activas esta semana.',
-              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -190,13 +204,19 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                       const SizedBox(height: 2),
                       Text(
                         m.titulo,
-                        style: const TextStyle(fontSize: 14, color: Color(0xFF94A3B8)),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF94A3B8),
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: badgeColor,
                     borderRadius: BorderRadius.circular(20),
@@ -223,29 +243,47 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(LucideIcons.calendar, size: 14, color: Colors.grey),
+                    const Icon(
+                      LucideIcons.calendar,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       DateFormat('dd/MM/yyyy').format(m.fechaProximo),
-                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(LucideIcons.repeat, size: 14, color: AppTheme.amberSafety),
+                    const Icon(
+                      LucideIcons.repeat,
+                      size: 14,
+                      color: AppTheme.amberSafety,
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       m.tipoFrecuencia.etiqueta,
-                      style: const TextStyle(color: AppTheme.amberSafety, fontSize: 12, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        color: AppTheme.amberSafety,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('Socios: ', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    const Text(
+                      'Socios: ',
+                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
                     ...m.responsablesIds.map((sid) {
                       final s = widget.storage.socios.firstWhere(
                         (socio) => socio.id == sid,
@@ -259,8 +297,14 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                             radius: 10,
                             backgroundColor: Color(s.colorValue),
                             child: Text(
-                              s.nombre.isNotEmpty ? s.nombre.substring(0, 1).toUpperCase() : 'S',
-                              style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white),
+                              s.nombre.isNotEmpty
+                                  ? s.nombre.substring(0, 1).toUpperCase()
+                                  : 'S',
+                              style: const TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -276,7 +320,11 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                 m.descripcion!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF64748B),
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
             const SizedBox(height: 12),
@@ -285,16 +333,27 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.emeraldSuccess.withValues(alpha: 0.15),
+                      backgroundColor: AppTheme.emeraldSuccess.withValues(
+                        alpha: 0.15,
+                      ),
                       foregroundColor: AppTheme.emeraldSuccess,
-                      side: const BorderSide(color: AppTheme.emeraldSuccess, width: 1),
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      side: const BorderSide(
+                        color: AppTheme.emeraldSuccess,
+                        width: 1,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 8,
+                      ),
                     ),
                     icon: const Icon(LucideIcons.check_check, size: 16),
                     label: const Text(
                       'Completar',
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     onPressed: () {
                       _mostrarConfirmarCompletar(m);
@@ -304,7 +363,11 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                 const SizedBox(width: 4),
                 IconButton(
                   visualDensity: VisualDensity.compact,
-                  icon: const Icon(LucideIcons.pencil, size: 18, color: Colors.grey),
+                  icon: const Icon(
+                    LucideIcons.pencil,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -312,14 +375,19 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                         mantenimientoExistente: m,
                         clientes: widget.storage.clientes,
                         socios: widget.storage.socios,
-                        onGuardar: (actualizado) => widget.storage.editarMantenimiento(actualizado),
+                        onGuardar: (actualizado) =>
+                            widget.storage.editarMantenimiento(actualizado),
                       ),
                     );
                   },
                 ),
                 IconButton(
                   visualDensity: VisualDensity.compact,
-                  icon: const Icon(LucideIcons.trash, size: 18, color: AppTheme.coralUrgent),
+                  icon: const Icon(
+                    LucideIcons.trash,
+                    size: 18,
+                    color: AppTheme.coralUrgent,
+                  ),
                   onPressed: () => _confirmarEliminar(m.id),
                 ),
               ],
@@ -353,13 +421,18 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
             child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.emeraldSuccess, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.emeraldSuccess,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(ctx);
               widget.storage.completarMantenimiento(m.id);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('¡Mantenimiento completado! Siguiente fecha: ${DateFormat('dd/MM/yyyy').format(proxima)}'),
+                  content: Text(
+                    '¡Mantenimiento completado! Siguiente fecha: ${DateFormat('dd/MM/yyyy').format(proxima)}',
+                  ),
                   backgroundColor: AppTheme.emeraldSuccess,
                 ),
               );
@@ -377,11 +450,19 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.slateSurface,
         title: const Text('Eliminar Mantenimiento'),
-        content: const Text('¿Estás seguro de eliminar este mantenimiento programado? Las alertas asociadas se cancelarán.'),
+        content: const Text(
+          '¿Estás seguro de eliminar este mantenimiento programado? Las alertas asociadas se cancelarán.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar', style: TextStyle(color: Colors.grey))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.coralUrgent, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.coralUrgent,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(ctx);
               widget.storage.eliminarMantenimiento(id);
@@ -406,12 +487,20 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
                 color: AppTheme.slateCard,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.calendar_check, size: 48, color: AppTheme.amberSafety),
+              child: const Icon(
+                LucideIcons.calendar_check,
+                size: 48,
+                color: AppTheme.amberSafety,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
               'No hay mantenimientos en este filtro',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 8),
             const Text(

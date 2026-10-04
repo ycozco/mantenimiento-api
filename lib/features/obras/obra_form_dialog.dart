@@ -44,7 +44,11 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
     _nombreCtrl = TextEditingController(text: o?.nombre ?? '');
     _ubicacionCtrl = TextEditingController(text: o?.ubicacion ?? '');
     _descCtrl = TextEditingController(text: o?.descripcion ?? '');
-    _presupuestoCtrl = TextEditingController(text: o != null && o.presupuesto > 0 ? o.presupuesto.toStringAsFixed(0) : '');
+    _presupuestoCtrl = TextEditingController(
+      text: o != null && o.presupuesto > 0
+          ? o.presupuesto.toStringAsFixed(0)
+          : '',
+    );
 
     if (o != null) {
       _clienteId = o.clienteId;
@@ -94,14 +98,24 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                         color: AppTheme.skyAccent.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(LucideIcons.hard_hat, color: AppTheme.skyAccent, size: 20),
+                      child: const Icon(
+                        LucideIcons.hard_hat,
+                        color: AppTheme.skyAccent,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        widget.obraExistente == null ? 'Nueva Obra / Proyecto' : 'Editar Obra',
+                        widget.obraExistente == null
+                            ? 'Nueva Obra / Proyecto'
+                            : 'Editar Obra',
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -116,35 +130,72 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Nombre de la Obra / Proyecto', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Nombre de la Obra / Proyecto',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _nombreCtrl,
-                          validator: (val) => val == null || val.trim().isEmpty ? 'Ingresa el nombre de la obra' : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? 'Ingresa el nombre de la obra'
+                              : null,
                           decoration: const InputDecoration(
-                            hintText: 'Ej. Instalación Eléctrica Nave 4, Remodelación Local',
-                            prefixIcon: Icon(LucideIcons.building, size: 18, color: Colors.grey),
+                            hintText:
+                                'Ej. Instalación Eléctrica Nave 4, Remodelación Local',
+                            prefixIcon: Icon(
+                              LucideIcons.building,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
 
                         // Cliente asociado
-                        const Text('Cliente (Opcional)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Cliente (Opcional)',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
                           initialValue: _clienteId,
                           dropdownColor: AppTheme.slateSurface,
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(LucideIcons.user, size: 18, color: Colors.grey),
+                            prefixIcon: Icon(
+                              LucideIcons.user,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
                           ),
                           items: [
-                            const DropdownMenuItem(value: null, child: Text('Sin cliente específico')),
-                            ...widget.clientes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.nombre))),
+                            const DropdownMenuItem(
+                              value: null,
+                              child: Text('Sin cliente específico'),
+                            ),
+                            ...widget.clientes.map(
+                              (c) => DropdownMenuItem(
+                                value: c.id,
+                                child: Text(c.nombre),
+                              ),
+                            ),
                           ],
                           onChanged: (val) {
                             setState(() {
                               _clienteId = val;
-                              _clienteNombre = val != null ? widget.clientes.firstWhere((c) => c.id == val).nombre : null;
+                              _clienteNombre = val != null
+                                  ? widget.clientes
+                                        .firstWhere((c) => c.id == val)
+                                        .nombre
+                                  : null;
                             });
                           },
                         ),
@@ -157,13 +208,24 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Presupuesto Total (\$) ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                                  const Text(
+                                    'Presupuesto Total (\$) ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: Color(0xFF94A3B8),
+                                    ),
+                                  ),
                                   const SizedBox(height: 6),
                                   TextFormField(
                                     controller: _presupuestoCtrl,
                                     keyboardType: TextInputType.number,
                                     decoration: const InputDecoration(
-                                      prefixIcon: Icon(LucideIcons.dollar_sign, size: 18, color: AppTheme.emeraldSuccess),
+                                      prefixIcon: Icon(
+                                        LucideIcons.dollar_sign,
+                                        size: 18,
+                                        color: AppTheme.emeraldSuccess,
+                                      ),
                                       hintText: '0.00',
                                     ),
                                   ),
@@ -175,17 +237,29 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Estado', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                                  const Text(
+                                    'Estado',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: Color(0xFF94A3B8),
+                                    ),
+                                  ),
                                   const SizedBox(height: 6),
                                   DropdownButtonFormField<EstadoObra>(
                                     initialValue: _estado,
                                     dropdownColor: AppTheme.slateSurface,
                                     decoration: const InputDecoration(),
                                     items: EstadoObra.values.map((e) {
-                                      return DropdownMenuItem(value: e, child: Text(e.etiqueta));
+                                      return DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e.etiqueta),
+                                      );
                                     }).toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() => _estado = val);
+                                      if (val != null) {
+                                        setState(() => _estado = val);
+                                      }
                                     },
                                   ),
                                 ],
@@ -196,19 +270,38 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                         const SizedBox(height: 16),
 
                         // Ubicación
-                        const Text('Ubicación / Dirección', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Ubicación / Dirección',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _ubicacionCtrl,
                           decoration: const InputDecoration(
-                            hintText: 'Ej. Zona Industrial Nave 2, Calle 10 #23',
-                            prefixIcon: Icon(LucideIcons.map_pin, size: 18, color: Colors.grey),
+                            hintText:
+                                'Ej. Zona Industrial Nave 2, Calle 10 #23',
+                            prefixIcon: Icon(
+                              LucideIcons.map_pin,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
 
                         // Socios Participantes
-                        const Text('Socios Inversionistas / Encargados', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Socios Inversionistas / Encargados',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -218,7 +311,9 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                             return FilterChip(
                               label: Text(s.nombre),
                               selected: sel,
-                              selectedColor: Color(s.colorValue).withValues(alpha: 0.3),
+                              selectedColor: Color(
+                                s.colorValue,
+                              ).withValues(alpha: 0.3),
                               checkmarkColor: Color(s.colorValue),
                               avatar: CircleAvatar(
                                 radius: 8,
@@ -239,13 +334,21 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                         const SizedBox(height: 16),
 
                         // Descripción
-                        const Text('Detalles de la Obra', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF94A3B8))),
+                        const Text(
+                          'Detalles de la Obra',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: _descCtrl,
                           maxLines: 2,
                           decoration: const InputDecoration(
-                            hintText: 'Alcance del proyecto, notas de compras, etc.',
+                            hintText:
+                                'Alcance del proyecto, notas de compras, etc.',
                           ),
                         ),
                       ],
@@ -258,11 +361,16 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.skyAccent),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.skyAccent,
+                      ),
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           final nueva = Obra(
@@ -272,8 +380,11 @@ class _ObraFormDialogState extends State<ObraFormDialog> {
                             clienteNombre: _clienteNombre,
                             ubicacion: _ubicacionCtrl.text.trim(),
                             descripcion: _descCtrl.text.trim(),
-                            presupuesto: double.tryParse(_presupuestoCtrl.text) ?? 0.0,
-                            fechaInicio: widget.obraExistente?.fechaInicio ?? DateTime.now(),
+                            presupuesto:
+                                double.tryParse(_presupuestoCtrl.text) ?? 0.0,
+                            fechaInicio:
+                                widget.obraExistente?.fechaInicio ??
+                                DateTime.now(),
                             estado: _estado,
                             sociosAsignados: _sociosSeleccionados.toList(),
                           );

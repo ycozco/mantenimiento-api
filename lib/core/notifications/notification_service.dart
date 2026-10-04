@@ -10,7 +10,8 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
 
   Future<void> init() async {
@@ -23,16 +24,17 @@ class NotificationService {
 
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+          macOS: initializationSettingsDarwin,
+        );
 
     await _notificationsPlugin.initialize(
       settings: initializationSettings,
@@ -50,12 +52,17 @@ class NotificationService {
 
     if (Platform.isAndroid) {
       final androidImplementation = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-      final granted = await androidImplementation?.requestNotificationsPermission();
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      final granted = await androidImplementation
+          ?.requestNotificationsPermission();
       return granted ?? false;
     } else if (Platform.isIOS || Platform.isMacOS) {
       final iosImplementation = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       final granted = await iosImplementation?.requestPermissions(
         alert: true,
         badge: true,
@@ -71,7 +78,7 @@ class NotificationService {
   }
 
   Future<void> programarAlertasMantenimiento(Mantenimiento m) async {
-    if (kIsWeb) return;
+    if (kIsWeb || !_isInitialized) return;
 
     await cancelarAlertasMantenimiento(m.id);
 
@@ -97,13 +104,14 @@ class NotificationService {
         String mensajeTiempo = diasAntes == 7
             ? 'en 1 semana'
             : diasAntes == 1
-                ? '¡MAÑANA!'
-                : 'en $diasAntes días';
+            ? '¡MAÑANA!'
+            : 'en $diasAntes días';
 
         await _programarNotificacionZonificada(
           id: notifId,
           titulo: 'Mantenimiento $mensajeTiempo: ${m.clienteNombre}',
-          cuerpo: '${m.titulo} programado para el ${targetDate.day}/${targetDate.month}/${targetDate.year}.',
+          cuerpo:
+              '${m.titulo} programado para el ${targetDate.day}/${targetDate.month}/${targetDate.year}.',
           fechaProgramada: fechaAlertaAjustada,
           payload: m.id,
         );
@@ -121,10 +129,12 @@ class NotificationService {
     try {
       final tzDateTime = tz.TZDateTime.from(fechaProgramada, tz.local);
 
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      const AndroidNotificationDetails
+      androidDetails = AndroidNotificationDetails(
         'mantenimiento_alertas_channel',
         'Alertas de Mantenimiento',
-        channelDescription: 'Recordatorios anticipados de 7, 3, 2 y 1 días para mantenimientos de clientes',
+        channelDescription:
+            'Recordatorios anticipados de 7, 3, 2 y 1 días para mantenimientos de clientes',
         importance: Importance.high,
         priority: Priority.high,
         icon: '@mipmap/ic_launcher',
@@ -150,11 +160,15 @@ class NotificationService {
   }
 
   Future<void> cancelarAlertasMantenimiento(String mantenimientoId) async {
-    if (kIsWeb) return;
+    if (kIsWeb || !_isInitialized) return;
     const diasAlerta = [7, 3, 2, 1];
     for (final diasAntes in diasAlerta) {
       final notifId = _generarNotificationId(mantenimientoId, diasAntes);
-      await _notificationsPlugin.cancel(id: notifId);
+      try {
+        await _notificationsPlugin.cancel(id: notifId);
+      } catch (e) {
+        debugPrint('Error cancelando alerta: $e');
+      }
     }
   }
 
@@ -162,12 +176,13 @@ class NotificationService {
     required String titulo,
     required String cuerpo,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'mantenimiento_directo_channel',
-      'Avisos Inmediatos',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'mantenimiento_directo_channel',
+          'Avisos Inmediatos',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
     const NotificationDetails details = NotificationDetails(
       android: androidDetails,
