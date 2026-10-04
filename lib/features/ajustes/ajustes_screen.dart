@@ -5,6 +5,7 @@ import '../../core/database/local_storage_service.dart';
 import '../../core/notifications/notification_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../inventory/inventory_screen.dart';
+import '../tools/tools_screen.dart';
 
 class AjustesScreen extends StatelessWidget {
   final LocalStorageService storage;
@@ -65,6 +66,36 @@ class AjustesScreen extends StatelessWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => InventoryScreen(storage: storage),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(height: 1, color: Color(0xFF334155)),
+                ListTile(
+                  leading: const Icon(
+                    LucideIcons.wrench,
+                    color: AppTheme.skyAccent,
+                  ),
+                  title: const Text(
+                    'Herramientas y Maquinaria',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Control de custodia, entrega a operarios, asignación a obras y mantenimiento técnico.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  trailing: const Icon(
+                    LucideIcons.chevron_right,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ToolsScreen(storage: storage),
                       ),
                     );
                   },

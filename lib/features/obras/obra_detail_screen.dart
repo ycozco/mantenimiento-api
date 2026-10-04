@@ -7,6 +7,7 @@ import '../../core/models/obra.dart';
 import '../../core/models/worker.dart';
 import '../../core/models/work_log.dart';
 import '../../core/models/stock_movement.dart';
+import '../../core/models/tool_assignment.dart';
 import '../../core/theme/app_theme.dart';
 import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
@@ -538,6 +539,87 @@ class ObraDetailScreen extends StatelessWidget {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Sección Herramientas y Maquinaria en Obra
+                    const Text(
+                      'Herramientas y Maquinaria en Obra',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    StreamBuilder<List<ToolAssignment>>(
+                      stream: storage.toolRepository
+                          .watchProjectActiveAssignments(obra.id),
+                      builder: (context, toolsSnap) {
+                        final assignments = toolsSnap.data ?? [];
+                        if (assignments.isEmpty) {
+                          return Container(
+                            padding: const EdgeInsets.all(20),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF1E293B,
+                              ).withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'No hay herramientas asignadas actualmente a esta obra',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: assignments.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                          itemBuilder: (context, idx) {
+                            final a = assignments[idx];
+                            return FutureBuilder(
+                              future: storage.toolRepository.getTool(a.toolId),
+                              builder: (ctx, tSnap) {
+                                final tool = tSnap.data;
+                                return Card(
+                                  margin: EdgeInsets.zero,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: AppTheme.skyAccent
+                                          .withValues(alpha: 0.15),
+                                      child: const Icon(
+                                        LucideIcons.wrench,
+                                        color: AppTheme.skyAccent,
+                                        size: 18,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      tool?.name ?? 'Herramienta',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      'Código: ${tool?.code ?? "N/A"} • Salida: ${dateFormat.format(a.assignedAt)}',
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                   ),
                                 );

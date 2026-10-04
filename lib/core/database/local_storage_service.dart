@@ -18,6 +18,7 @@ import '../repositories/work_log_repository.dart';
 import '../repositories/labor_payment_repository.dart';
 import '../repositories/maintenance_repository.dart';
 import '../repositories/inventory_repository.dart';
+import '../repositories/tool_repository.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -29,6 +30,7 @@ class LocalStorageService extends ChangeNotifier {
       _instance._laborPaymentRepository = LaborPaymentRepository(database);
       _instance._maintenanceRepository = MaintenanceRepository(database);
       _instance._inventoryRepository = InventoryRepository(database);
+      _instance._toolRepository = ToolRepository(database);
     }
     return _instance;
   }
@@ -56,6 +58,9 @@ class LocalStorageService extends ChangeNotifier {
   InventoryRepository? _inventoryRepository;
   InventoryRepository get inventoryRepository =>
       _inventoryRepository ??= InventoryRepository(db);
+
+  ToolRepository? _toolRepository;
+  ToolRepository get toolRepository => _toolRepository ??= ToolRepository(db);
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];

@@ -7,6 +7,7 @@ import '../../core/models/maintenance_plan.dart';
 import '../../core/models/maintenance_visit.dart';
 import '../../core/models/work_log.dart';
 import '../../core/models/stock_movement.dart';
+import '../../core/models/tool_assignment.dart';
 import '../../core/theme/app_theme.dart';
 import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
@@ -707,6 +708,89 @@ class _MaintenanceVisitDetailScreenState
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Herramientas Asignadas a esta Visita
+                    const Text(
+                      'Herramientas Asignadas a la Visita',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    StreamBuilder<List<ToolAssignment>>(
+                      stream: widget.storage.toolRepository
+                          .watchVisitActiveAssignments(visit.id),
+                      builder: (context, toolsSnap) {
+                        final assignments = toolsSnap.data ?? [];
+                        if (assignments.isEmpty) {
+                          return Container(
+                            padding: const EdgeInsets.all(20),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF1E293B,
+                              ).withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'No hay herramientas asignadas actualmente a esta visita',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: assignments.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                          itemBuilder: (context, idx) {
+                            final a = assignments[idx];
+                            return FutureBuilder(
+                              future: widget.storage.toolRepository.getTool(
+                                a.toolId,
+                              ),
+                              builder: (ctx, tSnap) {
+                                final tool = tSnap.data;
+                                return Card(
+                                  margin: EdgeInsets.zero,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: AppTheme.skyAccent
+                                          .withValues(alpha: 0.15),
+                                      child: const Icon(
+                                        LucideIcons.wrench,
+                                        color: AppTheme.skyAccent,
+                                        size: 18,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      tool?.name ?? 'Herramienta',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      'Código: ${tool?.code ?? "N/A"} • Salida: ${dateFormat.format(a.assignedAt)}',
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                   ),
                                 );
