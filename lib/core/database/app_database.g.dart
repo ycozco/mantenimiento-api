@@ -4461,6 +4461,18 @@ class $MaintenancePlansTable extends MaintenancePlans
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -4529,6 +4541,17 @@ class $MaintenancePlansTable extends MaintenancePlans
     requiredDuringInsert: false,
     defaultValue: const Constant(30),
   );
+  static const VerificationMeta _nextDateMeta = const VerificationMeta(
+    'nextDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextDate = GeneratedColumn<DateTime>(
+    'next_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _estimatedCostCentsMeta =
       const VerificationMeta('estimatedCostCents');
   @override
@@ -4591,6 +4614,28 @@ class $MaintenancePlansTable extends MaintenancePlans
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -4617,17 +4662,21 @@ class $MaintenancePlansTable extends MaintenancePlans
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     title,
     clientId,
     locationId,
     description,
     frequencyType,
     intervalDays,
+    nextDate,
     estimatedCostCents,
     assignedPartnerIdsJson,
     isActive,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -4647,6 +4696,15 @@ class $MaintenancePlansTable extends MaintenancePlans
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -4697,6 +4755,12 @@ class $MaintenancePlansTable extends MaintenancePlans
         ),
       );
     }
+    if (data.containsKey('next_date')) {
+      context.handle(
+        _nextDateMeta,
+        nextDate.isAcceptableOrUnknown(data['next_date']!, _nextDateMeta),
+      );
+    }
     if (data.containsKey('estimated_cost_cents')) {
       context.handle(
         _estimatedCostCentsMeta,
@@ -4733,6 +4797,18 @@ class $MaintenancePlansTable extends MaintenancePlans
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -4758,6 +4834,10 @@ class $MaintenancePlansTable extends MaintenancePlans
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -4782,6 +4862,10 @@ class $MaintenancePlansTable extends MaintenancePlans
         DriftSqlType.int,
         data['${effectivePrefix}interval_days'],
       )!,
+      nextDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_date'],
+      ),
       estimatedCostCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}estimated_cost_cents'],
@@ -4802,6 +4886,14 @@ class $MaintenancePlansTable extends MaintenancePlans
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -4821,32 +4913,40 @@ class $MaintenancePlansTable extends MaintenancePlans
 
 class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
   final String id;
+  final String workspaceId;
   final String title;
   final String clientId;
   final String? locationId;
   final String? description;
   final String frequencyType;
   final int intervalDays;
+  final DateTime? nextDate;
   final int estimatedCostCents;
   final String assignedPartnerIdsJson;
   final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const MaintenancePlan({
     required this.id,
+    required this.workspaceId,
     required this.title,
     required this.clientId,
     this.locationId,
     this.description,
     required this.frequencyType,
     required this.intervalDays,
+    this.nextDate,
     required this.estimatedCostCents,
     required this.assignedPartnerIdsJson,
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -4854,6 +4954,7 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['title'] = Variable<String>(title);
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || locationId != null) {
@@ -4864,11 +4965,20 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     }
     map['frequency_type'] = Variable<String>(frequencyType);
     map['interval_days'] = Variable<int>(intervalDays);
+    if (!nullToAbsent || nextDate != null) {
+      map['next_date'] = Variable<DateTime>(nextDate);
+    }
     map['estimated_cost_cents'] = Variable<int>(estimatedCostCents);
     map['assigned_partner_ids_json'] = Variable<String>(assignedPartnerIdsJson);
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -4879,6 +4989,7 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
   MaintenancePlansCompanion toCompanion(bool nullToAbsent) {
     return MaintenancePlansCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       title: Value(title),
       clientId: Value(clientId),
       locationId: locationId == null && nullToAbsent
@@ -4889,11 +5000,20 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
           : Value(description),
       frequencyType: Value(frequencyType),
       intervalDays: Value(intervalDays),
+      nextDate: nextDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextDate),
       estimatedCostCents: Value(estimatedCostCents),
       assignedPartnerIdsJson: Value(assignedPartnerIdsJson),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -4908,12 +5028,14 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MaintenancePlan(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       title: serializer.fromJson<String>(json['title']),
       clientId: serializer.fromJson<String>(json['clientId']),
       locationId: serializer.fromJson<String?>(json['locationId']),
       description: serializer.fromJson<String?>(json['description']),
       frequencyType: serializer.fromJson<String>(json['frequencyType']),
       intervalDays: serializer.fromJson<int>(json['intervalDays']),
+      nextDate: serializer.fromJson<DateTime?>(json['nextDate']),
       estimatedCostCents: serializer.fromJson<int>(json['estimatedCostCents']),
       assignedPartnerIdsJson: serializer.fromJson<String>(
         json['assignedPartnerIdsJson'],
@@ -4921,6 +5043,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       isActive: serializer.fromJson<bool>(json['isActive']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -4930,12 +5054,14 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'title': serializer.toJson<String>(title),
       'clientId': serializer.toJson<String>(clientId),
       'locationId': serializer.toJson<String?>(locationId),
       'description': serializer.toJson<String?>(description),
       'frequencyType': serializer.toJson<String>(frequencyType),
       'intervalDays': serializer.toJson<int>(intervalDays),
+      'nextDate': serializer.toJson<DateTime?>(nextDate),
       'estimatedCostCents': serializer.toJson<int>(estimatedCostCents),
       'assignedPartnerIdsJson': serializer.toJson<String>(
         assignedPartnerIdsJson,
@@ -4943,6 +5069,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       'isActive': serializer.toJson<bool>(isActive),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -4950,39 +5078,50 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
 
   MaintenancePlan copyWith({
     String? id,
+    String? workspaceId,
     String? title,
     String? clientId,
     Value<String?> locationId = const Value.absent(),
     Value<String?> description = const Value.absent(),
     String? frequencyType,
     int? intervalDays,
+    Value<DateTime?> nextDate = const Value.absent(),
     int? estimatedCostCents,
     String? assignedPartnerIdsJson,
     bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => MaintenancePlan(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     title: title ?? this.title,
     clientId: clientId ?? this.clientId,
     locationId: locationId.present ? locationId.value : this.locationId,
     description: description.present ? description.value : this.description,
     frequencyType: frequencyType ?? this.frequencyType,
     intervalDays: intervalDays ?? this.intervalDays,
+    nextDate: nextDate.present ? nextDate.value : this.nextDate,
     estimatedCostCents: estimatedCostCents ?? this.estimatedCostCents,
     assignedPartnerIdsJson:
         assignedPartnerIdsJson ?? this.assignedPartnerIdsJson,
     isActive: isActive ?? this.isActive,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   MaintenancePlan copyWithCompanion(MaintenancePlansCompanion data) {
     return MaintenancePlan(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       title: data.title.present ? data.title.value : this.title,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       locationId: data.locationId.present
@@ -4997,6 +5136,7 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       intervalDays: data.intervalDays.present
           ? data.intervalDays.value
           : this.intervalDays,
+      nextDate: data.nextDate.present ? data.nextDate.value : this.nextDate,
       estimatedCostCents: data.estimatedCostCents.present
           ? data.estimatedCostCents.value
           : this.estimatedCostCents,
@@ -5006,6 +5146,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -5015,17 +5157,21 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
   String toString() {
     return (StringBuffer('MaintenancePlan(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('title: $title, ')
           ..write('clientId: $clientId, ')
           ..write('locationId: $locationId, ')
           ..write('description: $description, ')
           ..write('frequencyType: $frequencyType, ')
           ..write('intervalDays: $intervalDays, ')
+          ..write('nextDate: $nextDate, ')
           ..write('estimatedCostCents: $estimatedCostCents, ')
           ..write('assignedPartnerIdsJson: $assignedPartnerIdsJson, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -5035,17 +5181,21 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     title,
     clientId,
     locationId,
     description,
     frequencyType,
     intervalDays,
+    nextDate,
     estimatedCostCents,
     assignedPartnerIdsJson,
     isActive,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -5054,67 +5204,83 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       identical(this, other) ||
       (other is MaintenancePlan &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.title == this.title &&
           other.clientId == this.clientId &&
           other.locationId == this.locationId &&
           other.description == this.description &&
           other.frequencyType == this.frequencyType &&
           other.intervalDays == this.intervalDays &&
+          other.nextDate == this.nextDate &&
           other.estimatedCostCents == this.estimatedCostCents &&
           other.assignedPartnerIdsJson == this.assignedPartnerIdsJson &&
           other.isActive == this.isActive &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> title;
   final Value<String> clientId;
   final Value<String?> locationId;
   final Value<String?> description;
   final Value<String> frequencyType;
   final Value<int> intervalDays;
+  final Value<DateTime?> nextDate;
   final Value<int> estimatedCostCents;
   final Value<String> assignedPartnerIdsJson;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const MaintenancePlansCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.title = const Value.absent(),
     this.clientId = const Value.absent(),
     this.locationId = const Value.absent(),
     this.description = const Value.absent(),
     this.frequencyType = const Value.absent(),
     this.intervalDays = const Value.absent(),
+    this.nextDate = const Value.absent(),
     this.estimatedCostCents = const Value.absent(),
     this.assignedPartnerIdsJson = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MaintenancePlansCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String title,
     required String clientId,
     this.locationId = const Value.absent(),
     this.description = const Value.absent(),
     this.frequencyType = const Value.absent(),
     this.intervalDays = const Value.absent(),
+    this.nextDate = const Value.absent(),
     this.estimatedCostCents = const Value.absent(),
     this.assignedPartnerIdsJson = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -5123,29 +5289,35 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
        clientId = Value(clientId);
   static Insertable<MaintenancePlan> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? title,
     Expression<String>? clientId,
     Expression<String>? locationId,
     Expression<String>? description,
     Expression<String>? frequencyType,
     Expression<int>? intervalDays,
+    Expression<DateTime>? nextDate,
     Expression<int>? estimatedCostCents,
     Expression<String>? assignedPartnerIdsJson,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (title != null) 'title': title,
       if (clientId != null) 'client_id': clientId,
       if (locationId != null) 'location_id': locationId,
       if (description != null) 'description': description,
       if (frequencyType != null) 'frequency_type': frequencyType,
       if (intervalDays != null) 'interval_days': intervalDays,
+      if (nextDate != null) 'next_date': nextDate,
       if (estimatedCostCents != null)
         'estimated_cost_cents': estimatedCostCents,
       if (assignedPartnerIdsJson != null)
@@ -5153,6 +5325,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
       if (isActive != null) 'is_active': isActive,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -5161,35 +5335,43 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
 
   MaintenancePlansCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? title,
     Value<String>? clientId,
     Value<String?>? locationId,
     Value<String?>? description,
     Value<String>? frequencyType,
     Value<int>? intervalDays,
+    Value<DateTime?>? nextDate,
     Value<int>? estimatedCostCents,
     Value<String>? assignedPartnerIdsJson,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return MaintenancePlansCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       title: title ?? this.title,
       clientId: clientId ?? this.clientId,
       locationId: locationId ?? this.locationId,
       description: description ?? this.description,
       frequencyType: frequencyType ?? this.frequencyType,
       intervalDays: intervalDays ?? this.intervalDays,
+      nextDate: nextDate ?? this.nextDate,
       estimatedCostCents: estimatedCostCents ?? this.estimatedCostCents,
       assignedPartnerIdsJson:
           assignedPartnerIdsJson ?? this.assignedPartnerIdsJson,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -5201,6 +5383,9 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -5220,6 +5405,9 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     if (intervalDays.present) {
       map['interval_days'] = Variable<int>(intervalDays.value);
     }
+    if (nextDate.present) {
+      map['next_date'] = Variable<DateTime>(nextDate.value);
+    }
     if (estimatedCostCents.present) {
       map['estimated_cost_cents'] = Variable<int>(estimatedCostCents.value);
     }
@@ -5237,6 +5425,12 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -5253,17 +5447,21 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
   String toString() {
     return (StringBuffer('MaintenancePlansCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('title: $title, ')
           ..write('clientId: $clientId, ')
           ..write('locationId: $locationId, ')
           ..write('description: $description, ')
           ..write('frequencyType: $frequencyType, ')
           ..write('intervalDays: $intervalDays, ')
+          ..write('nextDate: $nextDate, ')
           ..write('estimatedCostCents: $estimatedCostCents, ')
           ..write('assignedPartnerIdsJson: $assignedPartnerIdsJson, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -5286,6 +5484,18 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _planIdMeta = const VerificationMeta('planId');
   @override
@@ -5367,6 +5577,28 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -5393,6 +5625,7 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     planId,
     scheduledDate,
     completedDate,
@@ -5400,6 +5633,8 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
     technicianNotes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -5419,6 +5654,15 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('plan_id')) {
       context.handle(
@@ -5475,6 +5719,18 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -5499,6 +5755,10 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       planId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -5528,6 +5788,14 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -5548,6 +5816,7 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
 class MaintenanceVisit extends DataClass
     implements Insertable<MaintenanceVisit> {
   final String id;
+  final String workspaceId;
   final String planId;
   final DateTime scheduledDate;
   final DateTime? completedDate;
@@ -5555,10 +5824,13 @@ class MaintenanceVisit extends DataClass
   final String? technicianNotes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const MaintenanceVisit({
     required this.id,
+    required this.workspaceId,
     required this.planId,
     required this.scheduledDate,
     this.completedDate,
@@ -5566,6 +5838,8 @@ class MaintenanceVisit extends DataClass
     this.technicianNotes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -5573,6 +5847,7 @@ class MaintenanceVisit extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['plan_id'] = Variable<String>(planId);
     map['scheduled_date'] = Variable<DateTime>(scheduledDate);
     if (!nullToAbsent || completedDate != null) {
@@ -5584,6 +5859,12 @@ class MaintenanceVisit extends DataClass
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -5594,6 +5875,7 @@ class MaintenanceVisit extends DataClass
   MaintenanceVisitsCompanion toCompanion(bool nullToAbsent) {
     return MaintenanceVisitsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       planId: Value(planId),
       scheduledDate: Value(scheduledDate),
       completedDate: completedDate == null && nullToAbsent
@@ -5605,6 +5887,12 @@ class MaintenanceVisit extends DataClass
           : Value(technicianNotes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -5619,6 +5907,7 @@ class MaintenanceVisit extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MaintenanceVisit(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       planId: serializer.fromJson<String>(json['planId']),
       scheduledDate: serializer.fromJson<DateTime>(json['scheduledDate']),
       completedDate: serializer.fromJson<DateTime?>(json['completedDate']),
@@ -5626,6 +5915,8 @@ class MaintenanceVisit extends DataClass
       technicianNotes: serializer.fromJson<String?>(json['technicianNotes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -5635,6 +5926,7 @@ class MaintenanceVisit extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'planId': serializer.toJson<String>(planId),
       'scheduledDate': serializer.toJson<DateTime>(scheduledDate),
       'completedDate': serializer.toJson<DateTime?>(completedDate),
@@ -5642,6 +5934,8 @@ class MaintenanceVisit extends DataClass
       'technicianNotes': serializer.toJson<String?>(technicianNotes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -5649,6 +5943,7 @@ class MaintenanceVisit extends DataClass
 
   MaintenanceVisit copyWith({
     String? id,
+    String? workspaceId,
     String? planId,
     DateTime? scheduledDate,
     Value<DateTime?> completedDate = const Value.absent(),
@@ -5656,10 +5951,13 @@ class MaintenanceVisit extends DataClass
     Value<String?> technicianNotes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => MaintenanceVisit(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     planId: planId ?? this.planId,
     scheduledDate: scheduledDate ?? this.scheduledDate,
     completedDate: completedDate.present
@@ -5671,12 +5969,17 @@ class MaintenanceVisit extends DataClass
         : this.technicianNotes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   MaintenanceVisit copyWithCompanion(MaintenanceVisitsCompanion data) {
     return MaintenanceVisit(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       planId: data.planId.present ? data.planId.value : this.planId,
       scheduledDate: data.scheduledDate.present
           ? data.scheduledDate.value
@@ -5690,6 +5993,8 @@ class MaintenanceVisit extends DataClass
           : this.technicianNotes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -5699,6 +6004,7 @@ class MaintenanceVisit extends DataClass
   String toString() {
     return (StringBuffer('MaintenanceVisit(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('planId: $planId, ')
           ..write('scheduledDate: $scheduledDate, ')
           ..write('completedDate: $completedDate, ')
@@ -5706,6 +6012,8 @@ class MaintenanceVisit extends DataClass
           ..write('technicianNotes: $technicianNotes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -5715,6 +6023,7 @@ class MaintenanceVisit extends DataClass
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     planId,
     scheduledDate,
     completedDate,
@@ -5722,6 +6031,8 @@ class MaintenanceVisit extends DataClass
     technicianNotes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -5730,6 +6041,7 @@ class MaintenanceVisit extends DataClass
       identical(this, other) ||
       (other is MaintenanceVisit &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.planId == this.planId &&
           other.scheduledDate == this.scheduledDate &&
           other.completedDate == this.completedDate &&
@@ -5737,12 +6049,15 @@ class MaintenanceVisit extends DataClass
           other.technicianNotes == this.technicianNotes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> planId;
   final Value<DateTime> scheduledDate;
   final Value<DateTime?> completedDate;
@@ -5750,11 +6065,14 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
   final Value<String?> technicianNotes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const MaintenanceVisitsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.planId = const Value.absent(),
     this.scheduledDate = const Value.absent(),
     this.completedDate = const Value.absent(),
@@ -5762,12 +6080,15 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     this.technicianNotes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MaintenanceVisitsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String planId,
     required DateTime scheduledDate,
     this.completedDate = const Value.absent(),
@@ -5775,6 +6096,8 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     this.technicianNotes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -5783,6 +6106,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
        scheduledDate = Value(scheduledDate);
   static Insertable<MaintenanceVisit> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? planId,
     Expression<DateTime>? scheduledDate,
     Expression<DateTime>? completedDate,
@@ -5790,12 +6114,15 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     Expression<String>? technicianNotes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (planId != null) 'plan_id': planId,
       if (scheduledDate != null) 'scheduled_date': scheduledDate,
       if (completedDate != null) 'completed_date': completedDate,
@@ -5803,6 +6130,8 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
       if (technicianNotes != null) 'technician_notes': technicianNotes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -5811,6 +6140,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
 
   MaintenanceVisitsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? planId,
     Value<DateTime>? scheduledDate,
     Value<DateTime?>? completedDate,
@@ -5818,12 +6148,15 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     Value<String?>? technicianNotes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return MaintenanceVisitsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       planId: planId ?? this.planId,
       scheduledDate: scheduledDate ?? this.scheduledDate,
       completedDate: completedDate ?? this.completedDate,
@@ -5831,6 +6164,8 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
       technicianNotes: technicianNotes ?? this.technicianNotes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -5842,6 +6177,9 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (planId.present) {
       map['plan_id'] = Variable<String>(planId.value);
@@ -5864,6 +6202,12 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -5880,6 +6224,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
   String toString() {
     return (StringBuffer('MaintenanceVisitsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('planId: $planId, ')
           ..write('scheduledDate: $scheduledDate, ')
           ..write('completedDate: $completedDate, ')
@@ -5887,6 +6232,8 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
           ..write('technicianNotes: $technicianNotes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -5909,6 +6256,18 @@ class $InventoryItemsTable extends InventoryItems
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _skuMeta = const VerificationMeta('sku');
   @override
@@ -5989,6 +6348,15 @@ class $InventoryItemsTable extends InventoryItems
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -6012,6 +6380,28 @@ class $InventoryItemsTable extends InventoryItems
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
@@ -6039,6 +6429,7 @@ class $InventoryItemsTable extends InventoryItems
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     sku,
     name,
     category,
@@ -6046,8 +6437,11 @@ class $InventoryItemsTable extends InventoryItems
     minStockAlert,
     defaultCostCents,
     isActive,
+    notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -6067,6 +6461,15 @@ class $InventoryItemsTable extends InventoryItems
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('sku')) {
       context.handle(
@@ -6118,6 +6521,12 @@ class $InventoryItemsTable extends InventoryItems
         isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
       );
     }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -6128,6 +6537,18 @@ class $InventoryItemsTable extends InventoryItems
       context.handle(
         _updatedAtMeta,
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
       );
     }
     if (data.containsKey('version')) {
@@ -6154,6 +6575,10 @@ class $InventoryItemsTable extends InventoryItems
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       sku: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -6183,6 +6608,10 @@ class $InventoryItemsTable extends InventoryItems
         DriftSqlType.bool,
         data['${effectivePrefix}is_active'],
       )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -6191,6 +6620,14 @@ class $InventoryItemsTable extends InventoryItems
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -6210,6 +6647,7 @@ class $InventoryItemsTable extends InventoryItems
 
 class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   final String id;
+  final String workspaceId;
   final String? sku;
   final String name;
   final String category;
@@ -6217,12 +6655,16 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   final double minStockAlert;
   final int defaultCostCents;
   final bool isActive;
+  final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const InventoryItem({
     required this.id,
+    required this.workspaceId,
     this.sku,
     required this.name,
     required this.category,
@@ -6230,8 +6672,11 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     required this.minStockAlert,
     required this.defaultCostCents,
     required this.isActive,
+    this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -6239,6 +6684,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     if (!nullToAbsent || sku != null) {
       map['sku'] = Variable<String>(sku);
     }
@@ -6248,8 +6694,17 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     map['min_stock_alert'] = Variable<double>(minStockAlert);
     map['default_cost_cents'] = Variable<int>(defaultCostCents);
     map['is_active'] = Variable<bool>(isActive);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -6260,6 +6715,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   InventoryItemsCompanion toCompanion(bool nullToAbsent) {
     return InventoryItemsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       sku: sku == null && nullToAbsent ? const Value.absent() : Value(sku),
       name: Value(name),
       category: Value(category),
@@ -6267,8 +6723,17 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
       minStockAlert: Value(minStockAlert),
       defaultCostCents: Value(defaultCostCents),
       isActive: Value(isActive),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -6283,6 +6748,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return InventoryItem(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       sku: serializer.fromJson<String?>(json['sku']),
       name: serializer.fromJson<String>(json['name']),
       category: serializer.fromJson<String>(json['category']),
@@ -6290,8 +6756,11 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
       minStockAlert: serializer.fromJson<double>(json['minStockAlert']),
       defaultCostCents: serializer.fromJson<int>(json['defaultCostCents']),
       isActive: serializer.fromJson<bool>(json['isActive']),
+      notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -6301,6 +6770,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'sku': serializer.toJson<String?>(sku),
       'name': serializer.toJson<String>(name),
       'category': serializer.toJson<String>(category),
@@ -6308,8 +6778,11 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
       'minStockAlert': serializer.toJson<double>(minStockAlert),
       'defaultCostCents': serializer.toJson<int>(defaultCostCents),
       'isActive': serializer.toJson<bool>(isActive),
+      'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -6317,6 +6790,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
 
   InventoryItem copyWith({
     String? id,
+    String? workspaceId,
     Value<String?> sku = const Value.absent(),
     String? name,
     String? category,
@@ -6324,12 +6798,16 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     double? minStockAlert,
     int? defaultCostCents,
     bool? isActive,
+    Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => InventoryItem(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     sku: sku.present ? sku.value : this.sku,
     name: name ?? this.name,
     category: category ?? this.category,
@@ -6337,14 +6815,20 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     minStockAlert: minStockAlert ?? this.minStockAlert,
     defaultCostCents: defaultCostCents ?? this.defaultCostCents,
     isActive: isActive ?? this.isActive,
+    notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   InventoryItem copyWithCompanion(InventoryItemsCompanion data) {
     return InventoryItem(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       sku: data.sku.present ? data.sku.value : this.sku,
       name: data.name.present ? data.name.value : this.name,
       category: data.category.present ? data.category.value : this.category,
@@ -6356,8 +6840,11 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
           ? data.defaultCostCents.value
           : this.defaultCostCents,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -6367,6 +6854,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   String toString() {
     return (StringBuffer('InventoryItem(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('sku: $sku, ')
           ..write('name: $name, ')
           ..write('category: $category, ')
@@ -6374,8 +6862,11 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
           ..write('minStockAlert: $minStockAlert, ')
           ..write('defaultCostCents: $defaultCostCents, ')
           ..write('isActive: $isActive, ')
+          ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -6385,6 +6876,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     sku,
     name,
     category,
@@ -6392,8 +6884,11 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     minStockAlert,
     defaultCostCents,
     isActive,
+    notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -6402,6 +6897,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
       identical(this, other) ||
       (other is InventoryItem &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.sku == this.sku &&
           other.name == this.name &&
           other.category == this.category &&
@@ -6409,14 +6905,18 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
           other.minStockAlert == this.minStockAlert &&
           other.defaultCostCents == this.defaultCostCents &&
           other.isActive == this.isActive &&
+          other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String?> sku;
   final Value<String> name;
   final Value<String> category;
@@ -6424,13 +6924,17 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
   final Value<double> minStockAlert;
   final Value<int> defaultCostCents;
   final Value<bool> isActive;
+  final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const InventoryItemsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.sku = const Value.absent(),
     this.name = const Value.absent(),
     this.category = const Value.absent(),
@@ -6438,14 +6942,18 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     this.minStockAlert = const Value.absent(),
     this.defaultCostCents = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   InventoryItemsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     this.sku = const Value.absent(),
     required String name,
     this.category = const Value.absent(),
@@ -6453,8 +6961,11 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     this.minStockAlert = const Value.absent(),
     this.defaultCostCents = const Value.absent(),
     this.isActive = const Value.absent(),
+    this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -6462,6 +6973,7 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
        name = Value(name);
   static Insertable<InventoryItem> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? sku,
     Expression<String>? name,
     Expression<String>? category,
@@ -6469,14 +6981,18 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     Expression<double>? minStockAlert,
     Expression<int>? defaultCostCents,
     Expression<bool>? isActive,
+    Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (sku != null) 'sku': sku,
       if (name != null) 'name': name,
       if (category != null) 'category': category,
@@ -6484,8 +7000,11 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
       if (minStockAlert != null) 'min_stock_alert': minStockAlert,
       if (defaultCostCents != null) 'default_cost_cents': defaultCostCents,
       if (isActive != null) 'is_active': isActive,
+      if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -6494,6 +7013,7 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
 
   InventoryItemsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String?>? sku,
     Value<String>? name,
     Value<String>? category,
@@ -6501,14 +7021,18 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     Value<double>? minStockAlert,
     Value<int>? defaultCostCents,
     Value<bool>? isActive,
+    Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return InventoryItemsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       sku: sku ?? this.sku,
       name: name ?? this.name,
       category: category ?? this.category,
@@ -6516,8 +7040,11 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
       minStockAlert: minStockAlert ?? this.minStockAlert,
       defaultCostCents: defaultCostCents ?? this.defaultCostCents,
       isActive: isActive ?? this.isActive,
+      notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -6529,6 +7056,9 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (sku.present) {
       map['sku'] = Variable<String>(sku.value);
@@ -6551,11 +7081,20 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
     }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
     }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
@@ -6573,6 +7112,7 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
   String toString() {
     return (StringBuffer('InventoryItemsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('sku: $sku, ')
           ..write('name: $name, ')
           ..write('category: $category, ')
@@ -6580,8 +7120,11 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
           ..write('minStockAlert: $minStockAlert, ')
           ..write('defaultCostCents: $defaultCostCents, ')
           ..write('isActive: $isActive, ')
+          ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -6604,6 +7147,18 @@ class $SuppliersTable extends Suppliers
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -6676,6 +7231,28 @@ class $SuppliersTable extends Suppliers
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -6702,6 +7279,7 @@ class $SuppliersTable extends Suppliers
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     name,
     phone,
     taxId,
@@ -6709,6 +7287,8 @@ class $SuppliersTable extends Suppliers
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -6728,6 +7308,15 @@ class $SuppliersTable extends Suppliers
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -6773,6 +7362,18 @@ class $SuppliersTable extends Suppliers
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -6797,6 +7398,10 @@ class $SuppliersTable extends Suppliers
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -6826,6 +7431,14 @@ class $SuppliersTable extends Suppliers
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -6845,6 +7458,7 @@ class $SuppliersTable extends Suppliers
 
 class Supplier extends DataClass implements Insertable<Supplier> {
   final String id;
+  final String workspaceId;
   final String name;
   final String? phone;
   final String? taxId;
@@ -6852,10 +7466,13 @@ class Supplier extends DataClass implements Insertable<Supplier> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const Supplier({
     required this.id,
+    required this.workspaceId,
     required this.name,
     this.phone,
     this.taxId,
@@ -6863,6 +7480,8 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -6870,6 +7489,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
@@ -6885,6 +7505,12 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -6895,6 +7521,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
   SuppliersCompanion toCompanion(bool nullToAbsent) {
     return SuppliersCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       name: Value(name),
       phone: phone == null && nullToAbsent
           ? const Value.absent()
@@ -6910,6 +7537,12 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -6924,6 +7557,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Supplier(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       name: serializer.fromJson<String>(json['name']),
       phone: serializer.fromJson<String?>(json['phone']),
       taxId: serializer.fromJson<String?>(json['taxId']),
@@ -6931,6 +7565,8 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -6940,6 +7576,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'name': serializer.toJson<String>(name),
       'phone': serializer.toJson<String?>(phone),
       'taxId': serializer.toJson<String?>(taxId),
@@ -6947,6 +7584,8 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -6954,6 +7593,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
 
   Supplier copyWith({
     String? id,
+    String? workspaceId,
     String? name,
     Value<String?> phone = const Value.absent(),
     Value<String?> taxId = const Value.absent(),
@@ -6961,10 +7601,13 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Supplier(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     name: name ?? this.name,
     phone: phone.present ? phone.value : this.phone,
     taxId: taxId.present ? taxId.value : this.taxId,
@@ -6972,12 +7615,17 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Supplier copyWithCompanion(SuppliersCompanion data) {
     return Supplier(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       name: data.name.present ? data.name.value : this.name,
       phone: data.phone.present ? data.phone.value : this.phone,
       taxId: data.taxId.present ? data.taxId.value : this.taxId,
@@ -6985,6 +7633,8 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -6994,6 +7644,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
   String toString() {
     return (StringBuffer('Supplier(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('name: $name, ')
           ..write('phone: $phone, ')
           ..write('taxId: $taxId, ')
@@ -7001,6 +7652,8 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -7010,6 +7663,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     name,
     phone,
     taxId,
@@ -7017,6 +7671,8 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -7025,6 +7681,7 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       identical(this, other) ||
       (other is Supplier &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.name == this.name &&
           other.phone == this.phone &&
           other.taxId == this.taxId &&
@@ -7032,12 +7689,15 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class SuppliersCompanion extends UpdateCompanion<Supplier> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> name;
   final Value<String?> phone;
   final Value<String?> taxId;
@@ -7045,11 +7705,14 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const SuppliersCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.name = const Value.absent(),
     this.phone = const Value.absent(),
     this.taxId = const Value.absent(),
@@ -7057,12 +7720,15 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SuppliersCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String name,
     this.phone = const Value.absent(),
     this.taxId = const Value.absent(),
@@ -7070,6 +7736,8 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -7077,6 +7745,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
        name = Value(name);
   static Insertable<Supplier> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? name,
     Expression<String>? phone,
     Expression<String>? taxId,
@@ -7084,12 +7753,15 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (name != null) 'name': name,
       if (phone != null) 'phone': phone,
       if (taxId != null) 'tax_id': taxId,
@@ -7097,6 +7769,8 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -7105,6 +7779,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
 
   SuppliersCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? name,
     Value<String?>? phone,
     Value<String?>? taxId,
@@ -7112,12 +7787,15 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return SuppliersCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       taxId: taxId ?? this.taxId,
@@ -7125,6 +7803,8 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -7136,6 +7816,9 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -7158,6 +7841,12 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -7174,6 +7863,7 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
   String toString() {
     return (StringBuffer('SuppliersCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('name: $name, ')
           ..write('phone: $phone, ')
           ..write('taxId: $taxId, ')
@@ -7181,6 +7871,8 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -7203,6 +7895,18 @@ class $PurchasesTable extends Purchases
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _supplierIdMeta = const VerificationMeta(
     'supplierId',
@@ -7283,6 +7987,28 @@ class $PurchasesTable extends Purchases
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -7309,6 +8035,7 @@ class $PurchasesTable extends Purchases
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     supplierId,
     paidByPartnerId,
     totalAmountCents,
@@ -7316,6 +8043,8 @@ class $PurchasesTable extends Purchases
     invoiceNumber,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -7335,6 +8064,15 @@ class $PurchasesTable extends Purchases
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('supplier_id')) {
       context.handle(
@@ -7393,6 +8131,18 @@ class $PurchasesTable extends Purchases
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -7417,6 +8167,10 @@ class $PurchasesTable extends Purchases
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       supplierId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -7446,6 +8200,14 @@ class $PurchasesTable extends Purchases
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -7465,6 +8227,7 @@ class $PurchasesTable extends Purchases
 
 class Purchase extends DataClass implements Insertable<Purchase> {
   final String id;
+  final String workspaceId;
   final String? supplierId;
   final String paidByPartnerId;
   final int totalAmountCents;
@@ -7472,10 +8235,13 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   final String? invoiceNumber;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const Purchase({
     required this.id,
+    required this.workspaceId,
     this.supplierId,
     required this.paidByPartnerId,
     required this.totalAmountCents,
@@ -7483,6 +8249,8 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     this.invoiceNumber,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -7490,6 +8258,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     if (!nullToAbsent || supplierId != null) {
       map['supplier_id'] = Variable<String>(supplierId);
     }
@@ -7501,6 +8270,12 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -7511,6 +8286,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   PurchasesCompanion toCompanion(bool nullToAbsent) {
     return PurchasesCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       supplierId: supplierId == null && nullToAbsent
           ? const Value.absent()
           : Value(supplierId),
@@ -7522,6 +8298,12 @@ class Purchase extends DataClass implements Insertable<Purchase> {
           : Value(invoiceNumber),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -7536,6 +8318,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Purchase(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       supplierId: serializer.fromJson<String?>(json['supplierId']),
       paidByPartnerId: serializer.fromJson<String>(json['paidByPartnerId']),
       totalAmountCents: serializer.fromJson<int>(json['totalAmountCents']),
@@ -7543,6 +8326,8 @@ class Purchase extends DataClass implements Insertable<Purchase> {
       invoiceNumber: serializer.fromJson<String?>(json['invoiceNumber']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -7552,6 +8337,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'supplierId': serializer.toJson<String?>(supplierId),
       'paidByPartnerId': serializer.toJson<String>(paidByPartnerId),
       'totalAmountCents': serializer.toJson<int>(totalAmountCents),
@@ -7559,6 +8345,8 @@ class Purchase extends DataClass implements Insertable<Purchase> {
       'invoiceNumber': serializer.toJson<String?>(invoiceNumber),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -7566,6 +8354,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
 
   Purchase copyWith({
     String? id,
+    String? workspaceId,
     Value<String?> supplierId = const Value.absent(),
     String? paidByPartnerId,
     int? totalAmountCents,
@@ -7573,10 +8362,13 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     Value<String?> invoiceNumber = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Purchase(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     supplierId: supplierId.present ? supplierId.value : this.supplierId,
     paidByPartnerId: paidByPartnerId ?? this.paidByPartnerId,
     totalAmountCents: totalAmountCents ?? this.totalAmountCents,
@@ -7586,12 +8378,17 @@ class Purchase extends DataClass implements Insertable<Purchase> {
         : this.invoiceNumber,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Purchase copyWithCompanion(PurchasesCompanion data) {
     return Purchase(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       supplierId: data.supplierId.present
           ? data.supplierId.value
           : this.supplierId,
@@ -7607,6 +8404,8 @@ class Purchase extends DataClass implements Insertable<Purchase> {
           : this.invoiceNumber,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -7616,6 +8415,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   String toString() {
     return (StringBuffer('Purchase(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('supplierId: $supplierId, ')
           ..write('paidByPartnerId: $paidByPartnerId, ')
           ..write('totalAmountCents: $totalAmountCents, ')
@@ -7623,6 +8423,8 @@ class Purchase extends DataClass implements Insertable<Purchase> {
           ..write('invoiceNumber: $invoiceNumber, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -7632,6 +8434,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     supplierId,
     paidByPartnerId,
     totalAmountCents,
@@ -7639,6 +8442,8 @@ class Purchase extends DataClass implements Insertable<Purchase> {
     invoiceNumber,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -7647,6 +8452,7 @@ class Purchase extends DataClass implements Insertable<Purchase> {
       identical(this, other) ||
       (other is Purchase &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.supplierId == this.supplierId &&
           other.paidByPartnerId == this.paidByPartnerId &&
           other.totalAmountCents == this.totalAmountCents &&
@@ -7654,12 +8460,15 @@ class Purchase extends DataClass implements Insertable<Purchase> {
           other.invoiceNumber == this.invoiceNumber &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class PurchasesCompanion extends UpdateCompanion<Purchase> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String?> supplierId;
   final Value<String> paidByPartnerId;
   final Value<int> totalAmountCents;
@@ -7667,11 +8476,14 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
   final Value<String?> invoiceNumber;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const PurchasesCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.supplierId = const Value.absent(),
     this.paidByPartnerId = const Value.absent(),
     this.totalAmountCents = const Value.absent(),
@@ -7679,12 +8491,15 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     this.invoiceNumber = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   PurchasesCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     this.supplierId = const Value.absent(),
     required String paidByPartnerId,
     required int totalAmountCents,
@@ -7692,6 +8507,8 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     this.invoiceNumber = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -7701,6 +8518,7 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
        date = Value(date);
   static Insertable<Purchase> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? supplierId,
     Expression<String>? paidByPartnerId,
     Expression<int>? totalAmountCents,
@@ -7708,12 +8526,15 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     Expression<String>? invoiceNumber,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (supplierId != null) 'supplier_id': supplierId,
       if (paidByPartnerId != null) 'paid_by_partner_id': paidByPartnerId,
       if (totalAmountCents != null) 'total_amount_cents': totalAmountCents,
@@ -7721,6 +8542,8 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
       if (invoiceNumber != null) 'invoice_number': invoiceNumber,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -7729,6 +8552,7 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
 
   PurchasesCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String?>? supplierId,
     Value<String>? paidByPartnerId,
     Value<int>? totalAmountCents,
@@ -7736,12 +8560,15 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     Value<String?>? invoiceNumber,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return PurchasesCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       supplierId: supplierId ?? this.supplierId,
       paidByPartnerId: paidByPartnerId ?? this.paidByPartnerId,
       totalAmountCents: totalAmountCents ?? this.totalAmountCents,
@@ -7749,6 +8576,8 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
       invoiceNumber: invoiceNumber ?? this.invoiceNumber,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -7760,6 +8589,9 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (supplierId.present) {
       map['supplier_id'] = Variable<String>(supplierId.value);
@@ -7782,6 +8614,12 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -7798,6 +8636,7 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
   String toString() {
     return (StringBuffer('PurchasesCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('supplierId: $supplierId, ')
           ..write('paidByPartnerId: $paidByPartnerId, ')
           ..write('totalAmountCents: $totalAmountCents, ')
@@ -7805,6 +8644,8 @@ class PurchasesCompanion extends UpdateCompanion<Purchase> {
           ..write('invoiceNumber: $invoiceNumber, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -7827,6 +8668,18 @@ class $StockMovementsTable extends StockMovements
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
   @override
@@ -7868,6 +8721,18 @@ class $StockMovementsTable extends StockMovements
   @override
   late final GeneratedColumn<int> unitCostCents = GeneratedColumn<int>(
     'unit_cost_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _totalCostCentsMeta = const VerificationMeta(
+    'totalCostCents',
+  );
+  @override
+  late final GeneratedColumn<int> totalCostCents = GeneratedColumn<int>(
+    'total_cost_cents',
     aliasedName,
     false,
     type: DriftSqlType.int,
@@ -7953,6 +8818,28 @@ class $StockMovementsTable extends StockMovements
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -7979,10 +8866,12 @@ class $StockMovementsTable extends StockMovements
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     itemId,
     movementType,
     quantity,
     unitCostCents,
+    totalCostCents,
     projectId,
     visitId,
     purchaseId,
@@ -7990,6 +8879,8 @@ class $StockMovementsTable extends StockMovements
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -8009,6 +8900,15 @@ class $StockMovementsTable extends StockMovements
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('item_id')) {
       context.handle(
@@ -8041,6 +8941,15 @@ class $StockMovementsTable extends StockMovements
         unitCostCents.isAcceptableOrUnknown(
           data['unit_cost_cents']!,
           _unitCostCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_cost_cents')) {
+      context.handle(
+        _totalCostCentsMeta,
+        totalCostCents.isAcceptableOrUnknown(
+          data['total_cost_cents']!,
+          _totalCostCentsMeta,
         ),
       );
     }
@@ -8086,6 +8995,18 @@ class $StockMovementsTable extends StockMovements
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -8111,6 +9032,10 @@ class $StockMovementsTable extends StockMovements
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       itemId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}item_id'],
@@ -8126,6 +9051,10 @@ class $StockMovementsTable extends StockMovements
       unitCostCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}unit_cost_cents'],
+      )!,
+      totalCostCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_cost_cents'],
       )!,
       projectId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -8155,6 +9084,14 @@ class $StockMovementsTable extends StockMovements
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -8174,10 +9111,12 @@ class $StockMovementsTable extends StockMovements
 
 class StockMovement extends DataClass implements Insertable<StockMovement> {
   final String id;
+  final String workspaceId;
   final String itemId;
   final String movementType;
   final double quantity;
   final int unitCostCents;
+  final int totalCostCents;
   final String? projectId;
   final String? visitId;
   final String? purchaseId;
@@ -8185,14 +9124,18 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const StockMovement({
     required this.id,
+    required this.workspaceId,
     required this.itemId,
     required this.movementType,
     required this.quantity,
     required this.unitCostCents,
+    required this.totalCostCents,
     this.projectId,
     this.visitId,
     this.purchaseId,
@@ -8200,6 +9143,8 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -8207,10 +9152,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['item_id'] = Variable<String>(itemId);
     map['movement_type'] = Variable<String>(movementType);
     map['quantity'] = Variable<double>(quantity);
     map['unit_cost_cents'] = Variable<int>(unitCostCents);
+    map['total_cost_cents'] = Variable<int>(totalCostCents);
     if (!nullToAbsent || projectId != null) {
       map['project_id'] = Variable<String>(projectId);
     }
@@ -8226,6 +9173,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -8236,10 +9189,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
   StockMovementsCompanion toCompanion(bool nullToAbsent) {
     return StockMovementsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       itemId: Value(itemId),
       movementType: Value(movementType),
       quantity: Value(quantity),
       unitCostCents: Value(unitCostCents),
+      totalCostCents: Value(totalCostCents),
       projectId: projectId == null && nullToAbsent
           ? const Value.absent()
           : Value(projectId),
@@ -8255,6 +9210,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -8269,10 +9230,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return StockMovement(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       itemId: serializer.fromJson<String>(json['itemId']),
       movementType: serializer.fromJson<String>(json['movementType']),
       quantity: serializer.fromJson<double>(json['quantity']),
       unitCostCents: serializer.fromJson<int>(json['unitCostCents']),
+      totalCostCents: serializer.fromJson<int>(json['totalCostCents']),
       projectId: serializer.fromJson<String?>(json['projectId']),
       visitId: serializer.fromJson<String?>(json['visitId']),
       purchaseId: serializer.fromJson<String?>(json['purchaseId']),
@@ -8280,6 +9243,8 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -8289,10 +9254,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'itemId': serializer.toJson<String>(itemId),
       'movementType': serializer.toJson<String>(movementType),
       'quantity': serializer.toJson<double>(quantity),
       'unitCostCents': serializer.toJson<int>(unitCostCents),
+      'totalCostCents': serializer.toJson<int>(totalCostCents),
       'projectId': serializer.toJson<String?>(projectId),
       'visitId': serializer.toJson<String?>(visitId),
       'purchaseId': serializer.toJson<String?>(purchaseId),
@@ -8300,6 +9267,8 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -8307,10 +9276,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
 
   StockMovement copyWith({
     String? id,
+    String? workspaceId,
     String? itemId,
     String? movementType,
     double? quantity,
     int? unitCostCents,
+    int? totalCostCents,
     Value<String?> projectId = const Value.absent(),
     Value<String?> visitId = const Value.absent(),
     Value<String?> purchaseId = const Value.absent(),
@@ -8318,14 +9289,18 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => StockMovement(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     itemId: itemId ?? this.itemId,
     movementType: movementType ?? this.movementType,
     quantity: quantity ?? this.quantity,
     unitCostCents: unitCostCents ?? this.unitCostCents,
+    totalCostCents: totalCostCents ?? this.totalCostCents,
     projectId: projectId.present ? projectId.value : this.projectId,
     visitId: visitId.present ? visitId.value : this.visitId,
     purchaseId: purchaseId.present ? purchaseId.value : this.purchaseId,
@@ -8333,12 +9308,17 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   StockMovement copyWithCompanion(StockMovementsCompanion data) {
     return StockMovement(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       itemId: data.itemId.present ? data.itemId.value : this.itemId,
       movementType: data.movementType.present
           ? data.movementType.value
@@ -8347,6 +9327,9 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
       unitCostCents: data.unitCostCents.present
           ? data.unitCostCents.value
           : this.unitCostCents,
+      totalCostCents: data.totalCostCents.present
+          ? data.totalCostCents.value
+          : this.totalCostCents,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
       visitId: data.visitId.present ? data.visitId.value : this.visitId,
       purchaseId: data.purchaseId.present
@@ -8356,6 +9339,8 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -8365,10 +9350,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
   String toString() {
     return (StringBuffer('StockMovement(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('itemId: $itemId, ')
           ..write('movementType: $movementType, ')
           ..write('quantity: $quantity, ')
           ..write('unitCostCents: $unitCostCents, ')
+          ..write('totalCostCents: $totalCostCents, ')
           ..write('projectId: $projectId, ')
           ..write('visitId: $visitId, ')
           ..write('purchaseId: $purchaseId, ')
@@ -8376,6 +9363,8 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -8385,10 +9374,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     itemId,
     movementType,
     quantity,
     unitCostCents,
+    totalCostCents,
     projectId,
     visitId,
     purchaseId,
@@ -8396,6 +9387,8 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -8404,10 +9397,12 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
       identical(this, other) ||
       (other is StockMovement &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.itemId == this.itemId &&
           other.movementType == this.movementType &&
           other.quantity == this.quantity &&
           other.unitCostCents == this.unitCostCents &&
+          other.totalCostCents == this.totalCostCents &&
           other.projectId == this.projectId &&
           other.visitId == this.visitId &&
           other.purchaseId == this.purchaseId &&
@@ -8415,16 +9410,20 @@ class StockMovement extends DataClass implements Insertable<StockMovement> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> itemId;
   final Value<String> movementType;
   final Value<double> quantity;
   final Value<int> unitCostCents;
+  final Value<int> totalCostCents;
   final Value<String?> projectId;
   final Value<String?> visitId;
   final Value<String?> purchaseId;
@@ -8432,15 +9431,19 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const StockMovementsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.itemId = const Value.absent(),
     this.movementType = const Value.absent(),
     this.quantity = const Value.absent(),
     this.unitCostCents = const Value.absent(),
+    this.totalCostCents = const Value.absent(),
     this.projectId = const Value.absent(),
     this.visitId = const Value.absent(),
     this.purchaseId = const Value.absent(),
@@ -8448,16 +9451,20 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   StockMovementsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String itemId,
     this.movementType = const Value.absent(),
     required double quantity,
     this.unitCostCents = const Value.absent(),
+    this.totalCostCents = const Value.absent(),
     this.projectId = const Value.absent(),
     this.visitId = const Value.absent(),
     this.purchaseId = const Value.absent(),
@@ -8465,6 +9472,8 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -8473,10 +9482,12 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
        quantity = Value(quantity);
   static Insertable<StockMovement> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? itemId,
     Expression<String>? movementType,
     Expression<double>? quantity,
     Expression<int>? unitCostCents,
+    Expression<int>? totalCostCents,
     Expression<String>? projectId,
     Expression<String>? visitId,
     Expression<String>? purchaseId,
@@ -8484,16 +9495,20 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (itemId != null) 'item_id': itemId,
       if (movementType != null) 'movement_type': movementType,
       if (quantity != null) 'quantity': quantity,
       if (unitCostCents != null) 'unit_cost_cents': unitCostCents,
+      if (totalCostCents != null) 'total_cost_cents': totalCostCents,
       if (projectId != null) 'project_id': projectId,
       if (visitId != null) 'visit_id': visitId,
       if (purchaseId != null) 'purchase_id': purchaseId,
@@ -8501,6 +9516,8 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -8509,10 +9526,12 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
 
   StockMovementsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? itemId,
     Value<String>? movementType,
     Value<double>? quantity,
     Value<int>? unitCostCents,
+    Value<int>? totalCostCents,
     Value<String?>? projectId,
     Value<String?>? visitId,
     Value<String?>? purchaseId,
@@ -8520,16 +9539,20 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return StockMovementsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       itemId: itemId ?? this.itemId,
       movementType: movementType ?? this.movementType,
       quantity: quantity ?? this.quantity,
       unitCostCents: unitCostCents ?? this.unitCostCents,
+      totalCostCents: totalCostCents ?? this.totalCostCents,
       projectId: projectId ?? this.projectId,
       visitId: visitId ?? this.visitId,
       purchaseId: purchaseId ?? this.purchaseId,
@@ -8537,6 +9560,8 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -8549,6 +9574,9 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
+    }
     if (itemId.present) {
       map['item_id'] = Variable<String>(itemId.value);
     }
@@ -8560,6 +9588,9 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     }
     if (unitCostCents.present) {
       map['unit_cost_cents'] = Variable<int>(unitCostCents.value);
+    }
+    if (totalCostCents.present) {
+      map['total_cost_cents'] = Variable<int>(totalCostCents.value);
     }
     if (projectId.present) {
       map['project_id'] = Variable<String>(projectId.value);
@@ -8582,6 +9613,12 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -8598,10 +9635,12 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
   String toString() {
     return (StringBuffer('StockMovementsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('itemId: $itemId, ')
           ..write('movementType: $movementType, ')
           ..write('quantity: $quantity, ')
           ..write('unitCostCents: $unitCostCents, ')
+          ..write('totalCostCents: $totalCostCents, ')
           ..write('projectId: $projectId, ')
           ..write('visitId: $visitId, ')
           ..write('purchaseId: $purchaseId, ')
@@ -8609,6 +9648,8 @@ class StockMovementsCompanion extends UpdateCompanion<StockMovement> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -8631,6 +9672,18 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
@@ -8648,6 +9701,18 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('manual'),
   );
   static const VerificationMeta _brandModelMeta = const VerificationMeta(
     'brandModel',
@@ -8717,6 +9782,15 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
     requiredDuringInsert: false,
     defaultValue: const Constant('good'),
   );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -8740,6 +9814,28 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
@@ -8767,16 +9863,21 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     code,
     name,
+    category,
     brandModel,
     serialNumber,
     purchaseDate,
     purchasePriceCents,
     currentStatus,
     condition,
+    notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -8797,6 +9898,15 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('code')) {
       context.handle(
         _codeMeta,
@@ -8810,6 +9920,12 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
       );
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
     }
     if (data.containsKey('brand_model')) {
       context.handle(
@@ -8859,6 +9975,12 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
         condition.isAcceptableOrUnknown(data['condition']!, _conditionMeta),
       );
     }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -8869,6 +9991,18 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
       context.handle(
         _updatedAtMeta,
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
       );
     }
     if (data.containsKey('version')) {
@@ -8896,6 +10030,10 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       code: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}code'],
@@ -8903,6 +10041,10 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
       )!,
       brandModel: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -8928,6 +10070,10 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
         DriftSqlType.string,
         data['${effectivePrefix}condition'],
       )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -8936,6 +10082,14 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -8955,30 +10109,40 @@ class $ToolsTable extends Tools with TableInfo<$ToolsTable, Tool> {
 
 class Tool extends DataClass implements Insertable<Tool> {
   final String id;
+  final String workspaceId;
   final String? code;
   final String name;
+  final String category;
   final String? brandModel;
   final String? serialNumber;
   final DateTime? purchaseDate;
   final int purchasePriceCents;
   final String currentStatus;
   final String condition;
+  final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const Tool({
     required this.id,
+    required this.workspaceId,
     this.code,
     required this.name,
+    required this.category,
     this.brandModel,
     this.serialNumber,
     this.purchaseDate,
     required this.purchasePriceCents,
     required this.currentStatus,
     required this.condition,
+    this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -8986,10 +10150,12 @@ class Tool extends DataClass implements Insertable<Tool> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     if (!nullToAbsent || code != null) {
       map['code'] = Variable<String>(code);
     }
     map['name'] = Variable<String>(name);
+    map['category'] = Variable<String>(category);
     if (!nullToAbsent || brandModel != null) {
       map['brand_model'] = Variable<String>(brandModel);
     }
@@ -9002,8 +10168,17 @@ class Tool extends DataClass implements Insertable<Tool> {
     map['purchase_price_cents'] = Variable<int>(purchasePriceCents);
     map['current_status'] = Variable<String>(currentStatus);
     map['condition'] = Variable<String>(condition);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -9014,8 +10189,10 @@ class Tool extends DataClass implements Insertable<Tool> {
   ToolsCompanion toCompanion(bool nullToAbsent) {
     return ToolsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       name: Value(name),
+      category: Value(category),
       brandModel: brandModel == null && nullToAbsent
           ? const Value.absent()
           : Value(brandModel),
@@ -9028,8 +10205,17 @@ class Tool extends DataClass implements Insertable<Tool> {
       purchasePriceCents: Value(purchasePriceCents),
       currentStatus: Value(currentStatus),
       condition: Value(condition),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -9044,16 +10230,21 @@ class Tool extends DataClass implements Insertable<Tool> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Tool(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       code: serializer.fromJson<String?>(json['code']),
       name: serializer.fromJson<String>(json['name']),
+      category: serializer.fromJson<String>(json['category']),
       brandModel: serializer.fromJson<String?>(json['brandModel']),
       serialNumber: serializer.fromJson<String?>(json['serialNumber']),
       purchaseDate: serializer.fromJson<DateTime?>(json['purchaseDate']),
       purchasePriceCents: serializer.fromJson<int>(json['purchasePriceCents']),
       currentStatus: serializer.fromJson<String>(json['currentStatus']),
       condition: serializer.fromJson<String>(json['condition']),
+      notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -9063,16 +10254,21 @@ class Tool extends DataClass implements Insertable<Tool> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'code': serializer.toJson<String?>(code),
       'name': serializer.toJson<String>(name),
+      'category': serializer.toJson<String>(category),
       'brandModel': serializer.toJson<String?>(brandModel),
       'serialNumber': serializer.toJson<String?>(serialNumber),
       'purchaseDate': serializer.toJson<DateTime?>(purchaseDate),
       'purchasePriceCents': serializer.toJson<int>(purchasePriceCents),
       'currentStatus': serializer.toJson<String>(currentStatus),
       'condition': serializer.toJson<String>(condition),
+      'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -9080,38 +10276,52 @@ class Tool extends DataClass implements Insertable<Tool> {
 
   Tool copyWith({
     String? id,
+    String? workspaceId,
     Value<String?> code = const Value.absent(),
     String? name,
+    String? category,
     Value<String?> brandModel = const Value.absent(),
     Value<String?> serialNumber = const Value.absent(),
     Value<DateTime?> purchaseDate = const Value.absent(),
     int? purchasePriceCents,
     String? currentStatus,
     String? condition,
+    Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Tool(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     code: code.present ? code.value : this.code,
     name: name ?? this.name,
+    category: category ?? this.category,
     brandModel: brandModel.present ? brandModel.value : this.brandModel,
     serialNumber: serialNumber.present ? serialNumber.value : this.serialNumber,
     purchaseDate: purchaseDate.present ? purchaseDate.value : this.purchaseDate,
     purchasePriceCents: purchasePriceCents ?? this.purchasePriceCents,
     currentStatus: currentStatus ?? this.currentStatus,
     condition: condition ?? this.condition,
+    notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Tool copyWithCompanion(ToolsCompanion data) {
     return Tool(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       code: data.code.present ? data.code.value : this.code,
       name: data.name.present ? data.name.value : this.name,
+      category: data.category.present ? data.category.value : this.category,
       brandModel: data.brandModel.present
           ? data.brandModel.value
           : this.brandModel,
@@ -9128,8 +10338,11 @@ class Tool extends DataClass implements Insertable<Tool> {
           ? data.currentStatus.value
           : this.currentStatus,
       condition: data.condition.present ? data.condition.value : this.condition,
+      notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -9139,16 +10352,21 @@ class Tool extends DataClass implements Insertable<Tool> {
   String toString() {
     return (StringBuffer('Tool(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('code: $code, ')
           ..write('name: $name, ')
+          ..write('category: $category, ')
           ..write('brandModel: $brandModel, ')
           ..write('serialNumber: $serialNumber, ')
           ..write('purchaseDate: $purchaseDate, ')
           ..write('purchasePriceCents: $purchasePriceCents, ')
           ..write('currentStatus: $currentStatus, ')
           ..write('condition: $condition, ')
+          ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -9158,16 +10376,21 @@ class Tool extends DataClass implements Insertable<Tool> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     code,
     name,
+    category,
     brandModel,
     serialNumber,
     purchaseDate,
     purchasePriceCents,
     currentStatus,
     condition,
+    notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -9176,63 +10399,83 @@ class Tool extends DataClass implements Insertable<Tool> {
       identical(this, other) ||
       (other is Tool &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.code == this.code &&
           other.name == this.name &&
+          other.category == this.category &&
           other.brandModel == this.brandModel &&
           other.serialNumber == this.serialNumber &&
           other.purchaseDate == this.purchaseDate &&
           other.purchasePriceCents == this.purchasePriceCents &&
           other.currentStatus == this.currentStatus &&
           other.condition == this.condition &&
+          other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class ToolsCompanion extends UpdateCompanion<Tool> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String?> code;
   final Value<String> name;
+  final Value<String> category;
   final Value<String?> brandModel;
   final Value<String?> serialNumber;
   final Value<DateTime?> purchaseDate;
   final Value<int> purchasePriceCents;
   final Value<String> currentStatus;
   final Value<String> condition;
+  final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const ToolsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.code = const Value.absent(),
     this.name = const Value.absent(),
+    this.category = const Value.absent(),
     this.brandModel = const Value.absent(),
     this.serialNumber = const Value.absent(),
     this.purchaseDate = const Value.absent(),
     this.purchasePriceCents = const Value.absent(),
     this.currentStatus = const Value.absent(),
     this.condition = const Value.absent(),
+    this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ToolsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     this.code = const Value.absent(),
     required String name,
+    this.category = const Value.absent(),
     this.brandModel = const Value.absent(),
     this.serialNumber = const Value.absent(),
     this.purchaseDate = const Value.absent(),
     this.purchasePriceCents = const Value.absent(),
     this.currentStatus = const Value.absent(),
     this.condition = const Value.absent(),
+    this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -9240,24 +10483,31 @@ class ToolsCompanion extends UpdateCompanion<Tool> {
        name = Value(name);
   static Insertable<Tool> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? code,
     Expression<String>? name,
+    Expression<String>? category,
     Expression<String>? brandModel,
     Expression<String>? serialNumber,
     Expression<DateTime>? purchaseDate,
     Expression<int>? purchasePriceCents,
     Expression<String>? currentStatus,
     Expression<String>? condition,
+    Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (code != null) 'code': code,
       if (name != null) 'name': name,
+      if (category != null) 'category': category,
       if (brandModel != null) 'brand_model': brandModel,
       if (serialNumber != null) 'serial_number': serialNumber,
       if (purchaseDate != null) 'purchase_date': purchaseDate,
@@ -9265,8 +10515,11 @@ class ToolsCompanion extends UpdateCompanion<Tool> {
         'purchase_price_cents': purchasePriceCents,
       if (currentStatus != null) 'current_status': currentStatus,
       if (condition != null) 'condition': condition,
+      if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -9275,32 +10528,42 @@ class ToolsCompanion extends UpdateCompanion<Tool> {
 
   ToolsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String?>? code,
     Value<String>? name,
+    Value<String>? category,
     Value<String?>? brandModel,
     Value<String?>? serialNumber,
     Value<DateTime?>? purchaseDate,
     Value<int>? purchasePriceCents,
     Value<String>? currentStatus,
     Value<String>? condition,
+    Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ToolsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       code: code ?? this.code,
       name: name ?? this.name,
+      category: category ?? this.category,
       brandModel: brandModel ?? this.brandModel,
       serialNumber: serialNumber ?? this.serialNumber,
       purchaseDate: purchaseDate ?? this.purchaseDate,
       purchasePriceCents: purchasePriceCents ?? this.purchasePriceCents,
       currentStatus: currentStatus ?? this.currentStatus,
       condition: condition ?? this.condition,
+      notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -9313,11 +10576,17 @@ class ToolsCompanion extends UpdateCompanion<Tool> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
+    }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
     }
     if (brandModel.present) {
       map['brand_model'] = Variable<String>(brandModel.value);
@@ -9337,11 +10606,20 @@ class ToolsCompanion extends UpdateCompanion<Tool> {
     if (condition.present) {
       map['condition'] = Variable<String>(condition.value);
     }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
     }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
@@ -9359,16 +10637,21 @@ class ToolsCompanion extends UpdateCompanion<Tool> {
   String toString() {
     return (StringBuffer('ToolsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('code: $code, ')
           ..write('name: $name, ')
+          ..write('category: $category, ')
           ..write('brandModel: $brandModel, ')
           ..write('serialNumber: $serialNumber, ')
           ..write('purchaseDate: $purchaseDate, ')
           ..write('purchasePriceCents: $purchasePriceCents, ')
           ..write('currentStatus: $currentStatus, ')
           ..write('condition: $condition, ')
+          ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -9391,6 +10674,18 @@ class $ToolAssignmentsTable extends ToolAssignments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _toolIdMeta = const VerificationMeta('toolId');
   @override
@@ -9426,6 +10721,19 @@ class $ToolAssignmentsTable extends ToolAssignments
     requiredDuringInsert: false,
     $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
   );
+  static const VerificationMeta _maintenanceVisitIdMeta =
+      const VerificationMeta('maintenanceVisitId');
+  @override
+  late final GeneratedColumn<String> maintenanceVisitId =
+      GeneratedColumn<String>(
+        'maintenance_visit_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints:
+            'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
+      );
   static const VerificationMeta _assignedAtMeta = const VerificationMeta(
     'assignedAt',
   );
@@ -9438,6 +10746,18 @@ class $ToolAssignmentsTable extends ToolAssignments
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _expectedReturnAtMeta = const VerificationMeta(
+    'expectedReturnAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expectedReturnAt =
+      GeneratedColumn<DateTime>(
+        'expected_return_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _returnedAtMeta = const VerificationMeta(
     'returnedAt',
   );
@@ -9505,6 +10825,28 @@ class $ToolAssignmentsTable extends ToolAssignments
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -9531,16 +10873,21 @@ class $ToolAssignmentsTable extends ToolAssignments
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     toolId,
     workerId,
     projectId,
+    maintenanceVisitId,
     assignedAt,
+    expectedReturnAt,
     returnedAt,
     conditionOut,
     conditionIn,
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -9560,6 +10907,15 @@ class $ToolAssignmentsTable extends ToolAssignments
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('tool_id')) {
       context.handle(
@@ -9581,10 +10937,28 @@ class $ToolAssignmentsTable extends ToolAssignments
         projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
       );
     }
+    if (data.containsKey('maintenance_visit_id')) {
+      context.handle(
+        _maintenanceVisitIdMeta,
+        maintenanceVisitId.isAcceptableOrUnknown(
+          data['maintenance_visit_id']!,
+          _maintenanceVisitIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('assigned_at')) {
       context.handle(
         _assignedAtMeta,
         assignedAt.isAcceptableOrUnknown(data['assigned_at']!, _assignedAtMeta),
+      );
+    }
+    if (data.containsKey('expected_return_at')) {
+      context.handle(
+        _expectedReturnAtMeta,
+        expectedReturnAt.isAcceptableOrUnknown(
+          data['expected_return_at']!,
+          _expectedReturnAtMeta,
+        ),
       );
     }
     if (data.containsKey('returned_at')) {
@@ -9629,6 +11003,18 @@ class $ToolAssignmentsTable extends ToolAssignments
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -9654,6 +11040,10 @@ class $ToolAssignmentsTable extends ToolAssignments
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       toolId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}tool_id'],
@@ -9666,10 +11056,18 @@ class $ToolAssignmentsTable extends ToolAssignments
         DriftSqlType.string,
         data['${effectivePrefix}project_id'],
       ),
+      maintenanceVisitId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}maintenance_visit_id'],
+      ),
       assignedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}assigned_at'],
       )!,
+      expectedReturnAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expected_return_at'],
+      ),
       returnedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}returned_at'],
@@ -9694,6 +11092,14 @@ class $ToolAssignmentsTable extends ToolAssignments
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -9713,30 +11119,40 @@ class $ToolAssignmentsTable extends ToolAssignments
 
 class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
   final String id;
+  final String workspaceId;
   final String toolId;
   final String? workerId;
   final String? projectId;
+  final String? maintenanceVisitId;
   final DateTime assignedAt;
+  final DateTime? expectedReturnAt;
   final DateTime? returnedAt;
   final String conditionOut;
   final String? conditionIn;
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const ToolAssignment({
     required this.id,
+    required this.workspaceId,
     required this.toolId,
     this.workerId,
     this.projectId,
+    this.maintenanceVisitId,
     required this.assignedAt,
+    this.expectedReturnAt,
     this.returnedAt,
     required this.conditionOut,
     this.conditionIn,
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -9744,6 +11160,7 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['tool_id'] = Variable<String>(toolId);
     if (!nullToAbsent || workerId != null) {
       map['worker_id'] = Variable<String>(workerId);
@@ -9751,7 +11168,13 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
     if (!nullToAbsent || projectId != null) {
       map['project_id'] = Variable<String>(projectId);
     }
+    if (!nullToAbsent || maintenanceVisitId != null) {
+      map['maintenance_visit_id'] = Variable<String>(maintenanceVisitId);
+    }
     map['assigned_at'] = Variable<DateTime>(assignedAt);
+    if (!nullToAbsent || expectedReturnAt != null) {
+      map['expected_return_at'] = Variable<DateTime>(expectedReturnAt);
+    }
     if (!nullToAbsent || returnedAt != null) {
       map['returned_at'] = Variable<DateTime>(returnedAt);
     }
@@ -9764,6 +11187,12 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -9774,6 +11203,7 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
   ToolAssignmentsCompanion toCompanion(bool nullToAbsent) {
     return ToolAssignmentsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       toolId: Value(toolId),
       workerId: workerId == null && nullToAbsent
           ? const Value.absent()
@@ -9781,7 +11211,13 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
       projectId: projectId == null && nullToAbsent
           ? const Value.absent()
           : Value(projectId),
+      maintenanceVisitId: maintenanceVisitId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(maintenanceVisitId),
       assignedAt: Value(assignedAt),
+      expectedReturnAt: expectedReturnAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expectedReturnAt),
       returnedAt: returnedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(returnedAt),
@@ -9794,6 +11230,12 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -9808,16 +11250,25 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ToolAssignment(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       toolId: serializer.fromJson<String>(json['toolId']),
       workerId: serializer.fromJson<String?>(json['workerId']),
       projectId: serializer.fromJson<String?>(json['projectId']),
+      maintenanceVisitId: serializer.fromJson<String?>(
+        json['maintenanceVisitId'],
+      ),
       assignedAt: serializer.fromJson<DateTime>(json['assignedAt']),
+      expectedReturnAt: serializer.fromJson<DateTime?>(
+        json['expectedReturnAt'],
+      ),
       returnedAt: serializer.fromJson<DateTime?>(json['returnedAt']),
       conditionOut: serializer.fromJson<String>(json['conditionOut']),
       conditionIn: serializer.fromJson<String?>(json['conditionIn']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -9827,16 +11278,21 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'toolId': serializer.toJson<String>(toolId),
       'workerId': serializer.toJson<String?>(workerId),
       'projectId': serializer.toJson<String?>(projectId),
+      'maintenanceVisitId': serializer.toJson<String?>(maintenanceVisitId),
       'assignedAt': serializer.toJson<DateTime>(assignedAt),
+      'expectedReturnAt': serializer.toJson<DateTime?>(expectedReturnAt),
       'returnedAt': serializer.toJson<DateTime?>(returnedAt),
       'conditionOut': serializer.toJson<String>(conditionOut),
       'conditionIn': serializer.toJson<String?>(conditionIn),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -9844,42 +11300,65 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
 
   ToolAssignment copyWith({
     String? id,
+    String? workspaceId,
     String? toolId,
     Value<String?> workerId = const Value.absent(),
     Value<String?> projectId = const Value.absent(),
+    Value<String?> maintenanceVisitId = const Value.absent(),
     DateTime? assignedAt,
+    Value<DateTime?> expectedReturnAt = const Value.absent(),
     Value<DateTime?> returnedAt = const Value.absent(),
     String? conditionOut,
     Value<String?> conditionIn = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => ToolAssignment(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     toolId: toolId ?? this.toolId,
     workerId: workerId.present ? workerId.value : this.workerId,
     projectId: projectId.present ? projectId.value : this.projectId,
+    maintenanceVisitId: maintenanceVisitId.present
+        ? maintenanceVisitId.value
+        : this.maintenanceVisitId,
     assignedAt: assignedAt ?? this.assignedAt,
+    expectedReturnAt: expectedReturnAt.present
+        ? expectedReturnAt.value
+        : this.expectedReturnAt,
     returnedAt: returnedAt.present ? returnedAt.value : this.returnedAt,
     conditionOut: conditionOut ?? this.conditionOut,
     conditionIn: conditionIn.present ? conditionIn.value : this.conditionIn,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   ToolAssignment copyWithCompanion(ToolAssignmentsCompanion data) {
     return ToolAssignment(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       toolId: data.toolId.present ? data.toolId.value : this.toolId,
       workerId: data.workerId.present ? data.workerId.value : this.workerId,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      maintenanceVisitId: data.maintenanceVisitId.present
+          ? data.maintenanceVisitId.value
+          : this.maintenanceVisitId,
       assignedAt: data.assignedAt.present
           ? data.assignedAt.value
           : this.assignedAt,
+      expectedReturnAt: data.expectedReturnAt.present
+          ? data.expectedReturnAt.value
+          : this.expectedReturnAt,
       returnedAt: data.returnedAt.present
           ? data.returnedAt.value
           : this.returnedAt,
@@ -9892,6 +11371,8 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -9901,16 +11382,21 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
   String toString() {
     return (StringBuffer('ToolAssignment(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('toolId: $toolId, ')
           ..write('workerId: $workerId, ')
           ..write('projectId: $projectId, ')
+          ..write('maintenanceVisitId: $maintenanceVisitId, ')
           ..write('assignedAt: $assignedAt, ')
+          ..write('expectedReturnAt: $expectedReturnAt, ')
           ..write('returnedAt: $returnedAt, ')
           ..write('conditionOut: $conditionOut, ')
           ..write('conditionIn: $conditionIn, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -9920,16 +11406,21 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     toolId,
     workerId,
     projectId,
+    maintenanceVisitId,
     assignedAt,
+    expectedReturnAt,
     returnedAt,
     conditionOut,
     conditionIn,
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -9938,63 +11429,83 @@ class ToolAssignment extends DataClass implements Insertable<ToolAssignment> {
       identical(this, other) ||
       (other is ToolAssignment &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.toolId == this.toolId &&
           other.workerId == this.workerId &&
           other.projectId == this.projectId &&
+          other.maintenanceVisitId == this.maintenanceVisitId &&
           other.assignedAt == this.assignedAt &&
+          other.expectedReturnAt == this.expectedReturnAt &&
           other.returnedAt == this.returnedAt &&
           other.conditionOut == this.conditionOut &&
           other.conditionIn == this.conditionIn &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> toolId;
   final Value<String?> workerId;
   final Value<String?> projectId;
+  final Value<String?> maintenanceVisitId;
   final Value<DateTime> assignedAt;
+  final Value<DateTime?> expectedReturnAt;
   final Value<DateTime?> returnedAt;
   final Value<String> conditionOut;
   final Value<String?> conditionIn;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const ToolAssignmentsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.toolId = const Value.absent(),
     this.workerId = const Value.absent(),
     this.projectId = const Value.absent(),
+    this.maintenanceVisitId = const Value.absent(),
     this.assignedAt = const Value.absent(),
+    this.expectedReturnAt = const Value.absent(),
     this.returnedAt = const Value.absent(),
     this.conditionOut = const Value.absent(),
     this.conditionIn = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ToolAssignmentsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String toolId,
     this.workerId = const Value.absent(),
     this.projectId = const Value.absent(),
+    this.maintenanceVisitId = const Value.absent(),
     this.assignedAt = const Value.absent(),
+    this.expectedReturnAt = const Value.absent(),
     this.returnedAt = const Value.absent(),
     this.conditionOut = const Value.absent(),
     this.conditionIn = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -10002,32 +11513,43 @@ class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
        toolId = Value(toolId);
   static Insertable<ToolAssignment> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? toolId,
     Expression<String>? workerId,
     Expression<String>? projectId,
+    Expression<String>? maintenanceVisitId,
     Expression<DateTime>? assignedAt,
+    Expression<DateTime>? expectedReturnAt,
     Expression<DateTime>? returnedAt,
     Expression<String>? conditionOut,
     Expression<String>? conditionIn,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (toolId != null) 'tool_id': toolId,
       if (workerId != null) 'worker_id': workerId,
       if (projectId != null) 'project_id': projectId,
+      if (maintenanceVisitId != null)
+        'maintenance_visit_id': maintenanceVisitId,
       if (assignedAt != null) 'assigned_at': assignedAt,
+      if (expectedReturnAt != null) 'expected_return_at': expectedReturnAt,
       if (returnedAt != null) 'returned_at': returnedAt,
       if (conditionOut != null) 'condition_out': conditionOut,
       if (conditionIn != null) 'condition_in': conditionIn,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -10036,32 +11558,42 @@ class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
 
   ToolAssignmentsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? toolId,
     Value<String?>? workerId,
     Value<String?>? projectId,
+    Value<String?>? maintenanceVisitId,
     Value<DateTime>? assignedAt,
+    Value<DateTime?>? expectedReturnAt,
     Value<DateTime?>? returnedAt,
     Value<String>? conditionOut,
     Value<String?>? conditionIn,
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ToolAssignmentsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       toolId: toolId ?? this.toolId,
       workerId: workerId ?? this.workerId,
       projectId: projectId ?? this.projectId,
+      maintenanceVisitId: maintenanceVisitId ?? this.maintenanceVisitId,
       assignedAt: assignedAt ?? this.assignedAt,
+      expectedReturnAt: expectedReturnAt ?? this.expectedReturnAt,
       returnedAt: returnedAt ?? this.returnedAt,
       conditionOut: conditionOut ?? this.conditionOut,
       conditionIn: conditionIn ?? this.conditionIn,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -10074,6 +11606,9 @@ class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
+    }
     if (toolId.present) {
       map['tool_id'] = Variable<String>(toolId.value);
     }
@@ -10083,8 +11618,14 @@ class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
     if (projectId.present) {
       map['project_id'] = Variable<String>(projectId.value);
     }
+    if (maintenanceVisitId.present) {
+      map['maintenance_visit_id'] = Variable<String>(maintenanceVisitId.value);
+    }
     if (assignedAt.present) {
       map['assigned_at'] = Variable<DateTime>(assignedAt.value);
+    }
+    if (expectedReturnAt.present) {
+      map['expected_return_at'] = Variable<DateTime>(expectedReturnAt.value);
     }
     if (returnedAt.present) {
       map['returned_at'] = Variable<DateTime>(returnedAt.value);
@@ -10104,6 +11645,12 @@ class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -10120,16 +11667,21 @@ class ToolAssignmentsCompanion extends UpdateCompanion<ToolAssignment> {
   String toString() {
     return (StringBuffer('ToolAssignmentsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('toolId: $toolId, ')
           ..write('workerId: $workerId, ')
           ..write('projectId: $projectId, ')
+          ..write('maintenanceVisitId: $maintenanceVisitId, ')
           ..write('assignedAt: $assignedAt, ')
+          ..write('expectedReturnAt: $expectedReturnAt, ')
           ..write('returnedAt: $returnedAt, ')
           ..write('conditionOut: $conditionOut, ')
           ..write('conditionIn: $conditionIn, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -11135,6 +12687,18 @@ class $LaborPaymentsTable extends LaborPayments
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE RESTRICT',
   );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
+  );
   static const VerificationMeta _amountCentsMeta = const VerificationMeta(
     'amountCents',
   );
@@ -11146,14 +12710,28 @@ class $LaborPaymentsTable extends LaborPayments
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  static const VerificationMeta _paymentDateMeta = const VerificationMeta(
+    'paymentDate',
+  );
   @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-    'date',
+  late final GeneratedColumn<DateTime> paymentDate = GeneratedColumn<DateTime>(
+    'payment_date',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _paymentMethodMeta = const VerificationMeta(
+    'paymentMethod',
+  );
+  @override
+  late final GeneratedColumn<String> paymentMethod = GeneratedColumn<String>(
+    'payment_method',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('cash'),
   );
   static const VerificationMeta _paidByPartnerIdMeta = const VerificationMeta(
     'paidByPartnerId',
@@ -11162,10 +12740,10 @@ class $LaborPaymentsTable extends LaborPayments
   late final GeneratedColumn<String> paidByPartnerId = GeneratedColumn<String>(
     'paid_by_partner_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES partners(id)',
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES partners(id) ON DELETE SET NULL',
   );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
@@ -11250,8 +12828,10 @@ class $LaborPaymentsTable extends LaborPayments
     id,
     workspaceId,
     workerId,
+    projectId,
     amountCents,
-    date,
+    paymentDate,
+    paymentMethod,
     paidByPartnerId,
     notes,
     createdAt,
@@ -11295,6 +12875,12 @@ class $LaborPaymentsTable extends LaborPayments
     } else if (isInserting) {
       context.missing(_workerIdMeta);
     }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    }
     if (data.containsKey('amount_cents')) {
       context.handle(
         _amountCentsMeta,
@@ -11306,13 +12892,25 @@ class $LaborPaymentsTable extends LaborPayments
     } else if (isInserting) {
       context.missing(_amountCentsMeta);
     }
-    if (data.containsKey('date')) {
+    if (data.containsKey('payment_date')) {
       context.handle(
-        _dateMeta,
-        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+        _paymentDateMeta,
+        paymentDate.isAcceptableOrUnknown(
+          data['payment_date']!,
+          _paymentDateMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_dateMeta);
+      context.missing(_paymentDateMeta);
+    }
+    if (data.containsKey('payment_method')) {
+      context.handle(
+        _paymentMethodMeta,
+        paymentMethod.isAcceptableOrUnknown(
+          data['payment_method']!,
+          _paymentMethodMeta,
+        ),
+      );
     }
     if (data.containsKey('paid_by_partner_id')) {
       context.handle(
@@ -11322,8 +12920,6 @@ class $LaborPaymentsTable extends LaborPayments
           _paidByPartnerIdMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_paidByPartnerIdMeta);
     }
     if (data.containsKey('notes')) {
       context.handle(
@@ -11388,18 +12984,26 @@ class $LaborPaymentsTable extends LaborPayments
         DriftSqlType.string,
         data['${effectivePrefix}worker_id'],
       )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      ),
       amountCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}amount_cents'],
       )!,
-      date: attachedDatabase.typeMapping.read(
+      paymentDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}date'],
+        data['${effectivePrefix}payment_date'],
+      )!,
+      paymentMethod: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_method'],
       )!,
       paidByPartnerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}paid_by_partner_id'],
-      )!,
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -11441,9 +13045,11 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   final String id;
   final String workspaceId;
   final String workerId;
+  final String? projectId;
   final int amountCents;
-  final DateTime date;
-  final String paidByPartnerId;
+  final DateTime paymentDate;
+  final String paymentMethod;
+  final String? paidByPartnerId;
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -11455,9 +13061,11 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     required this.id,
     required this.workspaceId,
     required this.workerId,
+    this.projectId,
     required this.amountCents,
-    required this.date,
-    required this.paidByPartnerId,
+    required this.paymentDate,
+    required this.paymentMethod,
+    this.paidByPartnerId,
     this.notes,
     required this.createdAt,
     required this.updatedAt,
@@ -11472,9 +13080,15 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     map['id'] = Variable<String>(id);
     map['workspace_id'] = Variable<String>(workspaceId);
     map['worker_id'] = Variable<String>(workerId);
+    if (!nullToAbsent || projectId != null) {
+      map['project_id'] = Variable<String>(projectId);
+    }
     map['amount_cents'] = Variable<int>(amountCents);
-    map['date'] = Variable<DateTime>(date);
-    map['paid_by_partner_id'] = Variable<String>(paidByPartnerId);
+    map['payment_date'] = Variable<DateTime>(paymentDate);
+    map['payment_method'] = Variable<String>(paymentMethod);
+    if (!nullToAbsent || paidByPartnerId != null) {
+      map['paid_by_partner_id'] = Variable<String>(paidByPartnerId);
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -11498,9 +13112,15 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       id: Value(id),
       workspaceId: Value(workspaceId),
       workerId: Value(workerId),
+      projectId: projectId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(projectId),
       amountCents: Value(amountCents),
-      date: Value(date),
-      paidByPartnerId: Value(paidByPartnerId),
+      paymentDate: Value(paymentDate),
+      paymentMethod: Value(paymentMethod),
+      paidByPartnerId: paidByPartnerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paidByPartnerId),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -11528,9 +13148,11 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       id: serializer.fromJson<String>(json['id']),
       workspaceId: serializer.fromJson<String>(json['workspaceId']),
       workerId: serializer.fromJson<String>(json['workerId']),
+      projectId: serializer.fromJson<String?>(json['projectId']),
       amountCents: serializer.fromJson<int>(json['amountCents']),
-      date: serializer.fromJson<DateTime>(json['date']),
-      paidByPartnerId: serializer.fromJson<String>(json['paidByPartnerId']),
+      paymentDate: serializer.fromJson<DateTime>(json['paymentDate']),
+      paymentMethod: serializer.fromJson<String>(json['paymentMethod']),
+      paidByPartnerId: serializer.fromJson<String?>(json['paidByPartnerId']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -11547,9 +13169,11 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       'id': serializer.toJson<String>(id),
       'workspaceId': serializer.toJson<String>(workspaceId),
       'workerId': serializer.toJson<String>(workerId),
+      'projectId': serializer.toJson<String?>(projectId),
       'amountCents': serializer.toJson<int>(amountCents),
-      'date': serializer.toJson<DateTime>(date),
-      'paidByPartnerId': serializer.toJson<String>(paidByPartnerId),
+      'paymentDate': serializer.toJson<DateTime>(paymentDate),
+      'paymentMethod': serializer.toJson<String>(paymentMethod),
+      'paidByPartnerId': serializer.toJson<String?>(paidByPartnerId),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -11564,9 +13188,11 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     String? id,
     String? workspaceId,
     String? workerId,
+    Value<String?> projectId = const Value.absent(),
     int? amountCents,
-    DateTime? date,
-    String? paidByPartnerId,
+    DateTime? paymentDate,
+    String? paymentMethod,
+    Value<String?> paidByPartnerId = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -11578,9 +13204,13 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     id: id ?? this.id,
     workspaceId: workspaceId ?? this.workspaceId,
     workerId: workerId ?? this.workerId,
+    projectId: projectId.present ? projectId.value : this.projectId,
     amountCents: amountCents ?? this.amountCents,
-    date: date ?? this.date,
-    paidByPartnerId: paidByPartnerId ?? this.paidByPartnerId,
+    paymentDate: paymentDate ?? this.paymentDate,
+    paymentMethod: paymentMethod ?? this.paymentMethod,
+    paidByPartnerId: paidByPartnerId.present
+        ? paidByPartnerId.value
+        : this.paidByPartnerId,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -11596,10 +13226,16 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
           ? data.workspaceId.value
           : this.workspaceId,
       workerId: data.workerId.present ? data.workerId.value : this.workerId,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
       amountCents: data.amountCents.present
           ? data.amountCents.value
           : this.amountCents,
-      date: data.date.present ? data.date.value : this.date,
+      paymentDate: data.paymentDate.present
+          ? data.paymentDate.value
+          : this.paymentDate,
+      paymentMethod: data.paymentMethod.present
+          ? data.paymentMethod.value
+          : this.paymentMethod,
       paidByPartnerId: data.paidByPartnerId.present
           ? data.paidByPartnerId.value
           : this.paidByPartnerId,
@@ -11619,8 +13255,10 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
           ..write('id: $id, ')
           ..write('workspaceId: $workspaceId, ')
           ..write('workerId: $workerId, ')
+          ..write('projectId: $projectId, ')
           ..write('amountCents: $amountCents, ')
-          ..write('date: $date, ')
+          ..write('paymentDate: $paymentDate, ')
+          ..write('paymentMethod: $paymentMethod, ')
           ..write('paidByPartnerId: $paidByPartnerId, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
@@ -11638,8 +13276,10 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     id,
     workspaceId,
     workerId,
+    projectId,
     amountCents,
-    date,
+    paymentDate,
+    paymentMethod,
     paidByPartnerId,
     notes,
     createdAt,
@@ -11656,8 +13296,10 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
           other.id == this.id &&
           other.workspaceId == this.workspaceId &&
           other.workerId == this.workerId &&
+          other.projectId == this.projectId &&
           other.amountCents == this.amountCents &&
-          other.date == this.date &&
+          other.paymentDate == this.paymentDate &&
+          other.paymentMethod == this.paymentMethod &&
           other.paidByPartnerId == this.paidByPartnerId &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
@@ -11672,9 +13314,11 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
   final Value<String> id;
   final Value<String> workspaceId;
   final Value<String> workerId;
+  final Value<String?> projectId;
   final Value<int> amountCents;
-  final Value<DateTime> date;
-  final Value<String> paidByPartnerId;
+  final Value<DateTime> paymentDate;
+  final Value<String> paymentMethod;
+  final Value<String?> paidByPartnerId;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -11687,8 +13331,10 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     this.id = const Value.absent(),
     this.workspaceId = const Value.absent(),
     this.workerId = const Value.absent(),
+    this.projectId = const Value.absent(),
     this.amountCents = const Value.absent(),
-    this.date = const Value.absent(),
+    this.paymentDate = const Value.absent(),
+    this.paymentMethod = const Value.absent(),
     this.paidByPartnerId = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -11703,9 +13349,11 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     required String id,
     this.workspaceId = const Value.absent(),
     required String workerId,
+    this.projectId = const Value.absent(),
     required int amountCents,
-    required DateTime date,
-    required String paidByPartnerId,
+    required DateTime paymentDate,
+    this.paymentMethod = const Value.absent(),
+    this.paidByPartnerId = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -11717,14 +13365,15 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
   }) : id = Value(id),
        workerId = Value(workerId),
        amountCents = Value(amountCents),
-       date = Value(date),
-       paidByPartnerId = Value(paidByPartnerId);
+       paymentDate = Value(paymentDate);
   static Insertable<LaborPayment> custom({
     Expression<String>? id,
     Expression<String>? workspaceId,
     Expression<String>? workerId,
+    Expression<String>? projectId,
     Expression<int>? amountCents,
-    Expression<DateTime>? date,
+    Expression<DateTime>? paymentDate,
+    Expression<String>? paymentMethod,
     Expression<String>? paidByPartnerId,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
@@ -11739,8 +13388,10 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
       if (id != null) 'id': id,
       if (workspaceId != null) 'workspace_id': workspaceId,
       if (workerId != null) 'worker_id': workerId,
+      if (projectId != null) 'project_id': projectId,
       if (amountCents != null) 'amount_cents': amountCents,
-      if (date != null) 'date': date,
+      if (paymentDate != null) 'payment_date': paymentDate,
+      if (paymentMethod != null) 'payment_method': paymentMethod,
       if (paidByPartnerId != null) 'paid_by_partner_id': paidByPartnerId,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
@@ -11757,9 +13408,11 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     Value<String>? id,
     Value<String>? workspaceId,
     Value<String>? workerId,
+    Value<String?>? projectId,
     Value<int>? amountCents,
-    Value<DateTime>? date,
-    Value<String>? paidByPartnerId,
+    Value<DateTime>? paymentDate,
+    Value<String>? paymentMethod,
+    Value<String?>? paidByPartnerId,
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -11773,8 +13426,10 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
       id: id ?? this.id,
       workspaceId: workspaceId ?? this.workspaceId,
       workerId: workerId ?? this.workerId,
+      projectId: projectId ?? this.projectId,
       amountCents: amountCents ?? this.amountCents,
-      date: date ?? this.date,
+      paymentDate: paymentDate ?? this.paymentDate,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
       paidByPartnerId: paidByPartnerId ?? this.paidByPartnerId,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
@@ -11799,11 +13454,17 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     if (workerId.present) {
       map['worker_id'] = Variable<String>(workerId.value);
     }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
     if (amountCents.present) {
       map['amount_cents'] = Variable<int>(amountCents.value);
     }
-    if (date.present) {
-      map['date'] = Variable<DateTime>(date.value);
+    if (paymentDate.present) {
+      map['payment_date'] = Variable<DateTime>(paymentDate.value);
+    }
+    if (paymentMethod.present) {
+      map['payment_method'] = Variable<String>(paymentMethod.value);
     }
     if (paidByPartnerId.present) {
       map['paid_by_partner_id'] = Variable<String>(paidByPartnerId.value);
@@ -11841,8 +13502,10 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
           ..write('id: $id, ')
           ..write('workspaceId: $workspaceId, ')
           ..write('workerId: $workerId, ')
+          ..write('projectId: $projectId, ')
           ..write('amountCents: $amountCents, ')
-          ..write('date: $date, ')
+          ..write('paymentDate: $paymentDate, ')
+          ..write('paymentMethod: $paymentMethod, ')
           ..write('paidByPartnerId: $paidByPartnerId, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
@@ -11870,6 +13533,18 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _conceptMeta = const VerificationMeta(
     'concept',
@@ -12008,6 +13683,28 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -12034,6 +13731,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     concept,
     category,
     amountCents,
@@ -12046,6 +13744,8 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -12065,6 +13765,15 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('concept')) {
       context.handle(
@@ -12153,6 +13862,18 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -12177,6 +13898,10 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       concept: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -12226,6 +13951,14 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -12245,6 +13978,7 @@ class $ExpensesTable extends Expenses with TableInfo<$ExpensesTable, Expense> {
 
 class Expense extends DataClass implements Insertable<Expense> {
   final String id;
+  final String workspaceId;
   final String concept;
   final String category;
   final int amountCents;
@@ -12257,10 +13991,13 @@ class Expense extends DataClass implements Insertable<Expense> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const Expense({
     required this.id,
+    required this.workspaceId,
     required this.concept,
     required this.category,
     required this.amountCents,
@@ -12273,6 +14010,8 @@ class Expense extends DataClass implements Insertable<Expense> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -12280,6 +14019,7 @@ class Expense extends DataClass implements Insertable<Expense> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['concept'] = Variable<String>(concept);
     map['category'] = Variable<String>(category);
     map['amount_cents'] = Variable<int>(amountCents);
@@ -12298,6 +14038,12 @@ class Expense extends DataClass implements Insertable<Expense> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -12308,6 +14054,7 @@ class Expense extends DataClass implements Insertable<Expense> {
   ExpensesCompanion toCompanion(bool nullToAbsent) {
     return ExpensesCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       concept: Value(concept),
       category: Value(category),
       amountCents: Value(amountCents),
@@ -12326,6 +14073,12 @@ class Expense extends DataClass implements Insertable<Expense> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -12340,6 +14093,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Expense(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       concept: serializer.fromJson<String>(json['concept']),
       category: serializer.fromJson<String>(json['category']),
       amountCents: serializer.fromJson<int>(json['amountCents']),
@@ -12352,6 +14106,8 @@ class Expense extends DataClass implements Insertable<Expense> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -12361,6 +14117,7 @@ class Expense extends DataClass implements Insertable<Expense> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'concept': serializer.toJson<String>(concept),
       'category': serializer.toJson<String>(category),
       'amountCents': serializer.toJson<int>(amountCents),
@@ -12373,6 +14130,8 @@ class Expense extends DataClass implements Insertable<Expense> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -12380,6 +14139,7 @@ class Expense extends DataClass implements Insertable<Expense> {
 
   Expense copyWith({
     String? id,
+    String? workspaceId,
     String? concept,
     String? category,
     int? amountCents,
@@ -12392,10 +14152,13 @@ class Expense extends DataClass implements Insertable<Expense> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Expense(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     concept: concept ?? this.concept,
     category: category ?? this.category,
     amountCents: amountCents ?? this.amountCents,
@@ -12408,12 +14171,17 @@ class Expense extends DataClass implements Insertable<Expense> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Expense copyWithCompanion(ExpensesCompanion data) {
     return Expense(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       concept: data.concept.present ? data.concept.value : this.concept,
       category: data.category.present ? data.category.value : this.category,
       amountCents: data.amountCents.present
@@ -12432,6 +14200,8 @@ class Expense extends DataClass implements Insertable<Expense> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -12441,6 +14211,7 @@ class Expense extends DataClass implements Insertable<Expense> {
   String toString() {
     return (StringBuffer('Expense(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('concept: $concept, ')
           ..write('category: $category, ')
           ..write('amountCents: $amountCents, ')
@@ -12453,6 +14224,8 @@ class Expense extends DataClass implements Insertable<Expense> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -12462,6 +14235,7 @@ class Expense extends DataClass implements Insertable<Expense> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     concept,
     category,
     amountCents,
@@ -12474,6 +14248,8 @@ class Expense extends DataClass implements Insertable<Expense> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -12482,6 +14258,7 @@ class Expense extends DataClass implements Insertable<Expense> {
       identical(this, other) ||
       (other is Expense &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.concept == this.concept &&
           other.category == this.category &&
           other.amountCents == this.amountCents &&
@@ -12494,12 +14271,15 @@ class Expense extends DataClass implements Insertable<Expense> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class ExpensesCompanion extends UpdateCompanion<Expense> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> concept;
   final Value<String> category;
   final Value<int> amountCents;
@@ -12512,11 +14292,14 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const ExpensesCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.concept = const Value.absent(),
     this.category = const Value.absent(),
     this.amountCents = const Value.absent(),
@@ -12529,12 +14312,15 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ExpensesCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String concept,
     this.category = const Value.absent(),
     this.amountCents = const Value.absent(),
@@ -12547,6 +14333,8 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -12556,6 +14344,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
        paidByPartnerId = Value(paidByPartnerId);
   static Insertable<Expense> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? concept,
     Expression<String>? category,
     Expression<int>? amountCents,
@@ -12568,12 +14357,15 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (concept != null) 'concept': concept,
       if (category != null) 'category': category,
       if (amountCents != null) 'amount_cents': amountCents,
@@ -12586,6 +14378,8 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -12594,6 +14388,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
 
   ExpensesCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? concept,
     Value<String>? category,
     Value<int>? amountCents,
@@ -12606,12 +14401,15 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return ExpensesCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       concept: concept ?? this.concept,
       category: category ?? this.category,
       amountCents: amountCents ?? this.amountCents,
@@ -12624,6 +14422,8 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -12635,6 +14435,9 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (concept.present) {
       map['concept'] = Variable<String>(concept.value);
@@ -12672,6 +14475,12 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -12688,6 +14497,7 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
   String toString() {
     return (StringBuffer('ExpensesCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('concept: $concept, ')
           ..write('category: $category, ')
           ..write('amountCents: $amountCents, ')
@@ -12700,6 +14510,8 @@ class ExpensesCompanion extends UpdateCompanion<Expense> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -12722,6 +14534,18 @@ class $CapitalMovementsTable extends CapitalMovements
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _partnerIdMeta = const VerificationMeta(
     'partnerId',
@@ -12799,6 +14623,28 @@ class $CapitalMovementsTable extends CapitalMovements
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -12825,6 +14671,7 @@ class $CapitalMovementsTable extends CapitalMovements
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     partnerId,
     type,
     amountCents,
@@ -12832,6 +14679,8 @@ class $CapitalMovementsTable extends CapitalMovements
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -12851,6 +14700,15 @@ class $CapitalMovementsTable extends CapitalMovements
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('partner_id')) {
       context.handle(
@@ -12901,6 +14759,18 @@ class $CapitalMovementsTable extends CapitalMovements
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -12925,6 +14795,10 @@ class $CapitalMovementsTable extends CapitalMovements
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       partnerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -12954,6 +14828,14 @@ class $CapitalMovementsTable extends CapitalMovements
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -12973,6 +14855,7 @@ class $CapitalMovementsTable extends CapitalMovements
 
 class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
   final String id;
+  final String workspaceId;
   final String partnerId;
   final String type;
   final int amountCents;
@@ -12980,10 +14863,13 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const CapitalMovement({
     required this.id,
+    required this.workspaceId,
     required this.partnerId,
     required this.type,
     required this.amountCents,
@@ -12991,6 +14877,8 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -12998,6 +14886,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['partner_id'] = Variable<String>(partnerId);
     map['type'] = Variable<String>(type);
     map['amount_cents'] = Variable<int>(amountCents);
@@ -13007,6 +14896,12 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -13017,6 +14912,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
   CapitalMovementsCompanion toCompanion(bool nullToAbsent) {
     return CapitalMovementsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       partnerId: Value(partnerId),
       type: Value(type),
       amountCents: Value(amountCents),
@@ -13026,6 +14922,12 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -13040,6 +14942,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CapitalMovement(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       partnerId: serializer.fromJson<String>(json['partnerId']),
       type: serializer.fromJson<String>(json['type']),
       amountCents: serializer.fromJson<int>(json['amountCents']),
@@ -13047,6 +14950,8 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -13056,6 +14961,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'partnerId': serializer.toJson<String>(partnerId),
       'type': serializer.toJson<String>(type),
       'amountCents': serializer.toJson<int>(amountCents),
@@ -13063,6 +14969,8 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -13070,6 +14978,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
 
   CapitalMovement copyWith({
     String? id,
+    String? workspaceId,
     String? partnerId,
     String? type,
     int? amountCents,
@@ -13077,10 +14986,13 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => CapitalMovement(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     partnerId: partnerId ?? this.partnerId,
     type: type ?? this.type,
     amountCents: amountCents ?? this.amountCents,
@@ -13088,12 +15000,17 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   CapitalMovement copyWithCompanion(CapitalMovementsCompanion data) {
     return CapitalMovement(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       partnerId: data.partnerId.present ? data.partnerId.value : this.partnerId,
       type: data.type.present ? data.type.value : this.type,
       amountCents: data.amountCents.present
@@ -13103,6 +15020,8 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -13112,6 +15031,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
   String toString() {
     return (StringBuffer('CapitalMovement(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('partnerId: $partnerId, ')
           ..write('type: $type, ')
           ..write('amountCents: $amountCents, ')
@@ -13119,6 +15039,8 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -13128,6 +15050,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     partnerId,
     type,
     amountCents,
@@ -13135,6 +15058,8 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -13143,6 +15068,7 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
       identical(this, other) ||
       (other is CapitalMovement &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.partnerId == this.partnerId &&
           other.type == this.type &&
           other.amountCents == this.amountCents &&
@@ -13150,12 +15076,15 @@ class CapitalMovement extends DataClass implements Insertable<CapitalMovement> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> partnerId;
   final Value<String> type;
   final Value<int> amountCents;
@@ -13163,11 +15092,14 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const CapitalMovementsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.partnerId = const Value.absent(),
     this.type = const Value.absent(),
     this.amountCents = const Value.absent(),
@@ -13175,12 +15107,15 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CapitalMovementsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String partnerId,
     this.type = const Value.absent(),
     this.amountCents = const Value.absent(),
@@ -13188,6 +15123,8 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -13196,6 +15133,7 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
        date = Value(date);
   static Insertable<CapitalMovement> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? partnerId,
     Expression<String>? type,
     Expression<int>? amountCents,
@@ -13203,12 +15141,15 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (partnerId != null) 'partner_id': partnerId,
       if (type != null) 'type': type,
       if (amountCents != null) 'amount_cents': amountCents,
@@ -13216,6 +15157,8 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -13224,6 +15167,7 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
 
   CapitalMovementsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? partnerId,
     Value<String>? type,
     Value<int>? amountCents,
@@ -13231,12 +15175,15 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return CapitalMovementsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       partnerId: partnerId ?? this.partnerId,
       type: type ?? this.type,
       amountCents: amountCents ?? this.amountCents,
@@ -13244,6 +15191,8 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -13255,6 +15204,9 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (partnerId.present) {
       map['partner_id'] = Variable<String>(partnerId.value);
@@ -13277,6 +15229,12 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -13293,6 +15251,7 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
   String toString() {
     return (StringBuffer('CapitalMovementsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('partnerId: $partnerId, ')
           ..write('type: $type, ')
           ..write('amountCents: $amountCents, ')
@@ -13300,6 +15259,8 @@ class CapitalMovementsCompanion extends UpdateCompanion<CapitalMovement> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -13322,6 +15283,18 @@ class $CollectionsTable extends Collections
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _clientIdMeta = const VerificationMeta(
     'clientId',
@@ -13437,6 +15410,28 @@ class $CollectionsTable extends Collections
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -13463,6 +15458,7 @@ class $CollectionsTable extends Collections
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     clientId,
     projectId,
     visitId,
@@ -13473,6 +15469,8 @@ class $CollectionsTable extends Collections
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -13492,6 +15490,15 @@ class $CollectionsTable extends Collections
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('client_id')) {
       context.handle(
@@ -13568,6 +15575,18 @@ class $CollectionsTable extends Collections
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -13592,6 +15611,10 @@ class $CollectionsTable extends Collections
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       clientId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -13633,6 +15656,14 @@ class $CollectionsTable extends Collections
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -13652,6 +15683,7 @@ class $CollectionsTable extends Collections
 
 class Collection extends DataClass implements Insertable<Collection> {
   final String id;
+  final String workspaceId;
   final String clientId;
   final String? projectId;
   final String? visitId;
@@ -13662,10 +15694,13 @@ class Collection extends DataClass implements Insertable<Collection> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const Collection({
     required this.id,
+    required this.workspaceId,
     required this.clientId,
     this.projectId,
     this.visitId,
@@ -13676,6 +15711,8 @@ class Collection extends DataClass implements Insertable<Collection> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -13683,6 +15720,7 @@ class Collection extends DataClass implements Insertable<Collection> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || projectId != null) {
       map['project_id'] = Variable<String>(projectId);
@@ -13699,6 +15737,12 @@ class Collection extends DataClass implements Insertable<Collection> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -13709,6 +15753,7 @@ class Collection extends DataClass implements Insertable<Collection> {
   CollectionsCompanion toCompanion(bool nullToAbsent) {
     return CollectionsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       clientId: Value(clientId),
       projectId: projectId == null && nullToAbsent
           ? const Value.absent()
@@ -13725,6 +15770,12 @@ class Collection extends DataClass implements Insertable<Collection> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -13739,6 +15790,7 @@ class Collection extends DataClass implements Insertable<Collection> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Collection(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       clientId: serializer.fromJson<String>(json['clientId']),
       projectId: serializer.fromJson<String?>(json['projectId']),
       visitId: serializer.fromJson<String?>(json['visitId']),
@@ -13751,6 +15803,8 @@ class Collection extends DataClass implements Insertable<Collection> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -13760,6 +15814,7 @@ class Collection extends DataClass implements Insertable<Collection> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'clientId': serializer.toJson<String>(clientId),
       'projectId': serializer.toJson<String?>(projectId),
       'visitId': serializer.toJson<String?>(visitId),
@@ -13770,6 +15825,8 @@ class Collection extends DataClass implements Insertable<Collection> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -13777,6 +15834,7 @@ class Collection extends DataClass implements Insertable<Collection> {
 
   Collection copyWith({
     String? id,
+    String? workspaceId,
     String? clientId,
     Value<String?> projectId = const Value.absent(),
     Value<String?> visitId = const Value.absent(),
@@ -13787,10 +15845,13 @@ class Collection extends DataClass implements Insertable<Collection> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Collection(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     clientId: clientId ?? this.clientId,
     projectId: projectId.present ? projectId.value : this.projectId,
     visitId: visitId.present ? visitId.value : this.visitId,
@@ -13801,12 +15862,17 @@ class Collection extends DataClass implements Insertable<Collection> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Collection copyWithCompanion(CollectionsCompanion data) {
     return Collection(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
       visitId: data.visitId.present ? data.visitId.value : this.visitId,
@@ -13823,6 +15889,8 @@ class Collection extends DataClass implements Insertable<Collection> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -13832,6 +15900,7 @@ class Collection extends DataClass implements Insertable<Collection> {
   String toString() {
     return (StringBuffer('Collection(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('clientId: $clientId, ')
           ..write('projectId: $projectId, ')
           ..write('visitId: $visitId, ')
@@ -13842,6 +15911,8 @@ class Collection extends DataClass implements Insertable<Collection> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -13851,6 +15922,7 @@ class Collection extends DataClass implements Insertable<Collection> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     clientId,
     projectId,
     visitId,
@@ -13861,6 +15933,8 @@ class Collection extends DataClass implements Insertable<Collection> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -13869,6 +15943,7 @@ class Collection extends DataClass implements Insertable<Collection> {
       identical(this, other) ||
       (other is Collection &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.clientId == this.clientId &&
           other.projectId == this.projectId &&
           other.visitId == this.visitId &&
@@ -13879,12 +15954,15 @@ class Collection extends DataClass implements Insertable<Collection> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class CollectionsCompanion extends UpdateCompanion<Collection> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> clientId;
   final Value<String?> projectId;
   final Value<String?> visitId;
@@ -13895,11 +15973,14 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const CollectionsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.projectId = const Value.absent(),
     this.visitId = const Value.absent(),
@@ -13910,12 +15991,15 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CollectionsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String clientId,
     this.projectId = const Value.absent(),
     this.visitId = const Value.absent(),
@@ -13926,6 +16010,8 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -13935,6 +16021,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
        receivedByPartnerId = Value(receivedByPartnerId);
   static Insertable<Collection> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? clientId,
     Expression<String>? projectId,
     Expression<String>? visitId,
@@ -13945,12 +16032,15 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (clientId != null) 'client_id': clientId,
       if (projectId != null) 'project_id': projectId,
       if (visitId != null) 'visit_id': visitId,
@@ -13962,6 +16052,8 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -13970,6 +16062,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
 
   CollectionsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? clientId,
     Value<String?>? projectId,
     Value<String?>? visitId,
@@ -13980,12 +16073,15 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return CollectionsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       clientId: clientId ?? this.clientId,
       projectId: projectId ?? this.projectId,
       visitId: visitId ?? this.visitId,
@@ -13996,6 +16092,8 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -14007,6 +16105,9 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -14040,6 +16141,12 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -14056,6 +16163,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
   String toString() {
     return (StringBuffer('CollectionsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('clientId: $clientId, ')
           ..write('projectId: $projectId, ')
           ..write('visitId: $visitId, ')
@@ -14066,6 +16174,8 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -16060,6 +18170,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
+        'maintenance_visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('tool_assignments', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
         'projects',
         limitUpdateKind: UpdateKind.delete,
       ),
@@ -16071,6 +18188,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('work_logs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('labor_payments', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'partners',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('labor_payments', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -19676,6 +21807,24 @@ final class $$ProjectsTableReferences
     );
   }
 
+  static MultiTypedResultKey<$LaborPaymentsTable, List<LaborPayment>>
+  _laborPaymentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.laborPayments,
+    aliasName: $_aliasNameGenerator(db.projects.id, db.laborPayments.projectId),
+  );
+
+  $$LaborPaymentsTableProcessedTableManager get laborPaymentsRefs {
+    final manager = $$LaborPaymentsTableTableManager(
+      $_db,
+      $_db.laborPayments,
+    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_laborPaymentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
@@ -19905,6 +22054,31 @@ class $$ProjectsTableFilterComposer
           }) => $$WorkLogsTableFilterComposer(
             $db: $db,
             $table: $db.workLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> laborPaymentsRefs(
+    Expression<bool> Function($$LaborPaymentsTableFilterComposer f) f,
+  ) {
+    final $$LaborPaymentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.laborPayments,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LaborPaymentsTableFilterComposer(
+            $db: $db,
+            $table: $db.laborPayments,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -20273,6 +22447,31 @@ class $$ProjectsTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> laborPaymentsRefs<T extends Object>(
+    Expression<T> Function($$LaborPaymentsTableAnnotationComposer a) f,
+  ) {
+    final $$LaborPaymentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.laborPayments,
+      getReferencedColumn: (t) => t.projectId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LaborPaymentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.laborPayments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> expensesRefs<T extends Object>(
     Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
   ) {
@@ -20343,6 +22542,7 @@ class $$ProjectsTableTableManager
             bool stockMovementsRefs,
             bool toolAssignmentsRefs,
             bool workLogsRefs,
+            bool laborPaymentsRefs,
             bool expensesRefs,
             bool collectionsRefs,
           })
@@ -20449,6 +22649,7 @@ class $$ProjectsTableTableManager
                 stockMovementsRefs = false,
                 toolAssignmentsRefs = false,
                 workLogsRefs = false,
+                laborPaymentsRefs = false,
                 expensesRefs = false,
                 collectionsRefs = false,
               }) {
@@ -20458,6 +22659,7 @@ class $$ProjectsTableTableManager
                     if (stockMovementsRefs) db.stockMovements,
                     if (toolAssignmentsRefs) db.toolAssignments,
                     if (workLogsRefs) db.workLogs,
+                    if (laborPaymentsRefs) db.laborPayments,
                     if (expensesRefs) db.expenses,
                     if (collectionsRefs) db.collections,
                   ],
@@ -20571,6 +22773,27 @@ class $$ProjectsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (laborPaymentsRefs)
+                        await $_getPrefetchedData<
+                          Project,
+                          $ProjectsTable,
+                          LaborPayment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._laborPaymentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).laborPaymentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.projectId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                       if (expensesRefs)
                         await $_getPrefetchedData<
                           Project,
@@ -20639,6 +22862,7 @@ typedef $$ProjectsTableProcessedTableManager =
         bool stockMovementsRefs,
         bool toolAssignmentsRefs,
         bool workLogsRefs,
+        bool laborPaymentsRefs,
         bool expensesRefs,
         bool collectionsRefs,
       })
@@ -20646,17 +22870,21 @@ typedef $$ProjectsTableProcessedTableManager =
 typedef $$MaintenancePlansTableCreateCompanionBuilder =
     MaintenancePlansCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String title,
       required String clientId,
       Value<String?> locationId,
       Value<String?> description,
       Value<String> frequencyType,
       Value<int> intervalDays,
+      Value<DateTime?> nextDate,
       Value<int> estimatedCostCents,
       Value<String> assignedPartnerIdsJson,
       Value<bool> isActive,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -20664,17 +22892,21 @@ typedef $$MaintenancePlansTableCreateCompanionBuilder =
 typedef $$MaintenancePlansTableUpdateCompanionBuilder =
     MaintenancePlansCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> title,
       Value<String> clientId,
       Value<String?> locationId,
       Value<String?> description,
       Value<String> frequencyType,
       Value<int> intervalDays,
+      Value<DateTime?> nextDate,
       Value<int> estimatedCostCents,
       Value<String> assignedPartnerIdsJson,
       Value<bool> isActive,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -20769,6 +23001,11 @@ class $$MaintenancePlansTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnFilters(column),
@@ -20786,6 +23023,11 @@ class $$MaintenancePlansTableFilterComposer
 
   ColumnFilters<int> get intervalDays => $composableBuilder(
     column: $table.intervalDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextDate => $composableBuilder(
+    column: $table.nextDate,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20811,6 +23053,16 @@ class $$MaintenancePlansTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20910,6 +23162,11 @@ class $$MaintenancePlansTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -20927,6 +23184,11 @@ class $$MaintenancePlansTableOrderingComposer
 
   ColumnOrderings<int> get intervalDays => $composableBuilder(
     column: $table.intervalDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextDate => $composableBuilder(
+    column: $table.nextDate,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -20952,6 +23214,16 @@ class $$MaintenancePlansTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -21024,6 +23296,11 @@ class $$MaintenancePlansTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -21041,6 +23318,9 @@ class $$MaintenancePlansTableAnnotationComposer
     column: $table.intervalDays,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get nextDate =>
+      $composableBuilder(column: $table.nextDate, builder: (column) => column);
 
   GeneratedColumn<int> get estimatedCostCents => $composableBuilder(
     column: $table.estimatedCostCents,
@@ -21060,6 +23340,12 @@ class $$MaintenancePlansTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -21175,33 +23461,41 @@ class $$MaintenancePlansTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String> clientId = const Value.absent(),
                 Value<String?> locationId = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String> frequencyType = const Value.absent(),
                 Value<int> intervalDays = const Value.absent(),
+                Value<DateTime?> nextDate = const Value.absent(),
                 Value<int> estimatedCostCents = const Value.absent(),
                 Value<String> assignedPartnerIdsJson = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MaintenancePlansCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 title: title,
                 clientId: clientId,
                 locationId: locationId,
                 description: description,
                 frequencyType: frequencyType,
                 intervalDays: intervalDays,
+                nextDate: nextDate,
                 estimatedCostCents: estimatedCostCents,
                 assignedPartnerIdsJson: assignedPartnerIdsJson,
                 isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -21209,33 +23503,41 @@ class $$MaintenancePlansTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String title,
                 required String clientId,
                 Value<String?> locationId = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<String> frequencyType = const Value.absent(),
                 Value<int> intervalDays = const Value.absent(),
+                Value<DateTime?> nextDate = const Value.absent(),
                 Value<int> estimatedCostCents = const Value.absent(),
                 Value<String> assignedPartnerIdsJson = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MaintenancePlansCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 title: title,
                 clientId: clientId,
                 locationId: locationId,
                 description: description,
                 frequencyType: frequencyType,
                 intervalDays: intervalDays,
+                nextDate: nextDate,
                 estimatedCostCents: estimatedCostCents,
                 assignedPartnerIdsJson: assignedPartnerIdsJson,
                 isActive: isActive,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -21360,6 +23662,7 @@ typedef $$MaintenancePlansTableProcessedTableManager =
 typedef $$MaintenanceVisitsTableCreateCompanionBuilder =
     MaintenanceVisitsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String planId,
       required DateTime scheduledDate,
       Value<DateTime?> completedDate,
@@ -21367,6 +23670,8 @@ typedef $$MaintenanceVisitsTableCreateCompanionBuilder =
       Value<String?> technicianNotes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -21374,6 +23679,7 @@ typedef $$MaintenanceVisitsTableCreateCompanionBuilder =
 typedef $$MaintenanceVisitsTableUpdateCompanionBuilder =
     MaintenanceVisitsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> planId,
       Value<DateTime> scheduledDate,
       Value<DateTime?> completedDate,
@@ -21381,6 +23687,8 @@ typedef $$MaintenanceVisitsTableUpdateCompanionBuilder =
       Value<String?> technicianNotes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -21437,6 +23745,29 @@ final class $$MaintenanceVisitsTableReferences
     ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_stockMovementsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
+  _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.toolAssignments,
+    aliasName: $_aliasNameGenerator(
+      db.maintenanceVisits.id,
+      db.toolAssignments.maintenanceVisitId,
+    ),
+  );
+
+  $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
+    final manager =
+        $$ToolAssignmentsTableTableManager($_db, $_db.toolAssignments).filter(
+          (f) => f.maintenanceVisitId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _toolAssignmentsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -21521,6 +23852,11 @@ class $$MaintenanceVisitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get scheduledDate => $composableBuilder(
     column: $table.scheduledDate,
     builder: (column) => ColumnFilters(column),
@@ -21548,6 +23884,16 @@ class $$MaintenanceVisitsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -21600,6 +23946,31 @@ class $$MaintenanceVisitsTableFilterComposer
           }) => $$StockMovementsTableFilterComposer(
             $db: $db,
             $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> toolAssignmentsRefs(
+    Expression<bool> Function($$ToolAssignmentsTableFilterComposer f) f,
+  ) {
+    final $$ToolAssignmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.maintenanceVisitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -21699,6 +24070,11 @@ class $$MaintenanceVisitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get scheduledDate => $composableBuilder(
     column: $table.scheduledDate,
     builder: (column) => ColumnOrderings(column),
@@ -21726,6 +24102,16 @@ class $$MaintenanceVisitsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -21775,6 +24161,11 @@ class $$MaintenanceVisitsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get scheduledDate => $composableBuilder(
     column: $table.scheduledDate,
     builder: (column) => column,
@@ -21798,6 +24189,12 @@ class $$MaintenanceVisitsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -21844,6 +24241,31 @@ class $$MaintenanceVisitsTableAnnotationComposer
           }) => $$StockMovementsTableAnnotationComposer(
             $db: $db,
             $table: $db.stockMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> toolAssignmentsRefs<T extends Object>(
+    Expression<T> Function($$ToolAssignmentsTableAnnotationComposer a) f,
+  ) {
+    final $$ToolAssignmentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.toolAssignments,
+      getReferencedColumn: (t) => t.maintenanceVisitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ToolAssignmentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.toolAssignments,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -21945,6 +24367,7 @@ class $$MaintenanceVisitsTableTableManager
           PrefetchHooks Function({
             bool planId,
             bool stockMovementsRefs,
+            bool toolAssignmentsRefs,
             bool workLogsRefs,
             bool expensesRefs,
             bool collectionsRefs,
@@ -21969,6 +24392,7 @@ class $$MaintenanceVisitsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> planId = const Value.absent(),
                 Value<DateTime> scheduledDate = const Value.absent(),
                 Value<DateTime?> completedDate = const Value.absent(),
@@ -21976,11 +24400,14 @@ class $$MaintenanceVisitsTableTableManager
                 Value<String?> technicianNotes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MaintenanceVisitsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 planId: planId,
                 scheduledDate: scheduledDate,
                 completedDate: completedDate,
@@ -21988,6 +24415,8 @@ class $$MaintenanceVisitsTableTableManager
                 technicianNotes: technicianNotes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -21995,6 +24424,7 @@ class $$MaintenanceVisitsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String planId,
                 required DateTime scheduledDate,
                 Value<DateTime?> completedDate = const Value.absent(),
@@ -22002,11 +24432,14 @@ class $$MaintenanceVisitsTableTableManager
                 Value<String?> technicianNotes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MaintenanceVisitsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 planId: planId,
                 scheduledDate: scheduledDate,
                 completedDate: completedDate,
@@ -22014,6 +24447,8 @@ class $$MaintenanceVisitsTableTableManager
                 technicianNotes: technicianNotes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -22030,6 +24465,7 @@ class $$MaintenanceVisitsTableTableManager
               ({
                 planId = false,
                 stockMovementsRefs = false,
+                toolAssignmentsRefs = false,
                 workLogsRefs = false,
                 expensesRefs = false,
                 collectionsRefs = false,
@@ -22038,6 +24474,7 @@ class $$MaintenanceVisitsTableTableManager
                   db: db,
                   explicitlyWatchedTables: [
                     if (stockMovementsRefs) db.stockMovements,
+                    if (toolAssignmentsRefs) db.toolAssignments,
                     if (workLogsRefs) db.workLogs,
                     if (expensesRefs) db.expenses,
                     if (collectionsRefs) db.collections,
@@ -22096,6 +24533,27 @@ class $$MaintenanceVisitsTableTableManager
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (toolAssignmentsRefs)
+                        await $_getPrefetchedData<
+                          MaintenanceVisit,
+                          $MaintenanceVisitsTable,
+                          ToolAssignment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenanceVisitsTableReferences
+                              ._toolAssignmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenanceVisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).toolAssignmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.maintenanceVisitId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -22185,6 +24643,7 @@ typedef $$MaintenanceVisitsTableProcessedTableManager =
       PrefetchHooks Function({
         bool planId,
         bool stockMovementsRefs,
+        bool toolAssignmentsRefs,
         bool workLogsRefs,
         bool expensesRefs,
         bool collectionsRefs,
@@ -22193,6 +24652,7 @@ typedef $$MaintenanceVisitsTableProcessedTableManager =
 typedef $$InventoryItemsTableCreateCompanionBuilder =
     InventoryItemsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       Value<String?> sku,
       required String name,
       Value<String> category,
@@ -22200,8 +24660,11 @@ typedef $$InventoryItemsTableCreateCompanionBuilder =
       Value<double> minStockAlert,
       Value<int> defaultCostCents,
       Value<bool> isActive,
+      Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -22209,6 +24672,7 @@ typedef $$InventoryItemsTableCreateCompanionBuilder =
 typedef $$InventoryItemsTableUpdateCompanionBuilder =
     InventoryItemsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String?> sku,
       Value<String> name,
       Value<String> category,
@@ -22216,8 +24680,11 @@ typedef $$InventoryItemsTableUpdateCompanionBuilder =
       Value<double> minStockAlert,
       Value<int> defaultCostCents,
       Value<bool> isActive,
+      Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -22267,6 +24734,11 @@ class $$InventoryItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get sku => $composableBuilder(
     column: $table.sku,
     builder: (column) => ColumnFilters(column),
@@ -22302,6 +24774,11 @@ class $$InventoryItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -22309,6 +24786,16 @@ class $$InventoryItemsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -22362,6 +24849,11 @@ class $$InventoryItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get sku => $composableBuilder(
     column: $table.sku,
     builder: (column) => ColumnOrderings(column),
@@ -22397,6 +24889,11 @@ class $$InventoryItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -22404,6 +24901,16 @@ class $$InventoryItemsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -22430,6 +24937,11 @@ class $$InventoryItemsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get sku =>
       $composableBuilder(column: $table.sku, builder: (column) => column);
 
@@ -22455,11 +24967,20 @@ class $$InventoryItemsTableAnnotationComposer
   GeneratedColumn<bool> get isActive =>
       $composableBuilder(column: $table.isActive, builder: (column) => column);
 
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -22524,6 +25045,7 @@ class $$InventoryItemsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> sku = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String> category = const Value.absent(),
@@ -22531,13 +25053,17 @@ class $$InventoryItemsTableTableManager
                 Value<double> minStockAlert = const Value.absent(),
                 Value<int> defaultCostCents = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => InventoryItemsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 sku: sku,
                 name: name,
                 category: category,
@@ -22545,8 +25071,11 @@ class $$InventoryItemsTableTableManager
                 minStockAlert: minStockAlert,
                 defaultCostCents: defaultCostCents,
                 isActive: isActive,
+                notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -22554,6 +25083,7 @@ class $$InventoryItemsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> sku = const Value.absent(),
                 required String name,
                 Value<String> category = const Value.absent(),
@@ -22561,13 +25091,17 @@ class $$InventoryItemsTableTableManager
                 Value<double> minStockAlert = const Value.absent(),
                 Value<int> defaultCostCents = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => InventoryItemsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 sku: sku,
                 name: name,
                 category: category,
@@ -22575,8 +25109,11 @@ class $$InventoryItemsTableTableManager
                 minStockAlert: minStockAlert,
                 defaultCostCents: defaultCostCents,
                 isActive: isActive,
+                notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -22642,6 +25179,7 @@ typedef $$InventoryItemsTableProcessedTableManager =
 typedef $$SuppliersTableCreateCompanionBuilder =
     SuppliersCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String name,
       Value<String?> phone,
       Value<String?> taxId,
@@ -22649,6 +25187,8 @@ typedef $$SuppliersTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -22656,6 +25196,7 @@ typedef $$SuppliersTableCreateCompanionBuilder =
 typedef $$SuppliersTableUpdateCompanionBuilder =
     SuppliersCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> name,
       Value<String?> phone,
       Value<String?> taxId,
@@ -22663,6 +25204,8 @@ typedef $$SuppliersTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -22705,6 +25248,11 @@ class $$SuppliersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnFilters(column),
@@ -22737,6 +25285,16 @@ class $$SuppliersTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -22790,6 +25348,11 @@ class $$SuppliersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -22825,6 +25388,16 @@ class $$SuppliersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get version => $composableBuilder(
     column: $table.version,
     builder: (column) => ColumnOrderings(column),
@@ -22848,6 +25421,11 @@ class $$SuppliersTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
@@ -22868,6 +25446,12 @@ class $$SuppliersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -22930,6 +25514,7 @@ class $$SuppliersTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
                 Value<String?> taxId = const Value.absent(),
@@ -22937,11 +25522,14 @@ class $$SuppliersTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SuppliersCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 name: name,
                 phone: phone,
                 taxId: taxId,
@@ -22949,6 +25537,8 @@ class $$SuppliersTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -22956,6 +25546,7 @@ class $$SuppliersTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String name,
                 Value<String?> phone = const Value.absent(),
                 Value<String?> taxId = const Value.absent(),
@@ -22963,11 +25554,14 @@ class $$SuppliersTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SuppliersCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 name: name,
                 phone: phone,
                 taxId: taxId,
@@ -22975,6 +25569,8 @@ class $$SuppliersTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -23038,6 +25634,7 @@ typedef $$SuppliersTableProcessedTableManager =
 typedef $$PurchasesTableCreateCompanionBuilder =
     PurchasesCompanion Function({
       required String id,
+      Value<String> workspaceId,
       Value<String?> supplierId,
       required String paidByPartnerId,
       required int totalAmountCents,
@@ -23045,6 +25642,8 @@ typedef $$PurchasesTableCreateCompanionBuilder =
       Value<String?> invoiceNumber,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -23052,6 +25651,7 @@ typedef $$PurchasesTableCreateCompanionBuilder =
 typedef $$PurchasesTableUpdateCompanionBuilder =
     PurchasesCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String?> supplierId,
       Value<String> paidByPartnerId,
       Value<int> totalAmountCents,
@@ -23059,6 +25659,8 @@ typedef $$PurchasesTableUpdateCompanionBuilder =
       Value<String?> invoiceNumber,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -23142,6 +25744,11 @@ class $$PurchasesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get totalAmountCents => $composableBuilder(
     column: $table.totalAmountCents,
     builder: (column) => ColumnFilters(column),
@@ -23164,6 +25771,16 @@ class $$PurchasesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23263,6 +25880,11 @@ class $$PurchasesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get totalAmountCents => $composableBuilder(
     column: $table.totalAmountCents,
     builder: (column) => ColumnOrderings(column),
@@ -23285,6 +25907,16 @@ class $$PurchasesTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23357,6 +25989,11 @@ class $$PurchasesTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get totalAmountCents => $composableBuilder(
     column: $table.totalAmountCents,
     builder: (column) => column,
@@ -23375,6 +26012,12 @@ class $$PurchasesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -23487,6 +26130,7 @@ class $$PurchasesTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> supplierId = const Value.absent(),
                 Value<String> paidByPartnerId = const Value.absent(),
                 Value<int> totalAmountCents = const Value.absent(),
@@ -23494,11 +26138,14 @@ class $$PurchasesTableTableManager
                 Value<String?> invoiceNumber = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PurchasesCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 supplierId: supplierId,
                 paidByPartnerId: paidByPartnerId,
                 totalAmountCents: totalAmountCents,
@@ -23506,6 +26153,8 @@ class $$PurchasesTableTableManager
                 invoiceNumber: invoiceNumber,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -23513,6 +26162,7 @@ class $$PurchasesTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> supplierId = const Value.absent(),
                 required String paidByPartnerId,
                 required int totalAmountCents,
@@ -23520,11 +26170,14 @@ class $$PurchasesTableTableManager
                 Value<String?> invoiceNumber = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PurchasesCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 supplierId: supplierId,
                 paidByPartnerId: paidByPartnerId,
                 totalAmountCents: totalAmountCents,
@@ -23532,6 +26185,8 @@ class $$PurchasesTableTableManager
                 invoiceNumber: invoiceNumber,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -23652,10 +26307,12 @@ typedef $$PurchasesTableProcessedTableManager =
 typedef $$StockMovementsTableCreateCompanionBuilder =
     StockMovementsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String itemId,
       Value<String> movementType,
       required double quantity,
       Value<int> unitCostCents,
+      Value<int> totalCostCents,
       Value<String?> projectId,
       Value<String?> visitId,
       Value<String?> purchaseId,
@@ -23663,6 +26320,8 @@ typedef $$StockMovementsTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -23670,10 +26329,12 @@ typedef $$StockMovementsTableCreateCompanionBuilder =
 typedef $$StockMovementsTableUpdateCompanionBuilder =
     StockMovementsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> itemId,
       Value<String> movementType,
       Value<double> quantity,
       Value<int> unitCostCents,
+      Value<int> totalCostCents,
       Value<String?> projectId,
       Value<String?> visitId,
       Value<String?> purchaseId,
@@ -23681,6 +26342,8 @@ typedef $$StockMovementsTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -23788,6 +26451,11 @@ class $$StockMovementsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get movementType => $composableBuilder(
     column: $table.movementType,
     builder: (column) => ColumnFilters(column),
@@ -23800,6 +26468,11 @@ class $$StockMovementsTableFilterComposer
 
   ColumnFilters<int> get unitCostCents => $composableBuilder(
     column: $table.unitCostCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalCostCents => $composableBuilder(
+    column: $table.totalCostCents,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23820,6 +26493,16 @@ class $$StockMovementsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23940,6 +26623,11 @@ class $$StockMovementsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get movementType => $composableBuilder(
     column: $table.movementType,
     builder: (column) => ColumnOrderings(column),
@@ -23952,6 +26640,11 @@ class $$StockMovementsTableOrderingComposer
 
   ColumnOrderings<int> get unitCostCents => $composableBuilder(
     column: $table.unitCostCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalCostCents => $composableBuilder(
+    column: $table.totalCostCents,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23972,6 +26665,16 @@ class $$StockMovementsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24090,6 +26793,11 @@ class $$StockMovementsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get movementType => $composableBuilder(
     column: $table.movementType,
     builder: (column) => column,
@@ -24100,6 +26808,11 @@ class $$StockMovementsTableAnnotationComposer
 
   GeneratedColumn<int> get unitCostCents => $composableBuilder(
     column: $table.unitCostCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalCostCents => $composableBuilder(
+    column: $table.totalCostCents,
     builder: (column) => column,
   );
 
@@ -24114,6 +26827,12 @@ class $$StockMovementsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -24251,10 +26970,12 @@ class $$StockMovementsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> itemId = const Value.absent(),
                 Value<String> movementType = const Value.absent(),
                 Value<double> quantity = const Value.absent(),
                 Value<int> unitCostCents = const Value.absent(),
+                Value<int> totalCostCents = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
                 Value<String?> visitId = const Value.absent(),
                 Value<String?> purchaseId = const Value.absent(),
@@ -24262,15 +26983,19 @@ class $$StockMovementsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => StockMovementsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 itemId: itemId,
                 movementType: movementType,
                 quantity: quantity,
                 unitCostCents: unitCostCents,
+                totalCostCents: totalCostCents,
                 projectId: projectId,
                 visitId: visitId,
                 purchaseId: purchaseId,
@@ -24278,6 +27003,8 @@ class $$StockMovementsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -24285,10 +27012,12 @@ class $$StockMovementsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String itemId,
                 Value<String> movementType = const Value.absent(),
                 required double quantity,
                 Value<int> unitCostCents = const Value.absent(),
+                Value<int> totalCostCents = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
                 Value<String?> visitId = const Value.absent(),
                 Value<String?> purchaseId = const Value.absent(),
@@ -24296,15 +27025,19 @@ class $$StockMovementsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => StockMovementsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 itemId: itemId,
                 movementType: movementType,
                 quantity: quantity,
                 unitCostCents: unitCostCents,
+                totalCostCents: totalCostCents,
                 projectId: projectId,
                 visitId: visitId,
                 purchaseId: purchaseId,
@@ -24312,6 +27045,8 @@ class $$StockMovementsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -24444,16 +27179,21 @@ typedef $$StockMovementsTableProcessedTableManager =
 typedef $$ToolsTableCreateCompanionBuilder =
     ToolsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       Value<String?> code,
       required String name,
+      Value<String> category,
       Value<String?> brandModel,
       Value<String?> serialNumber,
       Value<DateTime?> purchaseDate,
       Value<int> purchasePriceCents,
       Value<String> currentStatus,
       Value<String> condition,
+      Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -24461,16 +27201,21 @@ typedef $$ToolsTableCreateCompanionBuilder =
 typedef $$ToolsTableUpdateCompanionBuilder =
     ToolsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String?> code,
       Value<String> name,
+      Value<String> category,
       Value<String?> brandModel,
       Value<String?> serialNumber,
       Value<DateTime?> purchaseDate,
       Value<int> purchasePriceCents,
       Value<String> currentStatus,
       Value<String> condition,
+      Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -24514,6 +27259,11 @@ class $$ToolsTableFilterComposer extends Composer<_$AppDatabase, $ToolsTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnFilters(column),
@@ -24521,6 +27271,11 @@ class $$ToolsTableFilterComposer extends Composer<_$AppDatabase, $ToolsTable> {
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24554,6 +27309,11 @@ class $$ToolsTableFilterComposer extends Composer<_$AppDatabase, $ToolsTable> {
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -24561,6 +27321,16 @@ class $$ToolsTableFilterComposer extends Composer<_$AppDatabase, $ToolsTable> {
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24614,6 +27384,11 @@ class $$ToolsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnOrderings(column),
@@ -24621,6 +27396,11 @@ class $$ToolsTableOrderingComposer
 
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24654,6 +27434,11 @@ class $$ToolsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -24661,6 +27446,16 @@ class $$ToolsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24687,11 +27482,19 @@ class $$ToolsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
 
   GeneratedColumn<String> get brandModel => $composableBuilder(
     column: $table.brandModel,
@@ -24721,11 +27524,20 @@ class $$ToolsTableAnnotationComposer
   GeneratedColumn<String> get condition =>
       $composableBuilder(column: $table.condition, builder: (column) => column);
 
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -24788,31 +27600,41 @@ class $$ToolsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> code = const Value.absent(),
                 Value<String> name = const Value.absent(),
+                Value<String> category = const Value.absent(),
                 Value<String?> brandModel = const Value.absent(),
                 Value<String?> serialNumber = const Value.absent(),
                 Value<DateTime?> purchaseDate = const Value.absent(),
                 Value<int> purchasePriceCents = const Value.absent(),
                 Value<String> currentStatus = const Value.absent(),
                 Value<String> condition = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ToolsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 code: code,
                 name: name,
+                category: category,
                 brandModel: brandModel,
                 serialNumber: serialNumber,
                 purchaseDate: purchaseDate,
                 purchasePriceCents: purchasePriceCents,
                 currentStatus: currentStatus,
                 condition: condition,
+                notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -24820,31 +27642,41 @@ class $$ToolsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> code = const Value.absent(),
                 required String name,
+                Value<String> category = const Value.absent(),
                 Value<String?> brandModel = const Value.absent(),
                 Value<String?> serialNumber = const Value.absent(),
                 Value<DateTime?> purchaseDate = const Value.absent(),
                 Value<int> purchasePriceCents = const Value.absent(),
                 Value<String> currentStatus = const Value.absent(),
                 Value<String> condition = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ToolsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 code: code,
                 name: name,
+                category: category,
                 brandModel: brandModel,
                 serialNumber: serialNumber,
                 purchaseDate: purchaseDate,
                 purchasePriceCents: purchasePriceCents,
                 currentStatus: currentStatus,
                 condition: condition,
+                notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -24907,16 +27739,21 @@ typedef $$ToolsTableProcessedTableManager =
 typedef $$ToolAssignmentsTableCreateCompanionBuilder =
     ToolAssignmentsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String toolId,
       Value<String?> workerId,
       Value<String?> projectId,
+      Value<String?> maintenanceVisitId,
       Value<DateTime> assignedAt,
+      Value<DateTime?> expectedReturnAt,
       Value<DateTime?> returnedAt,
       Value<String> conditionOut,
       Value<String?> conditionIn,
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -24924,16 +27761,21 @@ typedef $$ToolAssignmentsTableCreateCompanionBuilder =
 typedef $$ToolAssignmentsTableUpdateCompanionBuilder =
     ToolAssignmentsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> toolId,
       Value<String?> workerId,
       Value<String?> projectId,
+      Value<String?> maintenanceVisitId,
       Value<DateTime> assignedAt,
+      Value<DateTime?> expectedReturnAt,
       Value<DateTime?> returnedAt,
       Value<String> conditionOut,
       Value<String?> conditionIn,
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -25003,6 +27845,28 @@ final class $$ToolAssignmentsTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static $MaintenanceVisitsTable _maintenanceVisitIdTable(_$AppDatabase db) =>
+      db.maintenanceVisits.createAlias(
+        $_aliasNameGenerator(
+          db.toolAssignments.maintenanceVisitId,
+          db.maintenanceVisits.id,
+        ),
+      );
+
+  $$MaintenanceVisitsTableProcessedTableManager? get maintenanceVisitId {
+    final $_column = $_itemColumn<String>('maintenance_visit_id');
+    if ($_column == null) return null;
+    final manager = $$MaintenanceVisitsTableTableManager(
+      $_db,
+      $_db.maintenanceVisits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_maintenanceVisitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
 }
 
 class $$ToolAssignmentsTableFilterComposer
@@ -25019,8 +27883,18 @@ class $$ToolAssignmentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get assignedAt => $composableBuilder(
     column: $table.assignedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expectedReturnAt => $composableBuilder(
+    column: $table.expectedReturnAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -25051,6 +27925,16 @@ class $$ToolAssignmentsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -25132,6 +28016,29 @@ class $$ToolAssignmentsTableFilterComposer
     );
     return composer;
   }
+
+  $$MaintenanceVisitsTableFilterComposer get maintenanceVisitId {
+    final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.maintenanceVisitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ToolAssignmentsTableOrderingComposer
@@ -25148,8 +28055,18 @@ class $$ToolAssignmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get assignedAt => $composableBuilder(
     column: $table.assignedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expectedReturnAt => $composableBuilder(
+    column: $table.expectedReturnAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -25180,6 +28097,16 @@ class $$ToolAssignmentsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -25261,6 +28188,29 @@ class $$ToolAssignmentsTableOrderingComposer
     );
     return composer;
   }
+
+  $$MaintenanceVisitsTableOrderingComposer get maintenanceVisitId {
+    final $$MaintenanceVisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.maintenanceVisitId,
+      referencedTable: $db.maintenanceVisits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenanceVisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ToolAssignmentsTableAnnotationComposer
@@ -25275,8 +28225,18 @@ class $$ToolAssignmentsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get assignedAt => $composableBuilder(
     column: $table.assignedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get expectedReturnAt => $composableBuilder(
+    column: $table.expectedReturnAt,
     builder: (column) => column,
   );
 
@@ -25303,6 +28263,12 @@ class $$ToolAssignmentsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -25378,6 +28344,30 @@ class $$ToolAssignmentsTableAnnotationComposer
     );
     return composer;
   }
+
+  $$MaintenanceVisitsTableAnnotationComposer get maintenanceVisitId {
+    final $$MaintenanceVisitsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.maintenanceVisitId,
+          referencedTable: $db.maintenanceVisits,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MaintenanceVisitsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.maintenanceVisits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
 }
 
 class $$ToolAssignmentsTableTableManager
@@ -25393,7 +28383,12 @@ class $$ToolAssignmentsTableTableManager
           $$ToolAssignmentsTableUpdateCompanionBuilder,
           (ToolAssignment, $$ToolAssignmentsTableReferences),
           ToolAssignment,
-          PrefetchHooks Function({bool toolId, bool workerId, bool projectId})
+          PrefetchHooks Function({
+            bool toolId,
+            bool workerId,
+            bool projectId,
+            bool maintenanceVisitId,
+          })
         > {
   $$ToolAssignmentsTableTableManager(
     _$AppDatabase db,
@@ -25411,31 +28406,41 @@ class $$ToolAssignmentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> toolId = const Value.absent(),
                 Value<String?> workerId = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
+                Value<String?> maintenanceVisitId = const Value.absent(),
                 Value<DateTime> assignedAt = const Value.absent(),
+                Value<DateTime?> expectedReturnAt = const Value.absent(),
                 Value<DateTime?> returnedAt = const Value.absent(),
                 Value<String> conditionOut = const Value.absent(),
                 Value<String?> conditionIn = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ToolAssignmentsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 toolId: toolId,
                 workerId: workerId,
                 projectId: projectId,
+                maintenanceVisitId: maintenanceVisitId,
                 assignedAt: assignedAt,
+                expectedReturnAt: expectedReturnAt,
                 returnedAt: returnedAt,
                 conditionOut: conditionOut,
                 conditionIn: conditionIn,
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -25443,31 +28448,41 @@ class $$ToolAssignmentsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String toolId,
                 Value<String?> workerId = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
+                Value<String?> maintenanceVisitId = const Value.absent(),
                 Value<DateTime> assignedAt = const Value.absent(),
+                Value<DateTime?> expectedReturnAt = const Value.absent(),
                 Value<DateTime?> returnedAt = const Value.absent(),
                 Value<String> conditionOut = const Value.absent(),
                 Value<String?> conditionIn = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ToolAssignmentsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 toolId: toolId,
                 workerId: workerId,
                 projectId: projectId,
+                maintenanceVisitId: maintenanceVisitId,
                 assignedAt: assignedAt,
+                expectedReturnAt: expectedReturnAt,
                 returnedAt: returnedAt,
                 conditionOut: conditionOut,
                 conditionIn: conditionIn,
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -25481,7 +28496,12 @@ class $$ToolAssignmentsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({toolId = false, workerId = false, projectId = false}) {
+              ({
+                toolId = false,
+                workerId = false,
+                projectId = false,
+                maintenanceVisitId = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [],
@@ -25546,6 +28566,21 @@ class $$ToolAssignmentsTableTableManager
                                   )
                                   as T;
                         }
+                        if (maintenanceVisitId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.maintenanceVisitId,
+                                    referencedTable:
+                                        $$ToolAssignmentsTableReferences
+                                            ._maintenanceVisitIdTable(db),
+                                    referencedColumn:
+                                        $$ToolAssignmentsTableReferences
+                                            ._maintenanceVisitIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
                         return state;
                       },
@@ -25570,7 +28605,12 @@ typedef $$ToolAssignmentsTableProcessedTableManager =
       $$ToolAssignmentsTableUpdateCompanionBuilder,
       (ToolAssignment, $$ToolAssignmentsTableReferences),
       ToolAssignment,
-      PrefetchHooks Function({bool toolId, bool workerId, bool projectId})
+      PrefetchHooks Function({
+        bool toolId,
+        bool workerId,
+        bool projectId,
+        bool maintenanceVisitId,
+      })
     >;
 typedef $$WorkLogsTableCreateCompanionBuilder =
     WorkLogsCompanion Function({
@@ -26319,9 +29359,11 @@ typedef $$LaborPaymentsTableCreateCompanionBuilder =
       required String id,
       Value<String> workspaceId,
       required String workerId,
+      Value<String?> projectId,
       required int amountCents,
-      required DateTime date,
-      required String paidByPartnerId,
+      required DateTime paymentDate,
+      Value<String> paymentMethod,
+      Value<String?> paidByPartnerId,
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -26336,9 +29378,11 @@ typedef $$LaborPaymentsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> workspaceId,
       Value<String> workerId,
+      Value<String?> projectId,
       Value<int> amountCents,
-      Value<DateTime> date,
-      Value<String> paidByPartnerId,
+      Value<DateTime> paymentDate,
+      Value<String> paymentMethod,
+      Value<String?> paidByPartnerId,
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -26376,14 +29420,33 @@ final class $$LaborPaymentsTableReferences
     );
   }
 
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias(
+        $_aliasNameGenerator(db.laborPayments.projectId, db.projects.id),
+      );
+
+  $$ProjectsTableProcessedTableManager? get projectId {
+    final $_column = $_itemColumn<String>('project_id');
+    if ($_column == null) return null;
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
   static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
       db.partners.createAlias(
         $_aliasNameGenerator(db.laborPayments.paidByPartnerId, db.partners.id),
       );
 
-  $$PartnersTableProcessedTableManager get paidByPartnerId {
-    final $_column = $_itemColumn<String>('paid_by_partner_id')!;
-
+  $$PartnersTableProcessedTableManager? get paidByPartnerId {
+    final $_column = $_itemColumn<String>('paid_by_partner_id');
+    if ($_column == null) return null;
     final manager = $$PartnersTableTableManager(
       $_db,
       $_db.partners,
@@ -26420,8 +29483,13 @@ class $$LaborPaymentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<DateTime> get date => $composableBuilder(
-    column: $table.date,
+  ColumnFilters<DateTime> get paymentDate => $composableBuilder(
+    column: $table.paymentDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get paymentMethod => $composableBuilder(
+    column: $table.paymentMethod,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -26483,6 +29551,29 @@ class $$LaborPaymentsTableFilterComposer
     return composer;
   }
 
+  $$ProjectsTableFilterComposer get projectId {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$PartnersTableFilterComposer get paidByPartnerId {
     final $$PartnersTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -26531,8 +29622,13 @@ class $$LaborPaymentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get date => $composableBuilder(
-    column: $table.date,
+  ColumnOrderings<DateTime> get paymentDate => $composableBuilder(
+    column: $table.paymentDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get paymentMethod => $composableBuilder(
+    column: $table.paymentMethod,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -26594,6 +29690,29 @@ class $$LaborPaymentsTableOrderingComposer
     return composer;
   }
 
+  $$ProjectsTableOrderingComposer get projectId {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$PartnersTableOrderingComposer get paidByPartnerId {
     final $$PartnersTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -26640,8 +29759,15 @@ class $$LaborPaymentsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get date =>
-      $composableBuilder(column: $table.date, builder: (column) => column);
+  GeneratedColumn<DateTime> get paymentDate => $composableBuilder(
+    column: $table.paymentDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get paymentMethod => $composableBuilder(
+    column: $table.paymentMethod,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -26678,6 +29804,29 @@ class $$LaborPaymentsTableAnnotationComposer
           }) => $$WorkersTableAnnotationComposer(
             $db: $db,
             $table: $db.workers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProjectsTableAnnotationComposer get projectId {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -26724,7 +29873,11 @@ class $$LaborPaymentsTableTableManager
           $$LaborPaymentsTableUpdateCompanionBuilder,
           (LaborPayment, $$LaborPaymentsTableReferences),
           LaborPayment,
-          PrefetchHooks Function({bool workerId, bool paidByPartnerId})
+          PrefetchHooks Function({
+            bool workerId,
+            bool projectId,
+            bool paidByPartnerId,
+          })
         > {
   $$LaborPaymentsTableTableManager(_$AppDatabase db, $LaborPaymentsTable table)
     : super(
@@ -26742,9 +29895,11 @@ class $$LaborPaymentsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> workspaceId = const Value.absent(),
                 Value<String> workerId = const Value.absent(),
+                Value<String?> projectId = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
-                Value<DateTime> date = const Value.absent(),
-                Value<String> paidByPartnerId = const Value.absent(),
+                Value<DateTime> paymentDate = const Value.absent(),
+                Value<String> paymentMethod = const Value.absent(),
+                Value<String?> paidByPartnerId = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -26757,8 +29912,10 @@ class $$LaborPaymentsTableTableManager
                 id: id,
                 workspaceId: workspaceId,
                 workerId: workerId,
+                projectId: projectId,
                 amountCents: amountCents,
-                date: date,
+                paymentDate: paymentDate,
+                paymentMethod: paymentMethod,
                 paidByPartnerId: paidByPartnerId,
                 notes: notes,
                 createdAt: createdAt,
@@ -26774,9 +29931,11 @@ class $$LaborPaymentsTableTableManager
                 required String id,
                 Value<String> workspaceId = const Value.absent(),
                 required String workerId,
+                Value<String?> projectId = const Value.absent(),
                 required int amountCents,
-                required DateTime date,
-                required String paidByPartnerId,
+                required DateTime paymentDate,
+                Value<String> paymentMethod = const Value.absent(),
+                Value<String?> paidByPartnerId = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -26789,8 +29948,10 @@ class $$LaborPaymentsTableTableManager
                 id: id,
                 workspaceId: workspaceId,
                 workerId: workerId,
+                projectId: projectId,
                 amountCents: amountCents,
-                date: date,
+                paymentDate: paymentDate,
+                paymentMethod: paymentMethod,
                 paidByPartnerId: paidByPartnerId,
                 notes: notes,
                 createdAt: createdAt,
@@ -26809,60 +29970,80 @@ class $$LaborPaymentsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({workerId = false, paidByPartnerId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (workerId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.workerId,
-                                referencedTable: $$LaborPaymentsTableReferences
-                                    ._workerIdTable(db),
-                                referencedColumn: $$LaborPaymentsTableReferences
-                                    ._workerIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-                    if (paidByPartnerId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.paidByPartnerId,
-                                referencedTable: $$LaborPaymentsTableReferences
-                                    ._paidByPartnerIdTable(db),
-                                referencedColumn: $$LaborPaymentsTableReferences
-                                    ._paidByPartnerIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({workerId = false, projectId = false, paidByPartnerId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (workerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.workerId,
+                                    referencedTable:
+                                        $$LaborPaymentsTableReferences
+                                            ._workerIdTable(db),
+                                    referencedColumn:
+                                        $$LaborPaymentsTableReferences
+                                            ._workerIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (projectId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.projectId,
+                                    referencedTable:
+                                        $$LaborPaymentsTableReferences
+                                            ._projectIdTable(db),
+                                    referencedColumn:
+                                        $$LaborPaymentsTableReferences
+                                            ._projectIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (paidByPartnerId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.paidByPartnerId,
+                                    referencedTable:
+                                        $$LaborPaymentsTableReferences
+                                            ._paidByPartnerIdTable(db),
+                                    referencedColumn:
+                                        $$LaborPaymentsTableReferences
+                                            ._paidByPartnerIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -26879,11 +30060,16 @@ typedef $$LaborPaymentsTableProcessedTableManager =
       $$LaborPaymentsTableUpdateCompanionBuilder,
       (LaborPayment, $$LaborPaymentsTableReferences),
       LaborPayment,
-      PrefetchHooks Function({bool workerId, bool paidByPartnerId})
+      PrefetchHooks Function({
+        bool workerId,
+        bool projectId,
+        bool paidByPartnerId,
+      })
     >;
 typedef $$ExpensesTableCreateCompanionBuilder =
     ExpensesCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String concept,
       Value<String> category,
       Value<int> amountCents,
@@ -26896,6 +30082,8 @@ typedef $$ExpensesTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -26903,6 +30091,7 @@ typedef $$ExpensesTableCreateCompanionBuilder =
 typedef $$ExpensesTableUpdateCompanionBuilder =
     ExpensesCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> concept,
       Value<String> category,
       Value<int> amountCents,
@@ -26915,6 +30104,8 @@ typedef $$ExpensesTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -26994,6 +30185,11 @@ class $$ExpensesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get concept => $composableBuilder(
     column: $table.concept,
     builder: (column) => ColumnFilters(column),
@@ -27036,6 +30232,16 @@ class $$ExpensesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -27133,6 +30339,11 @@ class $$ExpensesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get concept => $composableBuilder(
     column: $table.concept,
     builder: (column) => ColumnOrderings(column),
@@ -27175,6 +30386,16 @@ class $$ExpensesTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -27270,6 +30491,11 @@ class $$ExpensesTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get concept =>
       $composableBuilder(column: $table.concept, builder: (column) => column);
 
@@ -27300,6 +30526,12 @@ class $$ExpensesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -27411,6 +30643,7 @@ class $$ExpensesTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> concept = const Value.absent(),
                 Value<String> category = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
@@ -27423,11 +30656,14 @@ class $$ExpensesTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExpensesCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 concept: concept,
                 category: category,
                 amountCents: amountCents,
@@ -27440,6 +30676,8 @@ class $$ExpensesTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -27447,6 +30685,7 @@ class $$ExpensesTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String concept,
                 Value<String> category = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
@@ -27459,11 +30698,14 @@ class $$ExpensesTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ExpensesCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 concept: concept,
                 category: category,
                 amountCents: amountCents,
@@ -27476,6 +30718,8 @@ class $$ExpensesTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -27581,6 +30825,7 @@ typedef $$ExpensesTableProcessedTableManager =
 typedef $$CapitalMovementsTableCreateCompanionBuilder =
     CapitalMovementsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String partnerId,
       Value<String> type,
       Value<int> amountCents,
@@ -27588,6 +30833,8 @@ typedef $$CapitalMovementsTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -27595,6 +30842,7 @@ typedef $$CapitalMovementsTableCreateCompanionBuilder =
 typedef $$CapitalMovementsTableUpdateCompanionBuilder =
     CapitalMovementsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> partnerId,
       Value<String> type,
       Value<int> amountCents,
@@ -27602,6 +30850,8 @@ typedef $$CapitalMovementsTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -27650,6 +30900,11 @@ class $$CapitalMovementsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnFilters(column),
@@ -27677,6 +30932,16 @@ class $$CapitalMovementsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -27728,6 +30993,11 @@ class $$CapitalMovementsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnOrderings(column),
@@ -27755,6 +31025,16 @@ class $$CapitalMovementsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -27804,6 +31084,11 @@ class $$CapitalMovementsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
@@ -27823,6 +31108,12 @@ class $$CapitalMovementsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -27885,6 +31176,7 @@ class $$CapitalMovementsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> partnerId = const Value.absent(),
                 Value<String> type = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
@@ -27892,11 +31184,14 @@ class $$CapitalMovementsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CapitalMovementsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 partnerId: partnerId,
                 type: type,
                 amountCents: amountCents,
@@ -27904,6 +31199,8 @@ class $$CapitalMovementsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -27911,6 +31208,7 @@ class $$CapitalMovementsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String partnerId,
                 Value<String> type = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
@@ -27918,11 +31216,14 @@ class $$CapitalMovementsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CapitalMovementsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 partnerId: partnerId,
                 type: type,
                 amountCents: amountCents,
@@ -27930,6 +31231,8 @@ class $$CapitalMovementsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -28006,6 +31309,7 @@ typedef $$CapitalMovementsTableProcessedTableManager =
 typedef $$CollectionsTableCreateCompanionBuilder =
     CollectionsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String clientId,
       Value<String?> projectId,
       Value<String?> visitId,
@@ -28016,6 +31320,8 @@ typedef $$CollectionsTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -28023,6 +31329,7 @@ typedef $$CollectionsTableCreateCompanionBuilder =
 typedef $$CollectionsTableUpdateCompanionBuilder =
     CollectionsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> clientId,
       Value<String?> projectId,
       Value<String?> visitId,
@@ -28033,6 +31340,8 @@ typedef $$CollectionsTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -28136,6 +31445,11 @@ class $$CollectionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnFilters(column),
@@ -28163,6 +31477,16 @@ class $$CollectionsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -28283,6 +31607,11 @@ class $$CollectionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnOrderings(column),
@@ -28310,6 +31639,16 @@ class $$CollectionsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -28428,6 +31767,11 @@ class $$CollectionsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => column,
@@ -28449,6 +31793,12 @@ class $$CollectionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -28584,6 +31934,7 @@ class $$CollectionsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> clientId = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
                 Value<String?> visitId = const Value.absent(),
@@ -28594,11 +31945,14 @@ class $$CollectionsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CollectionsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 clientId: clientId,
                 projectId: projectId,
                 visitId: visitId,
@@ -28609,6 +31963,8 @@ class $$CollectionsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -28616,6 +31972,7 @@ class $$CollectionsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String clientId,
                 Value<String?> projectId = const Value.absent(),
                 Value<String?> visitId = const Value.absent(),
@@ -28626,11 +31983,14 @@ class $$CollectionsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CollectionsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 clientId: clientId,
                 projectId: projectId,
                 visitId: visitId,
@@ -28641,6 +32001,8 @@ class $$CollectionsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,

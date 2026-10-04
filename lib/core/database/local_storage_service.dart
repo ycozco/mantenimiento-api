@@ -15,6 +15,7 @@ import 'app_database.dart';
 import 'data_migration_service.dart';
 import '../repositories/worker_repository.dart';
 import '../repositories/work_log_repository.dart';
+import '../repositories/labor_payment_repository.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -23,6 +24,7 @@ class LocalStorageService extends ChangeNotifier {
       _instance._db = database;
       _instance._workerRepository = WorkerRepository(database);
       _instance._workLogRepository = WorkLogRepository(database);
+      _instance._laborPaymentRepository = LaborPaymentRepository(database);
     }
     return _instance;
   }
@@ -38,6 +40,10 @@ class LocalStorageService extends ChangeNotifier {
   WorkLogRepository? _workLogRepository;
   WorkLogRepository get workLogRepository =>
       _workLogRepository ??= WorkLogRepository(db);
+
+  LaborPaymentRepository? _laborPaymentRepository;
+  LaborPaymentRepository get laborPaymentRepository =>
+      _laborPaymentRepository ??= LaborPaymentRepository(db);
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];

@@ -133,6 +133,7 @@ class Projects extends Table {
 // --- MAINTENANCE PLANS (PLANES RECURRENTES) ---
 class MaintenancePlans extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get title => text()();
   TextColumn get clientId => text().customConstraint(
     'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
@@ -143,6 +144,7 @@ class MaintenancePlans extends Table {
   TextColumn get description => text().nullable()();
   TextColumn get frequencyType => text().withDefault(const Constant('unMes'))();
   IntColumn get intervalDays => integer().withDefault(const Constant(30))();
+  DateTimeColumn get nextDate => dateTime().nullable()();
   IntColumn get estimatedCostCents =>
       integer().withDefault(const Constant(0))();
   TextColumn get assignedPartnerIdsJson =>
@@ -150,6 +152,8 @@ class MaintenancePlans extends Table {
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -160,6 +164,7 @@ class MaintenancePlans extends Table {
 // --- MAINTENANCE VISITS (HISTORIAL DE VISITAS) ---
 class MaintenanceVisits extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get planId => text().customConstraint(
     'NOT NULL REFERENCES maintenance_plans(id) ON DELETE CASCADE',
   )();
@@ -169,6 +174,8 @@ class MaintenanceVisits extends Table {
   TextColumn get technicianNotes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -179,6 +186,7 @@ class MaintenanceVisits extends Table {
 // --- INVENTORY ITEMS (CONSUMIBLES) ---
 class InventoryItems extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get sku => text().nullable()();
   TextColumn get name => text()();
   TextColumn get category => text().withDefault(const Constant('plants'))();
@@ -186,8 +194,11 @@ class InventoryItems extends Table {
   RealColumn get minStockAlert => real().withDefault(const Constant(0.0))();
   IntColumn get defaultCostCents => integer().withDefault(const Constant(0))();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -198,6 +209,7 @@ class InventoryItems extends Table {
 // --- SUPPLIERS (PROVEEDORES) ---
 class Suppliers extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get name => text()();
   TextColumn get phone => text().nullable()();
   TextColumn get taxId => text().nullable()();
@@ -205,6 +217,8 @@ class Suppliers extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -215,6 +229,7 @@ class Suppliers extends Table {
 // --- PURCHASES (COMPRAS DE INSUMOS) ---
 class Purchases extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get supplierId => text().nullable().customConstraint(
     'REFERENCES suppliers(id) ON DELETE SET NULL',
   )();
@@ -225,6 +240,8 @@ class Purchases extends Table {
   TextColumn get invoiceNumber => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -235,6 +252,7 @@ class Purchases extends Table {
 // --- STOCK MOVEMENTS (LEDGER DE INVENTARIO) ---
 class StockMovements extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get itemId => text().customConstraint(
     'NOT NULL REFERENCES inventory_items(id) ON DELETE CASCADE',
   )();
@@ -242,6 +260,7 @@ class StockMovements extends Table {
       text().withDefault(const Constant('consumption'))();
   RealColumn get quantity => real()();
   IntColumn get unitCostCents => integer().withDefault(const Constant(0))();
+  IntColumn get totalCostCents => integer().withDefault(const Constant(0))();
   TextColumn get projectId => text().nullable().customConstraint(
     'REFERENCES projects(id) ON DELETE SET NULL',
   )();
@@ -255,6 +274,8 @@ class StockMovements extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -265,8 +286,10 @@ class StockMovements extends Table {
 // --- TOOLS (HERRAMIENTAS / ACTIVOS) ---
 class Tools extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get code => text().nullable()();
   TextColumn get name => text()();
+  TextColumn get category => text().withDefault(const Constant('manual'))();
   TextColumn get brandModel => text().nullable()();
   TextColumn get serialNumber => text().nullable()();
   DateTimeColumn get purchaseDate => dateTime().nullable()();
@@ -275,8 +298,11 @@ class Tools extends Table {
   TextColumn get currentStatus =>
       text().withDefault(const Constant('available'))();
   TextColumn get condition => text().withDefault(const Constant('good'))();
+  TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -287,6 +313,7 @@ class Tools extends Table {
 // --- TOOL ASSIGNMENTS (HISTORIAL DE CUSTODIA) ---
 class ToolAssignments extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get toolId => text().customConstraint(
     'NOT NULL REFERENCES tools(id) ON DELETE CASCADE',
   )();
@@ -296,13 +323,19 @@ class ToolAssignments extends Table {
   TextColumn get projectId => text().nullable().customConstraint(
     'REFERENCES projects(id) ON DELETE SET NULL',
   )();
+  TextColumn get maintenanceVisitId => text().nullable().customConstraint(
+    'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
+  )();
   DateTimeColumn get assignedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get expectedReturnAt => dateTime().nullable()();
   DateTimeColumn get returnedAt => dateTime().nullable()();
   TextColumn get conditionOut => text().withDefault(const Constant('good'))();
   TextColumn get conditionIn => text().nullable()();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -353,10 +386,15 @@ class LaborPayments extends Table {
   TextColumn get workerId => text().customConstraint(
     'NOT NULL REFERENCES workers(id) ON DELETE RESTRICT',
   )();
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
+  )();
   IntColumn get amountCents => integer()();
-  DateTimeColumn get date => dateTime()();
-  TextColumn get paidByPartnerId =>
-      text().customConstraint('NOT NULL REFERENCES partners(id)')();
+  DateTimeColumn get paymentDate => dateTime()();
+  TextColumn get paymentMethod => text().withDefault(const Constant('cash'))();
+  TextColumn get paidByPartnerId => text().nullable().customConstraint(
+    'REFERENCES partners(id) ON DELETE SET NULL',
+  )();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
@@ -367,11 +405,15 @@ class LaborPayments extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => ['CHECK (amount_cents > 0)'];
 }
 
 // --- EXPENSES (GASTOS OPERATIVOS) ---
 class Expenses extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get concept => text()();
   TextColumn get category => text().withDefault(const Constant('otro'))();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
@@ -390,6 +432,8 @@ class Expenses extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -400,6 +444,7 @@ class Expenses extends Table {
 // --- CAPITAL MOVEMENTS (APORTES / RETIROS DE CAPITAL) ---
 class CapitalMovements extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get partnerId => text().customConstraint(
     'NOT NULL REFERENCES partners(id) ON DELETE CASCADE',
   )();
@@ -409,6 +454,8 @@ class CapitalMovements extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -419,6 +466,7 @@ class CapitalMovements extends Table {
 // --- COLLECTIONS (COBROS A CLIENTES) ---
 class Collections extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get clientId => text().customConstraint(
     'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
   )();
@@ -436,6 +484,8 @@ class Collections extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
