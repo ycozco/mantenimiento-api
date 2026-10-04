@@ -13,12 +13,16 @@ import '../models/gasto.dart';
 import '../notifications/notification_service.dart';
 import 'app_database.dart';
 import 'data_migration_service.dart';
+import '../repositories/worker_repository.dart';
+import '../repositories/work_log_repository.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
   factory LocalStorageService({AppDatabase? database}) {
     if (database != null) {
       _instance._db = database;
+      _instance._workerRepository = WorkerRepository(database);
+      _instance._workLogRepository = WorkLogRepository(database);
     }
     return _instance;
   }
@@ -26,6 +30,14 @@ class LocalStorageService extends ChangeNotifier {
 
   AppDatabase? _db;
   AppDatabase get db => _db ??= AppDatabase();
+
+  WorkerRepository? _workerRepository;
+  WorkerRepository get workerRepository =>
+      _workerRepository ??= WorkerRepository(db);
+
+  WorkLogRepository? _workLogRepository;
+  WorkLogRepository get workLogRepository =>
+      _workLogRepository ??= WorkLogRepository(db);
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];

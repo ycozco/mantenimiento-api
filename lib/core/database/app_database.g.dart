@@ -1328,6 +1328,18 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -1429,6 +1441,28 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -1455,6 +1489,7 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     name,
     phone,
     specialty,
@@ -1464,6 +1499,8 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -1483,6 +1520,15 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -1546,6 +1592,18 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -1570,6 +1628,10 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1607,6 +1669,14 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -1626,6 +1696,7 @@ class $WorkersTable extends Workers with TableInfo<$WorkersTable, Worker> {
 
 class Worker extends DataClass implements Insertable<Worker> {
   final String id;
+  final String workspaceId;
   final String name;
   final String? phone;
   final String? specialty;
@@ -1635,10 +1706,13 @@ class Worker extends DataClass implements Insertable<Worker> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const Worker({
     required this.id,
+    required this.workspaceId,
     required this.name,
     this.phone,
     this.specialty,
@@ -1648,6 +1722,8 @@ class Worker extends DataClass implements Insertable<Worker> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -1655,6 +1731,7 @@ class Worker extends DataClass implements Insertable<Worker> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
@@ -1670,6 +1747,12 @@ class Worker extends DataClass implements Insertable<Worker> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -1680,6 +1763,7 @@ class Worker extends DataClass implements Insertable<Worker> {
   WorkersCompanion toCompanion(bool nullToAbsent) {
     return WorkersCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       name: Value(name),
       phone: phone == null && nullToAbsent
           ? const Value.absent()
@@ -1695,6 +1779,12 @@ class Worker extends DataClass implements Insertable<Worker> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -1709,6 +1799,7 @@ class Worker extends DataClass implements Insertable<Worker> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Worker(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       name: serializer.fromJson<String>(json['name']),
       phone: serializer.fromJson<String?>(json['phone']),
       specialty: serializer.fromJson<String?>(json['specialty']),
@@ -1720,6 +1811,8 @@ class Worker extends DataClass implements Insertable<Worker> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -1729,6 +1822,7 @@ class Worker extends DataClass implements Insertable<Worker> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'name': serializer.toJson<String>(name),
       'phone': serializer.toJson<String?>(phone),
       'specialty': serializer.toJson<String?>(specialty),
@@ -1738,6 +1832,8 @@ class Worker extends DataClass implements Insertable<Worker> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -1745,6 +1841,7 @@ class Worker extends DataClass implements Insertable<Worker> {
 
   Worker copyWith({
     String? id,
+    String? workspaceId,
     String? name,
     Value<String?> phone = const Value.absent(),
     Value<String?> specialty = const Value.absent(),
@@ -1754,10 +1851,13 @@ class Worker extends DataClass implements Insertable<Worker> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Worker(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     name: name ?? this.name,
     phone: phone.present ? phone.value : this.phone,
     specialty: specialty.present ? specialty.value : this.specialty,
@@ -1767,12 +1867,17 @@ class Worker extends DataClass implements Insertable<Worker> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Worker copyWithCompanion(WorkersCompanion data) {
     return Worker(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       name: data.name.present ? data.name.value : this.name,
       phone: data.phone.present ? data.phone.value : this.phone,
       specialty: data.specialty.present ? data.specialty.value : this.specialty,
@@ -1786,6 +1891,8 @@ class Worker extends DataClass implements Insertable<Worker> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -1795,6 +1902,7 @@ class Worker extends DataClass implements Insertable<Worker> {
   String toString() {
     return (StringBuffer('Worker(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('name: $name, ')
           ..write('phone: $phone, ')
           ..write('specialty: $specialty, ')
@@ -1804,6 +1912,8 @@ class Worker extends DataClass implements Insertable<Worker> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -1813,6 +1923,7 @@ class Worker extends DataClass implements Insertable<Worker> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     name,
     phone,
     specialty,
@@ -1822,6 +1933,8 @@ class Worker extends DataClass implements Insertable<Worker> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -1830,6 +1943,7 @@ class Worker extends DataClass implements Insertable<Worker> {
       identical(this, other) ||
       (other is Worker &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.name == this.name &&
           other.phone == this.phone &&
           other.specialty == this.specialty &&
@@ -1839,12 +1953,15 @@ class Worker extends DataClass implements Insertable<Worker> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class WorkersCompanion extends UpdateCompanion<Worker> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> name;
   final Value<String?> phone;
   final Value<String?> specialty;
@@ -1854,11 +1971,14 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const WorkersCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.name = const Value.absent(),
     this.phone = const Value.absent(),
     this.specialty = const Value.absent(),
@@ -1868,12 +1988,15 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   WorkersCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String name,
     this.phone = const Value.absent(),
     this.specialty = const Value.absent(),
@@ -1883,6 +2006,8 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1890,6 +2015,7 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
        name = Value(name);
   static Insertable<Worker> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? name,
     Expression<String>? phone,
     Expression<String>? specialty,
@@ -1899,12 +2025,15 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (name != null) 'name': name,
       if (phone != null) 'phone': phone,
       if (specialty != null) 'specialty': specialty,
@@ -1915,6 +2044,8 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1923,6 +2054,7 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
 
   WorkersCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? name,
     Value<String?>? phone,
     Value<String?>? specialty,
@@ -1932,12 +2064,15 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return WorkersCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       specialty: specialty ?? this.specialty,
@@ -1947,6 +2082,8 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -1958,6 +2095,9 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -1986,6 +2126,12 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -2002,6 +2148,7 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
   String toString() {
     return (StringBuffer('WorkersCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('name: $name, ')
           ..write('phone: $phone, ')
           ..write('specialty: $specialty, ')
@@ -2011,6 +2158,8 @@ class WorkersCompanion extends UpdateCompanion<Worker> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -10003,6 +10152,18 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _workerIdMeta = const VerificationMeta(
     'workerId',
   );
@@ -10013,7 +10174,7 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE RESTRICT',
   );
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
@@ -10034,20 +10195,21 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES projects(id) ON DELETE SET NULL',
+    $customConstraints: 'REFERENCES projects(id) ON DELETE CASCADE',
   );
-  static const VerificationMeta _visitIdMeta = const VerificationMeta(
-    'visitId',
-  );
+  static const VerificationMeta _maintenanceVisitIdMeta =
+      const VerificationMeta('maintenanceVisitId');
   @override
-  late final GeneratedColumn<String> visitId = GeneratedColumn<String>(
-    'visit_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: 'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
-  );
+  late final GeneratedColumn<String> maintenanceVisitId =
+      GeneratedColumn<String>(
+        'maintenance_visit_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints:
+            'REFERENCES maintenance_visits(id) ON DELETE CASCADE',
+      );
   static const VerificationMeta _paymentTypeMeta = const VerificationMeta(
     'paymentType',
   );
@@ -10060,36 +10222,36 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     requiredDuringInsert: false,
     defaultValue: const Constant('daily'),
   );
-  static const VerificationMeta _unitsWorkedMeta = const VerificationMeta(
-    'unitsWorked',
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
   );
   @override
-  late final GeneratedColumn<double> unitsWorked = GeneratedColumn<double>(
-    'units_worked',
+  late final GeneratedColumn<double> quantity = GeneratedColumn<double>(
+    'quantity',
     aliasedName,
     false,
     type: DriftSqlType.double,
     requiredDuringInsert: false,
     defaultValue: const Constant(1.0),
   );
-  static const VerificationMeta _unitRateCentsMeta = const VerificationMeta(
-    'unitRateCents',
+  static const VerificationMeta _rateCentsMeta = const VerificationMeta(
+    'rateCents',
   );
   @override
-  late final GeneratedColumn<int> unitRateCents = GeneratedColumn<int>(
-    'unit_rate_cents',
+  late final GeneratedColumn<int> rateCents = GeneratedColumn<int>(
+    'rate_cents',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
-  static const VerificationMeta _totalAmountCentsMeta = const VerificationMeta(
-    'totalAmountCents',
+  static const VerificationMeta _amountCentsMeta = const VerificationMeta(
+    'amountCents',
   );
   @override
-  late final GeneratedColumn<int> totalAmountCents = GeneratedColumn<int>(
-    'total_amount_cents',
+  late final GeneratedColumn<int> amountCents = GeneratedColumn<int>(
+    'amount_cents',
     aliasedName,
     false,
     type: DriftSqlType.int,
@@ -10129,6 +10291,28 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -10155,17 +10339,20 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     workerId,
     date,
     projectId,
-    visitId,
+    maintenanceVisitId,
     paymentType,
-    unitsWorked,
-    unitRateCents,
-    totalAmountCents,
+    quantity,
+    rateCents,
+    amountCents,
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -10185,6 +10372,15 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('worker_id')) {
       context.handle(
@@ -10208,10 +10404,13 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
         projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
       );
     }
-    if (data.containsKey('visit_id')) {
+    if (data.containsKey('maintenance_visit_id')) {
       context.handle(
-        _visitIdMeta,
-        visitId.isAcceptableOrUnknown(data['visit_id']!, _visitIdMeta),
+        _maintenanceVisitIdMeta,
+        maintenanceVisitId.isAcceptableOrUnknown(
+          data['maintenance_visit_id']!,
+          _maintenanceVisitIdMeta,
+        ),
       );
     }
     if (data.containsKey('payment_type')) {
@@ -10223,30 +10422,24 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
         ),
       );
     }
-    if (data.containsKey('units_worked')) {
+    if (data.containsKey('quantity')) {
       context.handle(
-        _unitsWorkedMeta,
-        unitsWorked.isAcceptableOrUnknown(
-          data['units_worked']!,
-          _unitsWorkedMeta,
-        ),
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
       );
     }
-    if (data.containsKey('unit_rate_cents')) {
+    if (data.containsKey('rate_cents')) {
       context.handle(
-        _unitRateCentsMeta,
-        unitRateCents.isAcceptableOrUnknown(
-          data['unit_rate_cents']!,
-          _unitRateCentsMeta,
-        ),
+        _rateCentsMeta,
+        rateCents.isAcceptableOrUnknown(data['rate_cents']!, _rateCentsMeta),
       );
     }
-    if (data.containsKey('total_amount_cents')) {
+    if (data.containsKey('amount_cents')) {
       context.handle(
-        _totalAmountCentsMeta,
-        totalAmountCents.isAcceptableOrUnknown(
-          data['total_amount_cents']!,
-          _totalAmountCentsMeta,
+        _amountCentsMeta,
+        amountCents.isAcceptableOrUnknown(
+          data['amount_cents']!,
+          _amountCentsMeta,
         ),
       );
     }
@@ -10266,6 +10459,18 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
       context.handle(
         _updatedAtMeta,
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
       );
     }
     if (data.containsKey('version')) {
@@ -10293,6 +10498,10 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       workerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}worker_id'],
@@ -10305,25 +10514,25 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
         DriftSqlType.string,
         data['${effectivePrefix}project_id'],
       ),
-      visitId: attachedDatabase.typeMapping.read(
+      maintenanceVisitId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}visit_id'],
+        data['${effectivePrefix}maintenance_visit_id'],
       ),
       paymentType: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}payment_type'],
       )!,
-      unitsWorked: attachedDatabase.typeMapping.read(
+      quantity: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
-        data['${effectivePrefix}units_worked'],
+        data['${effectivePrefix}quantity'],
       )!,
-      unitRateCents: attachedDatabase.typeMapping.read(
+      rateCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}unit_rate_cents'],
+        data['${effectivePrefix}rate_cents'],
       )!,
-      totalAmountCents: attachedDatabase.typeMapping.read(
+      amountCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}total_amount_cents'],
+        data['${effectivePrefix}amount_cents'],
       )!,
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -10337,6 +10546,14 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -10356,32 +10573,38 @@ class $WorkLogsTable extends WorkLogs with TableInfo<$WorkLogsTable, WorkLog> {
 
 class WorkLog extends DataClass implements Insertable<WorkLog> {
   final String id;
+  final String workspaceId;
   final String workerId;
   final DateTime date;
   final String? projectId;
-  final String? visitId;
+  final String? maintenanceVisitId;
   final String paymentType;
-  final double unitsWorked;
-  final int unitRateCents;
-  final int totalAmountCents;
+  final double quantity;
+  final int rateCents;
+  final int amountCents;
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const WorkLog({
     required this.id,
+    required this.workspaceId,
     required this.workerId,
     required this.date,
     this.projectId,
-    this.visitId,
+    this.maintenanceVisitId,
     required this.paymentType,
-    required this.unitsWorked,
-    required this.unitRateCents,
-    required this.totalAmountCents,
+    required this.quantity,
+    required this.rateCents,
+    required this.amountCents,
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -10389,23 +10612,30 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['worker_id'] = Variable<String>(workerId);
     map['date'] = Variable<DateTime>(date);
     if (!nullToAbsent || projectId != null) {
       map['project_id'] = Variable<String>(projectId);
     }
-    if (!nullToAbsent || visitId != null) {
-      map['visit_id'] = Variable<String>(visitId);
+    if (!nullToAbsent || maintenanceVisitId != null) {
+      map['maintenance_visit_id'] = Variable<String>(maintenanceVisitId);
     }
     map['payment_type'] = Variable<String>(paymentType);
-    map['units_worked'] = Variable<double>(unitsWorked);
-    map['unit_rate_cents'] = Variable<int>(unitRateCents);
-    map['total_amount_cents'] = Variable<int>(totalAmountCents);
+    map['quantity'] = Variable<double>(quantity);
+    map['rate_cents'] = Variable<int>(rateCents);
+    map['amount_cents'] = Variable<int>(amountCents);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -10416,23 +10646,30 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
   WorkLogsCompanion toCompanion(bool nullToAbsent) {
     return WorkLogsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       workerId: Value(workerId),
       date: Value(date),
       projectId: projectId == null && nullToAbsent
           ? const Value.absent()
           : Value(projectId),
-      visitId: visitId == null && nullToAbsent
+      maintenanceVisitId: maintenanceVisitId == null && nullToAbsent
           ? const Value.absent()
-          : Value(visitId),
+          : Value(maintenanceVisitId),
       paymentType: Value(paymentType),
-      unitsWorked: Value(unitsWorked),
-      unitRateCents: Value(unitRateCents),
-      totalAmountCents: Value(totalAmountCents),
+      quantity: Value(quantity),
+      rateCents: Value(rateCents),
+      amountCents: Value(amountCents),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -10447,17 +10684,22 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return WorkLog(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       workerId: serializer.fromJson<String>(json['workerId']),
       date: serializer.fromJson<DateTime>(json['date']),
       projectId: serializer.fromJson<String?>(json['projectId']),
-      visitId: serializer.fromJson<String?>(json['visitId']),
+      maintenanceVisitId: serializer.fromJson<String?>(
+        json['maintenanceVisitId'],
+      ),
       paymentType: serializer.fromJson<String>(json['paymentType']),
-      unitsWorked: serializer.fromJson<double>(json['unitsWorked']),
-      unitRateCents: serializer.fromJson<int>(json['unitRateCents']),
-      totalAmountCents: serializer.fromJson<int>(json['totalAmountCents']),
+      quantity: serializer.fromJson<double>(json['quantity']),
+      rateCents: serializer.fromJson<int>(json['rateCents']),
+      amountCents: serializer.fromJson<int>(json['amountCents']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -10467,17 +10709,20 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'workerId': serializer.toJson<String>(workerId),
       'date': serializer.toJson<DateTime>(date),
       'projectId': serializer.toJson<String?>(projectId),
-      'visitId': serializer.toJson<String?>(visitId),
+      'maintenanceVisitId': serializer.toJson<String?>(maintenanceVisitId),
       'paymentType': serializer.toJson<String>(paymentType),
-      'unitsWorked': serializer.toJson<double>(unitsWorked),
-      'unitRateCents': serializer.toJson<int>(unitRateCents),
-      'totalAmountCents': serializer.toJson<int>(totalAmountCents),
+      'quantity': serializer.toJson<double>(quantity),
+      'rateCents': serializer.toJson<int>(rateCents),
+      'amountCents': serializer.toJson<int>(amountCents),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -10485,57 +10730,68 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
 
   WorkLog copyWith({
     String? id,
+    String? workspaceId,
     String? workerId,
     DateTime? date,
     Value<String?> projectId = const Value.absent(),
-    Value<String?> visitId = const Value.absent(),
+    Value<String?> maintenanceVisitId = const Value.absent(),
     String? paymentType,
-    double? unitsWorked,
-    int? unitRateCents,
-    int? totalAmountCents,
+    double? quantity,
+    int? rateCents,
+    int? amountCents,
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => WorkLog(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     workerId: workerId ?? this.workerId,
     date: date ?? this.date,
     projectId: projectId.present ? projectId.value : this.projectId,
-    visitId: visitId.present ? visitId.value : this.visitId,
+    maintenanceVisitId: maintenanceVisitId.present
+        ? maintenanceVisitId.value
+        : this.maintenanceVisitId,
     paymentType: paymentType ?? this.paymentType,
-    unitsWorked: unitsWorked ?? this.unitsWorked,
-    unitRateCents: unitRateCents ?? this.unitRateCents,
-    totalAmountCents: totalAmountCents ?? this.totalAmountCents,
+    quantity: quantity ?? this.quantity,
+    rateCents: rateCents ?? this.rateCents,
+    amountCents: amountCents ?? this.amountCents,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   WorkLog copyWithCompanion(WorkLogsCompanion data) {
     return WorkLog(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       workerId: data.workerId.present ? data.workerId.value : this.workerId,
       date: data.date.present ? data.date.value : this.date,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
-      visitId: data.visitId.present ? data.visitId.value : this.visitId,
+      maintenanceVisitId: data.maintenanceVisitId.present
+          ? data.maintenanceVisitId.value
+          : this.maintenanceVisitId,
       paymentType: data.paymentType.present
           ? data.paymentType.value
           : this.paymentType,
-      unitsWorked: data.unitsWorked.present
-          ? data.unitsWorked.value
-          : this.unitsWorked,
-      unitRateCents: data.unitRateCents.present
-          ? data.unitRateCents.value
-          : this.unitRateCents,
-      totalAmountCents: data.totalAmountCents.present
-          ? data.totalAmountCents.value
-          : this.totalAmountCents,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      rateCents: data.rateCents.present ? data.rateCents.value : this.rateCents,
+      amountCents: data.amountCents.present
+          ? data.amountCents.value
+          : this.amountCents,
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -10545,17 +10801,20 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
   String toString() {
     return (StringBuffer('WorkLog(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('workerId: $workerId, ')
           ..write('date: $date, ')
           ..write('projectId: $projectId, ')
-          ..write('visitId: $visitId, ')
+          ..write('maintenanceVisitId: $maintenanceVisitId, ')
           ..write('paymentType: $paymentType, ')
-          ..write('unitsWorked: $unitsWorked, ')
-          ..write('unitRateCents: $unitRateCents, ')
-          ..write('totalAmountCents: $totalAmountCents, ')
+          ..write('quantity: $quantity, ')
+          ..write('rateCents: $rateCents, ')
+          ..write('amountCents: $amountCents, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -10565,17 +10824,20 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     workerId,
     date,
     projectId,
-    visitId,
+    maintenanceVisitId,
     paymentType,
-    unitsWorked,
-    unitRateCents,
-    totalAmountCents,
+    quantity,
+    rateCents,
+    amountCents,
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -10584,67 +10846,79 @@ class WorkLog extends DataClass implements Insertable<WorkLog> {
       identical(this, other) ||
       (other is WorkLog &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.workerId == this.workerId &&
           other.date == this.date &&
           other.projectId == this.projectId &&
-          other.visitId == this.visitId &&
+          other.maintenanceVisitId == this.maintenanceVisitId &&
           other.paymentType == this.paymentType &&
-          other.unitsWorked == this.unitsWorked &&
-          other.unitRateCents == this.unitRateCents &&
-          other.totalAmountCents == this.totalAmountCents &&
+          other.quantity == this.quantity &&
+          other.rateCents == this.rateCents &&
+          other.amountCents == this.amountCents &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> workerId;
   final Value<DateTime> date;
   final Value<String?> projectId;
-  final Value<String?> visitId;
+  final Value<String?> maintenanceVisitId;
   final Value<String> paymentType;
-  final Value<double> unitsWorked;
-  final Value<int> unitRateCents;
-  final Value<int> totalAmountCents;
+  final Value<double> quantity;
+  final Value<int> rateCents;
+  final Value<int> amountCents;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const WorkLogsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.workerId = const Value.absent(),
     this.date = const Value.absent(),
     this.projectId = const Value.absent(),
-    this.visitId = const Value.absent(),
+    this.maintenanceVisitId = const Value.absent(),
     this.paymentType = const Value.absent(),
-    this.unitsWorked = const Value.absent(),
-    this.unitRateCents = const Value.absent(),
-    this.totalAmountCents = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.rateCents = const Value.absent(),
+    this.amountCents = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   WorkLogsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String workerId,
     required DateTime date,
     this.projectId = const Value.absent(),
-    this.visitId = const Value.absent(),
+    this.maintenanceVisitId = const Value.absent(),
     this.paymentType = const Value.absent(),
-    this.unitsWorked = const Value.absent(),
-    this.unitRateCents = const Value.absent(),
-    this.totalAmountCents = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.rateCents = const Value.absent(),
+    this.amountCents = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -10653,34 +10927,41 @@ class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
        date = Value(date);
   static Insertable<WorkLog> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? workerId,
     Expression<DateTime>? date,
     Expression<String>? projectId,
-    Expression<String>? visitId,
+    Expression<String>? maintenanceVisitId,
     Expression<String>? paymentType,
-    Expression<double>? unitsWorked,
-    Expression<int>? unitRateCents,
-    Expression<int>? totalAmountCents,
+    Expression<double>? quantity,
+    Expression<int>? rateCents,
+    Expression<int>? amountCents,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (workerId != null) 'worker_id': workerId,
       if (date != null) 'date': date,
       if (projectId != null) 'project_id': projectId,
-      if (visitId != null) 'visit_id': visitId,
+      if (maintenanceVisitId != null)
+        'maintenance_visit_id': maintenanceVisitId,
       if (paymentType != null) 'payment_type': paymentType,
-      if (unitsWorked != null) 'units_worked': unitsWorked,
-      if (unitRateCents != null) 'unit_rate_cents': unitRateCents,
-      if (totalAmountCents != null) 'total_amount_cents': totalAmountCents,
+      if (quantity != null) 'quantity': quantity,
+      if (rateCents != null) 'rate_cents': rateCents,
+      if (amountCents != null) 'amount_cents': amountCents,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -10689,34 +10970,40 @@ class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
 
   WorkLogsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? workerId,
     Value<DateTime>? date,
     Value<String?>? projectId,
-    Value<String?>? visitId,
+    Value<String?>? maintenanceVisitId,
     Value<String>? paymentType,
-    Value<double>? unitsWorked,
-    Value<int>? unitRateCents,
-    Value<int>? totalAmountCents,
+    Value<double>? quantity,
+    Value<int>? rateCents,
+    Value<int>? amountCents,
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return WorkLogsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       workerId: workerId ?? this.workerId,
       date: date ?? this.date,
       projectId: projectId ?? this.projectId,
-      visitId: visitId ?? this.visitId,
+      maintenanceVisitId: maintenanceVisitId ?? this.maintenanceVisitId,
       paymentType: paymentType ?? this.paymentType,
-      unitsWorked: unitsWorked ?? this.unitsWorked,
-      unitRateCents: unitRateCents ?? this.unitRateCents,
-      totalAmountCents: totalAmountCents ?? this.totalAmountCents,
+      quantity: quantity ?? this.quantity,
+      rateCents: rateCents ?? this.rateCents,
+      amountCents: amountCents ?? this.amountCents,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -10729,6 +11016,9 @@ class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
+    }
     if (workerId.present) {
       map['worker_id'] = Variable<String>(workerId.value);
     }
@@ -10738,20 +11028,20 @@ class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
     if (projectId.present) {
       map['project_id'] = Variable<String>(projectId.value);
     }
-    if (visitId.present) {
-      map['visit_id'] = Variable<String>(visitId.value);
+    if (maintenanceVisitId.present) {
+      map['maintenance_visit_id'] = Variable<String>(maintenanceVisitId.value);
     }
     if (paymentType.present) {
       map['payment_type'] = Variable<String>(paymentType.value);
     }
-    if (unitsWorked.present) {
-      map['units_worked'] = Variable<double>(unitsWorked.value);
+    if (quantity.present) {
+      map['quantity'] = Variable<double>(quantity.value);
     }
-    if (unitRateCents.present) {
-      map['unit_rate_cents'] = Variable<int>(unitRateCents.value);
+    if (rateCents.present) {
+      map['rate_cents'] = Variable<int>(rateCents.value);
     }
-    if (totalAmountCents.present) {
-      map['total_amount_cents'] = Variable<int>(totalAmountCents.value);
+    if (amountCents.present) {
+      map['amount_cents'] = Variable<int>(amountCents.value);
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -10761,6 +11051,12 @@ class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
     }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
@@ -10778,17 +11074,20 @@ class WorkLogsCompanion extends UpdateCompanion<WorkLog> {
   String toString() {
     return (StringBuffer('WorkLogsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('workerId: $workerId, ')
           ..write('date: $date, ')
           ..write('projectId: $projectId, ')
-          ..write('visitId: $visitId, ')
+          ..write('maintenanceVisitId: $maintenanceVisitId, ')
           ..write('paymentType: $paymentType, ')
-          ..write('unitsWorked: $unitsWorked, ')
-          ..write('unitRateCents: $unitRateCents, ')
-          ..write('totalAmountCents: $totalAmountCents, ')
+          ..write('quantity: $quantity, ')
+          ..write('rateCents: $rateCents, ')
+          ..write('amountCents: $amountCents, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -10812,6 +11111,18 @@ class $LaborPaymentsTable extends LaborPayments
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _workerIdMeta = const VerificationMeta(
     'workerId',
   );
@@ -10822,7 +11133,7 @@ class $LaborPaymentsTable extends LaborPayments
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
+    $customConstraints: 'NOT NULL REFERENCES workers(id) ON DELETE RESTRICT',
   );
   static const VerificationMeta _amountCentsMeta = const VerificationMeta(
     'amountCents',
@@ -10889,6 +11200,28 @@ class $LaborPaymentsTable extends LaborPayments
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -10915,6 +11248,7 @@ class $LaborPaymentsTable extends LaborPayments
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     workerId,
     amountCents,
     date,
@@ -10922,6 +11256,8 @@ class $LaborPaymentsTable extends LaborPayments
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   ];
@@ -10941,6 +11277,15 @@ class $LaborPaymentsTable extends LaborPayments
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('worker_id')) {
       context.handle(
@@ -10998,6 +11343,18 @@ class $LaborPaymentsTable extends LaborPayments
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -11022,6 +11379,10 @@ class $LaborPaymentsTable extends LaborPayments
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
       )!,
       workerId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -11051,6 +11412,14 @@ class $LaborPaymentsTable extends LaborPayments
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -11070,6 +11439,7 @@ class $LaborPaymentsTable extends LaborPayments
 
 class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   final String id;
+  final String workspaceId;
   final String workerId;
   final int amountCents;
   final DateTime date;
@@ -11077,10 +11447,13 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
   final int version;
   final DateTime? deletedAt;
   const LaborPayment({
     required this.id,
+    required this.workspaceId,
     required this.workerId,
     required this.amountCents,
     required this.date,
@@ -11088,6 +11461,8 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
     required this.version,
     this.deletedAt,
   });
@@ -11095,6 +11470,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['worker_id'] = Variable<String>(workerId);
     map['amount_cents'] = Variable<int>(amountCents);
     map['date'] = Variable<DateTime>(date);
@@ -11104,6 +11480,12 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -11114,6 +11496,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   LaborPaymentsCompanion toCompanion(bool nullToAbsent) {
     return LaborPaymentsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       workerId: Value(workerId),
       amountCents: Value(amountCents),
       date: Value(date),
@@ -11123,6 +11506,12 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
           : Value(notes),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -11137,6 +11526,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LaborPayment(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       workerId: serializer.fromJson<String>(json['workerId']),
       amountCents: serializer.fromJson<int>(json['amountCents']),
       date: serializer.fromJson<DateTime>(json['date']),
@@ -11144,6 +11534,8 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -11153,6 +11545,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'workerId': serializer.toJson<String>(workerId),
       'amountCents': serializer.toJson<int>(amountCents),
       'date': serializer.toJson<DateTime>(date),
@@ -11160,6 +11553,8 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -11167,6 +11562,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
 
   LaborPayment copyWith({
     String? id,
+    String? workspaceId,
     String? workerId,
     int? amountCents,
     DateTime? date,
@@ -11174,10 +11570,13 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => LaborPayment(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     workerId: workerId ?? this.workerId,
     amountCents: amountCents ?? this.amountCents,
     date: date ?? this.date,
@@ -11185,12 +11584,17 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   LaborPayment copyWithCompanion(LaborPaymentsCompanion data) {
     return LaborPayment(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       workerId: data.workerId.present ? data.workerId.value : this.workerId,
       amountCents: data.amountCents.present
           ? data.amountCents.value
@@ -11202,6 +11606,8 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -11211,6 +11617,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   String toString() {
     return (StringBuffer('LaborPayment(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('workerId: $workerId, ')
           ..write('amountCents: $amountCents, ')
           ..write('date: $date, ')
@@ -11218,6 +11625,8 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -11227,6 +11636,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     workerId,
     amountCents,
     date,
@@ -11234,6 +11644,8 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
     notes,
     createdAt,
     updatedAt,
+    createdBy,
+    updatedBy,
     version,
     deletedAt,
   );
@@ -11242,6 +11654,7 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
       identical(this, other) ||
       (other is LaborPayment &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.workerId == this.workerId &&
           other.amountCents == this.amountCents &&
           other.date == this.date &&
@@ -11249,12 +11662,15 @@ class LaborPayment extends DataClass implements Insertable<LaborPayment> {
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> workerId;
   final Value<int> amountCents;
   final Value<DateTime> date;
@@ -11262,11 +11678,14 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const LaborPaymentsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.workerId = const Value.absent(),
     this.amountCents = const Value.absent(),
     this.date = const Value.absent(),
@@ -11274,12 +11693,15 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LaborPaymentsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String workerId,
     required int amountCents,
     required DateTime date,
@@ -11287,6 +11709,8 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -11297,6 +11721,7 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
        paidByPartnerId = Value(paidByPartnerId);
   static Insertable<LaborPayment> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? workerId,
     Expression<int>? amountCents,
     Expression<DateTime>? date,
@@ -11304,12 +11729,15 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (workerId != null) 'worker_id': workerId,
       if (amountCents != null) 'amount_cents': amountCents,
       if (date != null) 'date': date,
@@ -11317,6 +11745,8 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -11325,6 +11755,7 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
 
   LaborPaymentsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? workerId,
     Value<int>? amountCents,
     Value<DateTime>? date,
@@ -11332,12 +11763,15 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     Value<String?>? notes,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return LaborPaymentsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       workerId: workerId ?? this.workerId,
       amountCents: amountCents ?? this.amountCents,
       date: date ?? this.date,
@@ -11345,6 +11779,8 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -11356,6 +11792,9 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (workerId.present) {
       map['worker_id'] = Variable<String>(workerId.value);
@@ -11378,6 +11817,12 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
     }
@@ -11394,6 +11839,7 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
   String toString() {
     return (StringBuffer('LaborPaymentsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('workerId: $workerId, ')
           ..write('amountCents: $amountCents, ')
           ..write('date: $date, ')
@@ -11401,6 +11847,8 @@ class LaborPaymentsCompanion extends UpdateCompanion<LaborPayment> {
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -15226,31 +15674,17 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'workers',
+        'projects',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('work_logs', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('work_logs', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
         'maintenance_visits',
         limitUpdateKind: UpdateKind.delete,
       ),
-      result: [TableUpdate('work_logs', kind: UpdateKind.update)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'workers',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('labor_payments', kind: UpdateKind.delete)],
+      result: [TableUpdate('work_logs', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -16638,6 +17072,7 @@ typedef $$PartnersTableProcessedTableManager =
 typedef $$WorkersTableCreateCompanionBuilder =
     WorkersCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String name,
       Value<String?> phone,
       Value<String?> specialty,
@@ -16647,6 +17082,8 @@ typedef $$WorkersTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -16654,6 +17091,7 @@ typedef $$WorkersTableCreateCompanionBuilder =
 typedef $$WorkersTableUpdateCompanionBuilder =
     WorkersCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> name,
       Value<String?> phone,
       Value<String?> specialty,
@@ -16663,6 +17101,8 @@ typedef $$WorkersTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -16744,6 +17184,11 @@ class $$WorkersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnFilters(column),
@@ -16786,6 +17231,16 @@ class $$WorkersTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16889,6 +17344,11 @@ class $$WorkersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -16934,6 +17394,16 @@ class $$WorkersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get version => $composableBuilder(
     column: $table.version,
     builder: (column) => ColumnOrderings(column),
@@ -16956,6 +17426,11 @@ class $$WorkersTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -16987,6 +17462,12 @@ class $$WorkersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -17103,6 +17584,7 @@ class $$WorkersTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
                 Value<String?> specialty = const Value.absent(),
@@ -17112,11 +17594,14 @@ class $$WorkersTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => WorkersCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 name: name,
                 phone: phone,
                 specialty: specialty,
@@ -17126,6 +17611,8 @@ class $$WorkersTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -17133,6 +17620,7 @@ class $$WorkersTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String name,
                 Value<String?> phone = const Value.absent(),
                 Value<String?> specialty = const Value.absent(),
@@ -17142,11 +17630,14 @@ class $$WorkersTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => WorkersCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 name: name,
                 phone: phone,
                 specialty: specialty,
@@ -17156,6 +17647,8 @@ class $$WorkersTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -20569,15 +21062,14 @@ final class $$MaintenanceVisitsTableReferences
     db.workLogs,
     aliasName: $_aliasNameGenerator(
       db.maintenanceVisits.id,
-      db.workLogs.visitId,
+      db.workLogs.maintenanceVisitId,
     ),
   );
 
   $$WorkLogsTableProcessedTableManager get workLogsRefs {
-    final manager = $$WorkLogsTableTableManager(
-      $_db,
-      $_db.workLogs,
-    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+    final manager = $$WorkLogsTableTableManager($_db, $_db.workLogs).filter(
+      (f) => f.maintenanceVisitId.id.sqlEquals($_itemColumn<String>('id')!),
+    );
 
     final cache = $_typedResult.readTableOrNull(_workLogsRefsTable($_db));
     return ProcessedTableManager(
@@ -20738,7 +21230,7 @@ class $$MaintenanceVisitsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.workLogs,
-      getReferencedColumn: (t) => t.visitId,
+      getReferencedColumn: (t) => t.maintenanceVisitId,
       builder:
           (
             joinBuilder, {
@@ -20982,7 +21474,7 @@ class $$MaintenanceVisitsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.workLogs,
-      getReferencedColumn: (t) => t.visitId,
+      getReferencedColumn: (t) => t.maintenanceVisitId,
       builder:
           (
             joinBuilder, {
@@ -21238,7 +21730,7 @@ class $$MaintenanceVisitsTableTableManager
                               ).workLogsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.visitId == item.id,
+                                (e) => e.maintenanceVisitId == item.id,
                               ),
                           typedResults: items,
                         ),
@@ -24697,17 +25189,20 @@ typedef $$ToolAssignmentsTableProcessedTableManager =
 typedef $$WorkLogsTableCreateCompanionBuilder =
     WorkLogsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String workerId,
       required DateTime date,
       Value<String?> projectId,
-      Value<String?> visitId,
+      Value<String?> maintenanceVisitId,
       Value<String> paymentType,
-      Value<double> unitsWorked,
-      Value<int> unitRateCents,
-      Value<int> totalAmountCents,
+      Value<double> quantity,
+      Value<int> rateCents,
+      Value<int> amountCents,
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -24715,17 +25210,20 @@ typedef $$WorkLogsTableCreateCompanionBuilder =
 typedef $$WorkLogsTableUpdateCompanionBuilder =
     WorkLogsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> workerId,
       Value<DateTime> date,
       Value<String?> projectId,
-      Value<String?> visitId,
+      Value<String?> maintenanceVisitId,
       Value<String> paymentType,
-      Value<double> unitsWorked,
-      Value<int> unitRateCents,
-      Value<int> totalAmountCents,
+      Value<double> quantity,
+      Value<int> rateCents,
+      Value<int> amountCents,
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -24769,19 +25267,22 @@ final class $$WorkLogsTableReferences
     );
   }
 
-  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
+  static $MaintenanceVisitsTable _maintenanceVisitIdTable(_$AppDatabase db) =>
       db.maintenanceVisits.createAlias(
-        $_aliasNameGenerator(db.workLogs.visitId, db.maintenanceVisits.id),
+        $_aliasNameGenerator(
+          db.workLogs.maintenanceVisitId,
+          db.maintenanceVisits.id,
+        ),
       );
 
-  $$MaintenanceVisitsTableProcessedTableManager? get visitId {
-    final $_column = $_itemColumn<String>('visit_id');
+  $$MaintenanceVisitsTableProcessedTableManager? get maintenanceVisitId {
+    final $_column = $_itemColumn<String>('maintenance_visit_id');
     if ($_column == null) return null;
     final manager = $$MaintenanceVisitsTableTableManager(
       $_db,
       $_db.maintenanceVisits,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_maintenanceVisitIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -24803,6 +25304,11 @@ class $$WorkLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get date => $composableBuilder(
     column: $table.date,
     builder: (column) => ColumnFilters(column),
@@ -24813,18 +25319,18 @@ class $$WorkLogsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get unitsWorked => $composableBuilder(
-    column: $table.unitsWorked,
+  ColumnFilters<double> get quantity => $composableBuilder(
+    column: $table.quantity,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get unitRateCents => $composableBuilder(
-    column: $table.unitRateCents,
+  ColumnFilters<int> get rateCents => $composableBuilder(
+    column: $table.rateCents,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get totalAmountCents => $composableBuilder(
-    column: $table.totalAmountCents,
+  ColumnFilters<int> get amountCents => $composableBuilder(
+    column: $table.amountCents,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24840,6 +25346,16 @@ class $$WorkLogsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24899,10 +25415,10 @@ class $$WorkLogsTableFilterComposer
     return composer;
   }
 
-  $$MaintenanceVisitsTableFilterComposer get visitId {
+  $$MaintenanceVisitsTableFilterComposer get maintenanceVisitId {
     final $$MaintenanceVisitsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.visitId,
+      getCurrentColumn: (t) => t.maintenanceVisitId,
       referencedTable: $db.maintenanceVisits,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -24937,6 +25453,11 @@ class $$WorkLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get date => $composableBuilder(
     column: $table.date,
     builder: (column) => ColumnOrderings(column),
@@ -24947,18 +25468,18 @@ class $$WorkLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get unitsWorked => $composableBuilder(
-    column: $table.unitsWorked,
+  ColumnOrderings<double> get quantity => $composableBuilder(
+    column: $table.quantity,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get unitRateCents => $composableBuilder(
-    column: $table.unitRateCents,
+  ColumnOrderings<int> get rateCents => $composableBuilder(
+    column: $table.rateCents,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get totalAmountCents => $composableBuilder(
-    column: $table.totalAmountCents,
+  ColumnOrderings<int> get amountCents => $composableBuilder(
+    column: $table.amountCents,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24974,6 +25495,16 @@ class $$WorkLogsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -25033,10 +25564,10 @@ class $$WorkLogsTableOrderingComposer
     return composer;
   }
 
-  $$MaintenanceVisitsTableOrderingComposer get visitId {
+  $$MaintenanceVisitsTableOrderingComposer get maintenanceVisitId {
     final $$MaintenanceVisitsTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.visitId,
+      getCurrentColumn: (t) => t.maintenanceVisitId,
       referencedTable: $db.maintenanceVisits,
       getReferencedColumn: (t) => t.id,
       builder:
@@ -25069,6 +25600,11 @@ class $$WorkLogsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
 
@@ -25077,18 +25613,14 @@ class $$WorkLogsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<double> get unitsWorked => $composableBuilder(
-    column: $table.unitsWorked,
-    builder: (column) => column,
-  );
+  GeneratedColumn<double> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
 
-  GeneratedColumn<int> get unitRateCents => $composableBuilder(
-    column: $table.unitRateCents,
-    builder: (column) => column,
-  );
+  GeneratedColumn<int> get rateCents =>
+      $composableBuilder(column: $table.rateCents, builder: (column) => column);
 
-  GeneratedColumn<int> get totalAmountCents => $composableBuilder(
-    column: $table.totalAmountCents,
+  GeneratedColumn<int> get amountCents => $composableBuilder(
+    column: $table.amountCents,
     builder: (column) => column,
   );
 
@@ -25100,6 +25632,12 @@ class $$WorkLogsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -25153,11 +25691,11 @@ class $$WorkLogsTableAnnotationComposer
     return composer;
   }
 
-  $$MaintenanceVisitsTableAnnotationComposer get visitId {
+  $$MaintenanceVisitsTableAnnotationComposer get maintenanceVisitId {
     final $$MaintenanceVisitsTableAnnotationComposer composer =
         $composerBuilder(
           composer: this,
-          getCurrentColumn: (t) => t.visitId,
+          getCurrentColumn: (t) => t.maintenanceVisitId,
           referencedTable: $db.maintenanceVisits,
           getReferencedColumn: (t) => t.id,
           builder:
@@ -25191,7 +25729,11 @@ class $$WorkLogsTableTableManager
           $$WorkLogsTableUpdateCompanionBuilder,
           (WorkLog, $$WorkLogsTableReferences),
           WorkLog,
-          PrefetchHooks Function({bool workerId, bool projectId, bool visitId})
+          PrefetchHooks Function({
+            bool workerId,
+            bool projectId,
+            bool maintenanceVisitId,
+          })
         > {
   $$WorkLogsTableTableManager(_$AppDatabase db, $WorkLogsTable table)
     : super(
@@ -25207,33 +25749,39 @@ class $$WorkLogsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> workerId = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
-                Value<String?> visitId = const Value.absent(),
+                Value<String?> maintenanceVisitId = const Value.absent(),
                 Value<String> paymentType = const Value.absent(),
-                Value<double> unitsWorked = const Value.absent(),
-                Value<int> unitRateCents = const Value.absent(),
-                Value<int> totalAmountCents = const Value.absent(),
+                Value<double> quantity = const Value.absent(),
+                Value<int> rateCents = const Value.absent(),
+                Value<int> amountCents = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => WorkLogsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 workerId: workerId,
                 date: date,
                 projectId: projectId,
-                visitId: visitId,
+                maintenanceVisitId: maintenanceVisitId,
                 paymentType: paymentType,
-                unitsWorked: unitsWorked,
-                unitRateCents: unitRateCents,
-                totalAmountCents: totalAmountCents,
+                quantity: quantity,
+                rateCents: rateCents,
+                amountCents: amountCents,
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -25241,33 +25789,39 @@ class $$WorkLogsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String workerId,
                 required DateTime date,
                 Value<String?> projectId = const Value.absent(),
-                Value<String?> visitId = const Value.absent(),
+                Value<String?> maintenanceVisitId = const Value.absent(),
                 Value<String> paymentType = const Value.absent(),
-                Value<double> unitsWorked = const Value.absent(),
-                Value<int> unitRateCents = const Value.absent(),
-                Value<int> totalAmountCents = const Value.absent(),
+                Value<double> quantity = const Value.absent(),
+                Value<int> rateCents = const Value.absent(),
+                Value<int> amountCents = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => WorkLogsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 workerId: workerId,
                 date: date,
                 projectId: projectId,
-                visitId: visitId,
+                maintenanceVisitId: maintenanceVisitId,
                 paymentType: paymentType,
-                unitsWorked: unitsWorked,
-                unitRateCents: unitRateCents,
-                totalAmountCents: totalAmountCents,
+                quantity: quantity,
+                rateCents: rateCents,
+                amountCents: amountCents,
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -25281,7 +25835,11 @@ class $$WorkLogsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({workerId = false, projectId = false, visitId = false}) {
+              ({
+                workerId = false,
+                projectId = false,
+                maintenanceVisitId = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [],
@@ -25327,15 +25885,15 @@ class $$WorkLogsTableTableManager
                                   )
                                   as T;
                         }
-                        if (visitId) {
+                        if (maintenanceVisitId) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.visitId,
+                                    currentColumn: table.maintenanceVisitId,
                                     referencedTable: $$WorkLogsTableReferences
-                                        ._visitIdTable(db),
+                                        ._maintenanceVisitIdTable(db),
                                     referencedColumn: $$WorkLogsTableReferences
-                                        ._visitIdTable(db)
+                                        ._maintenanceVisitIdTable(db)
                                         .id,
                                   )
                                   as T;
@@ -25364,11 +25922,16 @@ typedef $$WorkLogsTableProcessedTableManager =
       $$WorkLogsTableUpdateCompanionBuilder,
       (WorkLog, $$WorkLogsTableReferences),
       WorkLog,
-      PrefetchHooks Function({bool workerId, bool projectId, bool visitId})
+      PrefetchHooks Function({
+        bool workerId,
+        bool projectId,
+        bool maintenanceVisitId,
+      })
     >;
 typedef $$LaborPaymentsTableCreateCompanionBuilder =
     LaborPaymentsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String workerId,
       required int amountCents,
       required DateTime date,
@@ -25376,6 +25939,8 @@ typedef $$LaborPaymentsTableCreateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -25383,6 +25948,7 @@ typedef $$LaborPaymentsTableCreateCompanionBuilder =
 typedef $$LaborPaymentsTableUpdateCompanionBuilder =
     LaborPaymentsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> workerId,
       Value<int> amountCents,
       Value<DateTime> date,
@@ -25390,6 +25956,8 @@ typedef $$LaborPaymentsTableUpdateCompanionBuilder =
       Value<String?> notes,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -25456,6 +26024,11 @@ class $$LaborPaymentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnFilters(column),
@@ -25478,6 +26051,16 @@ class $$LaborPaymentsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -25552,6 +26135,11 @@ class $$LaborPaymentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => ColumnOrderings(column),
@@ -25574,6 +26162,16 @@ class $$LaborPaymentsTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -25646,6 +26244,11 @@ class $$LaborPaymentsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get amountCents => $composableBuilder(
     column: $table.amountCents,
     builder: (column) => column,
@@ -25662,6 +26265,12 @@ class $$LaborPaymentsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -25745,6 +26354,7 @@ class $$LaborPaymentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> workerId = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
@@ -25752,11 +26362,14 @@ class $$LaborPaymentsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LaborPaymentsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 workerId: workerId,
                 amountCents: amountCents,
                 date: date,
@@ -25764,6 +26377,8 @@ class $$LaborPaymentsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -25771,6 +26386,7 @@ class $$LaborPaymentsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String workerId,
                 required int amountCents,
                 required DateTime date,
@@ -25778,11 +26394,14 @@ class $$LaborPaymentsTableTableManager
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LaborPaymentsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 workerId: workerId,
                 amountCents: amountCents,
                 date: date,
@@ -25790,6 +26409,8 @@ class $$LaborPaymentsTableTableManager
                 notes: notes,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,

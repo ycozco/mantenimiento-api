@@ -5,7 +5,10 @@ import 'package:uuid/uuid.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/socio.dart';
 import '../../core/models/cliente.dart';
+import '../../core/models/worker.dart';
 import '../../core/theme/app_theme.dart';
+import '../workers/worker_form_dialog.dart';
+import '../workers/worker_detail_screen.dart';
 
 class SociosClientesScreen extends StatefulWidget {
   final LocalStorageService storage;
@@ -19,6 +22,8 @@ class SociosClientesScreen extends StatefulWidget {
 class _SociosClientesScreenState extends State<SociosClientesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String _busquedaWorker = '';
+  bool _mostrarInactivos = false;
 
   final List<int> _coloresDisponibles = [
     0xFFF59E0B, // Amber
@@ -32,7 +37,7 @@ class _SociosClientesScreenState extends State<SociosClientesScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -49,7 +54,7 @@ class _SociosClientesScreenState extends State<SociosClientesScreen>
           children: [
             Icon(LucideIcons.users, color: AppTheme.amberSafety, size: 24),
             SizedBox(width: 10),
-            Text('Socios y Clientes'),
+            Text('Socios, Personal y Clientes'),
           ],
         ),
         bottom: TabBar(
@@ -58,20 +63,18 @@ class _SociosClientesScreenState extends State<SociosClientesScreen>
           labelColor: Colors.white,
           unselectedLabelColor: Colors.grey,
           tabs: const [
+            Tab(icon: Icon(LucideIcons.user_check, size: 18), text: 'Socios'),
             Tab(
-              icon: Icon(LucideIcons.user_check, size: 18),
-              text: 'Socios (2 o más)',
+              icon: Icon(LucideIcons.hard_hat, size: 18),
+              text: 'Personal (Cuadrilla)',
             ),
-            Tab(
-              icon: Icon(LucideIcons.building, size: 18),
-              text: 'Directorio Clientes',
-            ),
+            Tab(icon: Icon(LucideIcons.building, size: 18), text: 'Clientes'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [_buildSociosTab(), _buildClientesTab()],
+        children: [_buildSociosTab(), _buildWorkersTab(), _buildClientesTab()],
       ),
     );
   }
@@ -284,6 +287,283 @@ class _SociosClientesScreenState extends State<SociosClientesScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // --- TAB TRABAJADORES (PERSONAL DE CAMPO) ---
+  Widget _buildWorkersTab() {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppTheme.amberSafety,
+        foregroundColor: const Color(0xFF0F172A),
+        icon: const Icon(LucideIcons.user_plus, size: 20),
+        label: const Text(
+          'Nuevo Trabajador',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => WorkerFormDialog(
+              onGuardar: (worker) =>
+                  widget.storage.workerRepository.createWorker(worker),
+            ),
+          );
+        },
+      ),
+      body: StreamBuilder<List<Worker>>(
+        stream: widget.storage.workerRepository.watchAllWorkers(),
+        builder: (context, snapshot) {
+          final allWorkers = snapshot.data ?? [];
+          final workersFiltrados = allWorkers.where((w) {
+            final matchFiltro = _mostrarInactivos || w.isActive;
+            if (!matchFiltro) return false;
+            if (_busquedaWorker.isEmpty) return true;
+            final query = _busquedaWorker.toLowerCase();
+            final nameMatch = w.name.toLowerCase().contains(query);
+            final specialtyMatch =
+                w.specialty != null &&
+                w.specialty!.toLowerCase().contains(query);
+            return nameMatch || specialtyMatch;
+          }).toList();
+
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+            children: [
+              // Buscador y Filtro
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Buscar trabajador por nombre o labor...',
+                        prefixIcon: const Icon(LucideIcons.search, size: 18),
+                        isDense: true,
+                        filled: true,
+                        fillColor: const Color(0xFF1E293B),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                      onChanged: (val) =>
+                          setState(() => _busquedaWorker = val.trim()),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilterChip(
+                    label: const Text(
+                      'Inactivos',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                    selected: _mostrarInactivos,
+                    selectedColor: AppTheme.amberSafety.withValues(alpha: 0.2),
+                    checkmarkColor: AppTheme.amberSafety,
+                    onSelected: (val) =>
+                        setState(() => _mostrarInactivos = val),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              if (workersFiltrados.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      const Icon(
+                        LucideIcons.hard_hat,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        _busquedaWorker.isNotEmpty
+                            ? 'No se encontraron trabajadores para "$_busquedaWorker"'
+                            : 'No hay trabajadores registrados en la cuadrilla',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Registra peones, albañiles o técnicos para asignarles jornadas.',
+                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ...workersFiltrados.map((w) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 4,
+                      ),
+                      leading: CircleAvatar(
+                        backgroundColor: w.isActive
+                            ? AppTheme.amberSafety.withValues(alpha: 0.15)
+                            : Colors.grey.withValues(alpha: 0.15),
+                        child: Icon(
+                          LucideIcons.hard_hat,
+                          color: w.isActive
+                              ? AppTheme.amberSafety
+                              : Colors.grey,
+                          size: 20,
+                        ),
+                      ),
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              w.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: w.isActive ? Colors.white : Colors.grey,
+                              ),
+                            ),
+                          ),
+                          if (!w.isActive)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                'Inactivo',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              if (w.specialty != null &&
+                                  w.specialty!.isNotEmpty) ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 1,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0F172A),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    w.specialty!,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: AppTheme.amberSafety,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                              Text(
+                                w.defaultRateCents > 0
+                                    ? 'S/ ${(w.defaultRateCents / 100).toStringAsFixed(0)} ${w.paymentTypeLabel}'
+                                    : 'Sin tarifa fijada',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF94A3B8),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (w.phone != null && w.phone!.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              'Tel: ${w.phone!}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => WorkerDetailScreen(
+                              workerId: w.id,
+                              storage: widget.storage,
+                            ),
+                          ),
+                        );
+                      },
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(
+                          LucideIcons.ellipsis_vertical,
+                          size: 18,
+                        ),
+                        onSelected: (val) {
+                          if (val == 'edit') {
+                            showDialog(
+                              context: context,
+                              builder: (_) => WorkerFormDialog(
+                                workerExistente: w,
+                                onGuardar: (act) => widget
+                                    .storage
+                                    .workerRepository
+                                    .updateWorker(act),
+                              ),
+                            );
+                          } else if (val == 'toggle_active') {
+                            if (w.isActive) {
+                              widget.storage.workerRepository.deactivateWorker(
+                                w.id,
+                              );
+                            } else {
+                              widget.storage.workerRepository.activateWorker(
+                                w.id,
+                              );
+                            }
+                          }
+                        },
+                        itemBuilder: (ctx) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: Text('Editar'),
+                          ),
+                          PopupMenuItem(
+                            value: 'toggle_active',
+                            child: Text(
+                              w.isActive ? 'Desactivar' : 'Reactivar',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+            ],
+          );
+        },
       ),
     );
   }

@@ -43,6 +43,7 @@ class Partners extends Table {
 // --- WORKERS (TRABAJADORES DE CAMPO - SIN LOGIN) ---
 class Workers extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get name => text()();
   TextColumn get phone => text().nullable()();
   TextColumn get specialty => text().nullable()();
@@ -53,6 +54,8 @@ class Workers extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -310,35 +313,45 @@ class ToolAssignments extends Table {
 // --- WORK LOGS (JORNADAS LABORALES) ---
 class WorkLogs extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get workerId => text().customConstraint(
-    'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
+    'NOT NULL REFERENCES workers(id) ON DELETE RESTRICT',
   )();
   DateTimeColumn get date => dateTime()();
   TextColumn get projectId => text().nullable().customConstraint(
-    'REFERENCES projects(id) ON DELETE SET NULL',
+    'REFERENCES projects(id) ON DELETE CASCADE',
   )();
-  TextColumn get visitId => text().nullable().customConstraint(
-    'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
+  TextColumn get maintenanceVisitId => text().nullable().customConstraint(
+    'REFERENCES maintenance_visits(id) ON DELETE CASCADE',
   )();
   TextColumn get paymentType => text().withDefault(const Constant('daily'))();
-  RealColumn get unitsWorked => real().withDefault(const Constant(1.0))();
-  IntColumn get unitRateCents => integer().withDefault(const Constant(0))();
-  IntColumn get totalAmountCents => integer().withDefault(const Constant(0))();
+  RealColumn get quantity => real().withDefault(const Constant(1.0))();
+  IntColumn get rateCents => integer().withDefault(const Constant(0))();
+  IntColumn get amountCents => integer().withDefault(const Constant(0))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK ((project_id IS NOT NULL AND maintenance_visit_id IS NULL) OR (project_id IS NULL AND maintenance_visit_id IS NOT NULL))',
+    'CHECK (quantity > 0 AND rate_cents >= 0 AND amount_cents >= 0)',
+  ];
 }
 
 // --- LABOR PAYMENTS (PAGOS DE JORNALES A OBREROS) ---
 class LaborPayments extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get workerId => text().customConstraint(
-    'NOT NULL REFERENCES workers(id) ON DELETE CASCADE',
+    'NOT NULL REFERENCES workers(id) ON DELETE RESTRICT',
   )();
   IntColumn get amountCents => integer()();
   DateTimeColumn get date => dateTime()();
@@ -347,6 +360,8 @@ class LaborPayments extends Table {
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 

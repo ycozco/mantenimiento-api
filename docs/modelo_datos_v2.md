@@ -84,14 +84,15 @@ erDiagram
 
 #### `workers` (Trabajadores de Cuadrilla - Sin Login)
 - `id` (UUID, PK, Auto)
+- `workspace_id` (TEXT, Not Null, Default 'default')
 - `name` (TEXT, Not Null)
 - `phone` (TEXT, Nullable)
 - `specialty` (TEXT, Nullable)
 - `default_payment_type` (TEXT, Not Null, Default 'daily')
-- `default_rate` (DECIMAL, Not Null, Default 0.0)
+- `default_rate_cents` (INTEGER, Not Null, Default 0)
 - `is_active` (BOOLEAN, Not Null, Default true)
 - `notes` (TEXT, Nullable)
-- `created_at`, `updated_at`, `version`, `deleted_at`
+- `created_at`, `updated_at`, `created_by`, `updated_by`, `version`, `deleted_at`
 
 ---
 
@@ -208,16 +209,18 @@ erDiagram
 ### 2.5 Jornadas, Gastos y Finanzas
 #### `work_logs` (Jornadas Laboradas)
 - `id` (UUID, PK, Auto)
+- `workspace_id` (TEXT, Not Null, Default 'default')
 - `worker_id` (UUID, Not Null, FK `workers.id`, Index)
-- `date` (DATE, Not Null, Index)
+- `date` (DATE/DATETIME, Not Null, Index)
 - `project_id` (UUID, Nullable, FK `projects.id`, Index)
-- `visit_id` (UUID, Nullable, FK `maintenance_visits.id`, Index)
+- `maintenance_visit_id` (UUID, Nullable, FK `maintenance_visits.id`, Index)
 - `payment_type` (TEXT, Not Null, Default 'daily')
-- `units_worked` (DECIMAL, Not Null, Default 1.0)
-- `unit_rate` (DECIMAL, Not Null, Default 0.0)
-- `total_amount` (DECIMAL, Not Null, Default 0.0)
+- `quantity` (REAL / Decimal controlado a 2 dec, Not Null, Default 1.0)
+- `rate_cents` (INTEGER, Not Null, Default 0)
+- `amount_cents` (INTEGER, Not Null, Default 0)
 - `notes` (TEXT, Nullable)
-- `created_at`, `updated_at`, `version`, `deleted_at`
+- `created_at`, `updated_at`, `created_by`, `updated_by`, `version`, `deleted_at`
+- *Constraints*: `CHECK ((project_id IS NOT NULL AND maintenance_visit_id IS NULL) OR (project_id IS NULL AND maintenance_visit_id IS NOT NULL))`, `CHECK (quantity > 0 AND rate_cents >= 0 AND amount_cents >= 0)`
 
 #### `labor_payments` (Pagos a Trabajadores)
 - `id` (UUID, PK, Auto)
