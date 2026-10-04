@@ -6,7 +6,9 @@ import '../../core/database/local_storage_service.dart';
 import '../../core/models/maintenance_plan.dart';
 import '../../core/models/maintenance_visit.dart';
 import '../../core/models/work_log.dart';
+import '../../core/models/stock_movement.dart';
 import '../../core/theme/app_theme.dart';
+import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
 
 class MaintenanceVisitDetailScreen extends StatefulWidget {
@@ -305,52 +307,104 @@ class _MaintenanceVisitDetailScreenState
                     ),
                     const SizedBox(height: 16),
 
-                    // Costos y Jornadas de la Visita
+                    // Costos y Jornadas de la Visita (Mano de Obra + Materiales)
                     StreamBuilder<int>(
                       stream: widget.storage.maintenanceRepository
                           .watchVisitLaborCostCents(visit.id),
-                      builder: (context, costSnapshot) {
-                        final laborCost = (costSnapshot.data ?? 0) / 100.0;
+                      builder: (context, laborSnapshot) {
+                        final laborCost = (laborSnapshot.data ?? 0) / 100.0;
 
-                        return Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF0F172A),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFF1E293B)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        return StreamBuilder<int>(
+                          stream: widget.storage.inventoryRepository
+                              .watchVisitMaterialCostCents(visit.id),
+                          builder: (context, matSnapshot) {
+                            final matCost = (matSnapshot.data ?? 0) / 100.0;
+                            final totalCost = laborCost + matCost;
+
+                            return Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0F172A),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFF1E293B),
+                                ),
+                              ),
+                              child: Column(
                                 children: [
-                                  Text(
-                                    'Costo Laboral de Visita',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Mano de Obra:',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ ${laborCost.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.skyAccent,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Derivado de jornales activos',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Insumos / Materiales:',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ ${matCost.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.emeraldSuccess,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(
+                                    height: 16,
+                                    color: Color(0xFF334155),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Costo Total de la Visita:',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        'S/ ${totalCost.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.amberSafety,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              Text(
-                                'S/ ${laborCost.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.skyAccent,
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -498,6 +552,165 @@ class _MaintenanceVisitDetailScreenState
                                   ],
                                 ),
                               ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Materiales e Insumos Consumidos
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Insumos / Materiales',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        if (!visit.isCancelled)
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppTheme.emeraldSuccess,
+                            ),
+                            icon: const Icon(LucideIcons.plus, size: 16),
+                            label: const Text('Registrar Consumo'),
+                            onPressed: () async {
+                              final items = await widget
+                                  .storage
+                                  .inventoryRepository
+                                  .watchActiveItems()
+                                  .first;
+                              if (!context.mounted) return;
+                              if (items.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'No hay insumos registrados en el inventario. Agregue uno en Ajustes > Inventario.',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+                              showDialog(
+                                context: context,
+                                builder: (_) => StockMovementFormDialog(
+                                  storage: widget.storage,
+                                  items: items,
+                                  preselectedVisitId: visit.id,
+                                  preselectedMovementType: 'consumption',
+                                ),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    StreamBuilder<List<StockMovement>>(
+                      stream: widget.storage.inventoryRepository
+                          .watchVisitMovements(visit.id),
+                      builder: (context, movesSnapshot) {
+                        final moves = movesSnapshot.data ?? [];
+                        if (moves.isEmpty) {
+                          return Container(
+                            padding: const EdgeInsets.all(20),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF1E293B,
+                              ).withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'No se han registrado consumos de materiales para esta visita',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: moves.length,
+                          separatorBuilder: (ctx, i) =>
+                              const SizedBox(height: 8),
+                          itemBuilder: (context, idx) {
+                            final m = moves[idx];
+                            return FutureBuilder(
+                              future: widget.storage.inventoryRepository
+                                  .getItem(m.itemId),
+                              builder: (ctx, itemSnap) {
+                                final item = itemSnap.data;
+                                return Card(
+                                  margin: EdgeInsets.zero,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: AppTheme.emeraldSuccess
+                                          .withValues(alpha: 0.15),
+                                      child: const Icon(
+                                        LucideIcons.package,
+                                        color: AppTheme.emeraldSuccess,
+                                        size: 18,
+                                      ),
+                                    ),
+                                    title: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item?.name ?? 'Insumo',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Text(
+                                          'S/ ${(m.totalCostCents / 100.0).toStringAsFixed(2)}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.emeraldSuccess,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    subtitle: Text(
+                                      '${m.quantity.abs().toStringAsFixed(1)} ${item?.unitLabel ?? "und"} • S/ ${(m.unitCostCents / 100.0).toStringAsFixed(2)} c/u',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    trailing: PopupMenuButton<String>(
+                                      icon: const Icon(
+                                        LucideIcons.ellipsis_vertical,
+                                        size: 16,
+                                      ),
+                                      onSelected: (val) {
+                                        if (val == 'delete') {
+                                          widget.storage.inventoryRepository
+                                              .deleteMovement(m.id);
+                                        }
+                                      },
+                                      itemBuilder: (_) => [
+                                        const PopupMenuItem(
+                                          value: 'delete',
+                                          child: Text(
+                                            'Anular consumo',
+                                            style: TextStyle(
+                                              color: AppTheme.coralUrgent,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           },
                         );

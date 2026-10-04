@@ -4,6 +4,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/notifications/notification_service.dart';
 import '../../core/theme/app_theme.dart';
+import '../inventory/inventory_screen.dart';
 
 class AjustesScreen extends StatelessWidget {
   final LocalStorageService storage;
@@ -25,6 +26,54 @@ class AjustesScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Sección Logística y Almacén
+          const Text(
+            'LOGÍSTICA Y CONTROL OPERATIVO',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.emeraldSuccess,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    LucideIcons.package,
+                    color: AppTheme.emeraldSuccess,
+                  ),
+                  title: const Text(
+                    'Inventario de Insumos y Materiales',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Kardex, stock de plantas, fertilizantes, tierra y consumo por obra/mantenimiento.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  trailing: const Icon(
+                    LucideIcons.chevron_right,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => InventoryScreen(storage: storage),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
           // Sección Respaldo Local
           const Text(
             'COPIA DE SEGURIDAD LOCAL (SIN LOGIN)',
