@@ -287,21 +287,30 @@ erDiagram
 ---
 
 ### 2.6 Adjuntos y Sincronización
-#### `attachments` (Evidencias y Comprobantes)
+#### `attachments` (Evidencias, Comprobantes y Documentos)
 - `id` (UUID, PK, Auto)
-- `parent_type` (TEXT, Not Null, Index)
+- `workspace_id` (UUID, Not Null, Default `00000000-0000-0000-0000-000000000001`, Index)
+- `parent_type` (TEXT, Not Null, Index) — e.g. 'work_logs', 'expenses', 'projects'
 - `parent_id` (UUID, Not Null, Index)
-- `stage` (TEXT, Nullable)
-- `local_file_path` (TEXT, Not Null)
+- `stage` (TEXT, Nullable) — e.g. 'antes', 'durante', 'despues'
+- `kind` (TEXT, Not Null, Default 'image') — 'image' | 'pdf' | 'document'
+- `provider` (TEXT, Not Null, Default 'local') — 'local' | 'server' | 'external_url'
+- `url` (TEXT, Nullable) — URL remota de visualización (ImgBB, Google Drive, CDN)
+- `storage_key` (TEXT, Nullable) — Ruta/clave de almacenamiento en VPS/storage (`workspace/docs/...`)
+- `local_file_path` (TEXT, Nullable) — Path temporal en sandbox del dispositivo (offline/cache)
 - `file_name` (TEXT, Not Null)
 - `file_size_bytes` (INTEGER, Not Null, Default 0)
-- `created_at`, `version`, `deleted_at`
+- `mime_type` (TEXT, Nullable)
+- `created_at`, `updated_at`, `created_by`, `version`, `deleted_at`
 
-#### `sync_queue` (Cola Outbox)
+#### `sync_queue` (Cola Outbox de Cambios Locales)
 - `id` (INTEGER, PK, Auto-Increment)
-- `entity_table` (TEXT, Not Null, Index)
-- `entity_id` (UUID, Not Null, Index)
-- `operation` (TEXT, Not Null)
-- `payload_json` (TEXT, Not Null)
+- `workspace_id` (UUID, Not Null, Default `00000000-0000-0000-0000-000000000001`, Index)
+- `entity_table` (TEXT, Not Null, Index) — Nombre de tabla destino
+- `entity_id` (UUID, Not Null, Index) — UUID del registro mutado
+- `operation` (TEXT, Not Null) — 'UPSERT' | 'DELETE'
+- `payload_json` (TEXT, Not Null) — Instantánea JSON serializada para push
 - `queued_at` (DATETIME, Not Null, Index)
 - `attempts` (INTEGER, Not Null, Default 0)
+- `last_error` (TEXT, Nullable)
+

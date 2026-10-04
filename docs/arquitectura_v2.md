@@ -175,3 +175,159 @@ La elección del backend para el Gateway se realizará formalmente en la etapa V
 2. **Supabase / PostgreSQL**: Backend-as-a-Service completo con Auth, PostgreSQL y Realtime listo para usar.
 3. **PocketBase**: Solución ligera embebida en un solo binario en Go con SQLite/WAL y bajo consumo de RAM, idónea para VPS económicos.
 4. **Appwrite**: Alternativa open-source completa con Auth, Bases de datos y Storage.
+
+---
+
+## 10. Arquitectura Objetivo V2 → V3 Conectada
+
+Este apartado establece formalmente el contrato arquitectónico para que la base de código actual (V2 local con Drift/SQLite) evolucione limpiamente hacia una plataforma multiusuario conectada (V3) sin reescrituras estructurales.
+
+### 10.1 Fuentes de Verdad y Filosofía Local-First
+- **Fase V2 (Offline / Sin Servidor)**: Drift/SQLite en el dispositivo es la única fuente de verdad operacional.
+- **Fase V3 (Conectada / Multiusuario)**:
+  - **SQLite Local**: Fuente de verdad local inmediata para lectura y escritura offline con latencia cero ($O(1)$). Permite trabajar sin conexión en obra o campo.
+  - **PostgreSQL Remoto**: Fuente de verdad centralizada, consolidada y autoritativa para el negocio.
+  - **Invariante**: La adopción de PostgreSQL **NUNCA** reemplaza ni elimina Drift del cliente; SQLite se mantiene permanentemente como motor de persistencia offline-first en los clientes.
+
+### 10.2 Contrato Mínimo de Entidad Sincronizable
+Toda entidad de negocio sincronizable debe implementar el siguiente contrato de campos:
+1. `id` (UUID v4 generado en el cliente al crear el registro).
+2. `workspace_id` (UUID del espacio de trabajo compartido; por defecto `00000000-0000-0000-0000-000000000001` para Decolumax).
+3. `created_at` (Timestamp UTC de creación).
+4. `updated_at` (Timestamp UTC de última modificación).
+5. `version` (Entero incremental optimista; inicia en 1 y se incrementa en cada mutación).
+6. `deleted_at` (Timestamp UTC para soft delete / tombstone; `null` si está activa).
+7. `created_by` / `updated_by` (UUIDs de auditoría para trazabilidad de usuario cuando aplique).
+
+**Regla de Oro de Infraestructura**:
+Las entidades de negocio **NO** deben contener banderas como `isSynced`, `synced` o `uploaded`. El estado de sincronización es una responsabilidad estricta de la capa de infraestructura representada por la tabla `sync_queue` (Outbox).
+
+### 10.3 Regla Transaccional Local (Invariante Outbox)
+Toda mutación de datos de negocio debe ejecutarse atómicamente junto con su registro en la cola de sincronización:
+```sql
+BEGIN TRANSACTION;
+  -- 1. Modificar entidad localmente en SQLite
+  INSERT/UPDATE/DELETE INTO entidad (...);
+  -- 2. Registrar evento Outbox en la cola
+  INSERT INTO sync_queue (workspace_id, entity_table, entity_id, operation, payload_json, queued_at)
+  VALUES (...);
+COMMIT;
+```
+*Prohibición*: Nunca persistir una entidad en SQLite y posteriormente, fuera de la transacción, intentar encolar la operación. Si la cola falla, el cambio local debe abortarse (rollback) para garantizar consistencia.
+
+### 10.4 Protocolo de Sincronización (Push / Pull)
+- **Push (`POST /sync/push`)**:
+  - El cliente envía periódicamente (o al recuperar conexión) el lote de operaciones pendientes de `sync_queue`.
+  - Estructura conceptual del ítem:
+    ```json
+    {
+      "workspaceId": "00000000-0000-0000-0000-000000000001",
+      "entityType": "work_logs",
+      "entityId": "e3b0c442-98fc-1c14-9afb-4c7b6c501192",
+      "operation": "UPSERT",
+      "version": 1,
+      "data": { ... }
+    }
+    ```
+  - Al recibir confirmación HTTP 200/204 con los IDs procesados, el cliente purga los registros correspondientes de `sync_queue`.
+- **Pull (`GET /sync/pull?cursor=...`)**:
+  - El cliente solicita los cambios remotos ocurridos desde su último cursor confirmado (`cursor` = timestamp UTC o token secuencial).
+  - El servidor responde: `{ "changes": [...], "nextCursor": "2026-10-04T21:00:00Z" }`.
+  - El cliente aplica las mutaciones entrantes dentro de una transacción local SQLite y actualiza su cursor local.
+
+### 10.5 Estrategia de Resolución de Conflictos
+Se descarta el uso de CRDTs por complejidad innecesaria. La resolución se basa en:
+1. **Entidades Editables (Catálogos y Datos Maestros)**:
+   - Clientes, Proveedores, Nombres, Teléfonos, Notas, Ubicaciones.
+   - Aplica *Last Write Wins* (LWW) condicionado por `version` y `updated_at`. Si la versión remota es superior, la actualización remota prevalece.
+2. **Eventos Financieros y Operacionales Críticos (Inmutabilidad de Ledger)**:
+   - `work_logs`, `labor_payments`, `stock_movements`, `capital_movements`, `collections`.
+   - **Regla Estricta**: **Nunca se sobrescribe silenciosamente la historia financiera**.
+   - Los registros de ledger no se editan destructivamente. Cualquier corrección se modela como un nuevo evento explícito (anulación mediante `deleted_at` + nuevo registro compensatorio/corrector) preservando la trazabilidad de auditoría.
+
+### 10.6 Estrategia de Archivos: PDFs, Imágenes y Adjuntos
+- **No Sobrecargar la Base de Datos**: Ni SQLite ni PostgreSQL deben almacenar binarios (BLOBs) ni strings base64 pesados. Solo almacenan tipos primitivos, URLs y metadatos.
+- **Imágenes (Evidencias de Obra, Visitas, Perfiles)**:
+  - Se utilizan URLs externas públicas o privadas (ImgBB, Google Drive u otros hostings HTTPS compatibles).
+  - La base de datos almacena exclusivamente `url`, `mime_type`, `file_name` y `file_size_bytes`.
+  - El cliente Flutter descarga y renderiza mediante caché de imágenes HTTP.
+- **Documentos PDF (Comprobantes, Informes, Planos, Actas)**:
+  - Los PDFs se almacenan en el sistema de archivos del servidor (volumen persistente en VPS o almacenamiento S3-compatible).
+  - PostgreSQL y SQLite almacenan únicamente la metadata: `storage_key` (ej. `workspace/docs/informe_01.pdf`), tamaño en bytes y checksum.
+  - Se accede al documento mediante endpoints autenticados o URLs firmadas temporales generadas por la API.
+- **Modelo Unificado de `attachments`**:
+  - La tabla `attachments` soporta ambos mundos:
+    - *Imágenes*: `kind = 'image'`, `provider = 'external_url'`, `url = 'https://...'`, `storage_key = null`.
+    - *PDFs de Servidor*: `kind = 'pdf'`, `provider = 'server'`, `url = null`, `storage_key = 'decolumax/2026/acta.pdf'`.
+
+### 10.7 Arquitectura Futura del Repositorio (Monorepo)
+En una etapa posterior de infraestructura se estructurará el repositorio como monorepo sin alterar la historia Git:
+```text
+mantenimiento/
+  apps/
+    client/          <-- Proyecto Flutter actual (Mobile & Web)
+    api/             <-- Backend futuro (NestJS / FastAPI / etc.)
+  infrastructure/
+    docker/          <-- Dockerfiles para API y servicios
+    reverse-proxy/   <-- Configuración Nginx o Caddy (SSL automático)
+    postgres/        <-- Scripts de inicialización y migraciones SQL
+    backup/          <-- Scripts cron de backup y rotación diaria
+  docs/              <-- Documentación maestra del sistema
+  docker-compose.yml <-- Orquestador de servicios en VPS
+  .env.example       <-- Plantilla de variables de entorno requeridas
+  README.md
+```
+*Aclaración*: Por el momento no se mueven carpetas; el proyecto Flutter permanece en la raíz del workspace hasta la tarea específica de reestructuración monorepo.
+
+### 10.8 Estrategia Git y Ciclo de Vida de Ramas
+- No existirán ramas de backend separadas de forma permanente.
+- Se utiliza un flujo *Trunk-based development*:
+  - Rama principal: `master` (o `main`).
+  - Ramas de características cortas: `feature/t03-labor-payments`, `feature/sync-gateway`, etc.
+  - Al completar y validar las pruebas de cada feature, se hace merge a la rama principal. El backend vivirá en `apps/api` dentro del mismo árbol.
+
+### 10.9 Despliegue en VPS Linux con Docker Compose
+- **Entorno de Producción**: Servidor VPS Linux económico (2 vCPU, 4GB RAM) ejecutando Docker Compose.
+- **Servicios Orquestados**:
+  1. `reverse-proxy`: Caddy o Nginx con HTTPS automático (Let's Encrypt).
+  2. `api`: Contenedor stateless del backend.
+  3. `postgres`: PostgreSQL 16 sobre volumen Docker nombrado y persistente.
+  4. `backup`: Contenedor ligero que ejecuta `pg_dump` programado (cron) con compresión y rotación hacia almacenamiento persistente desacoplado.
+- **Regla de Persistencia**: Los contenedores deben ser 100% efímeros y descartables. Cero almacenamiento crítico dentro de la capa de escritura del contenedor.
+- **Prudencia Operacional**: Se descarta Kubernetes, microservicios, Redis inicial y RabbitMQ inicial para evitar sobreingeniería innecesaria.
+
+### 10.10 Configuración y Seguridad
+- Todas las variables sensibles se cargan mediante variables de entorno (`.env` local en servidor, jamás versionado en Git).
+- Plantilla obligatoria `.env.example`:
+  ```bash
+  APP_ENV=production
+  API_PORT=3000
+  DATABASE_HOST=postgres
+  DATABASE_PORT=5432
+  DATABASE_NAME=mantenimiento_db
+  DATABASE_USER=decolumax_user
+  DATABASE_PASSWORD=CHANGE_THIS_IN_PRODUCTION
+  JWT_SECRET=CHANGE_THIS_IN_PRODUCTION_SUPER_SECRET
+  PDF_STORAGE_PATH=/data/pdfs
+  MAX_PDF_SIZE_MB=15
+  BACKUP_PATH=/data/backups
+  ```
+
+### 10.11 Modelo de Autenticación Futura
+- **Separación de Conceptos**:
+  - `User`: Identidad con credenciales (email/contraseña, hash, JWT, rol administrativo o de campo).
+  - `Worker`: Personal operativo de cuadrilla (no necesariamente tiene usuario ni acceso al sistema).
+  - `Partner`: Socio capitalista/gestor; puede asociarse biunívocamente a un `User` si utiliza la app.
+- **Estructura Inicial**:
+  - Workspace: `Decolumax`
+  - Usuarios: `Socio A` y `Socio B`
+- **Tokens**:
+  - Autenticación mediante `accessToken` (corta duración) y `refreshToken` (larga duración con rotación).
+  - En Flutter Mobile los tokens se guardan exclusivamente en almacenamiento seguro nativo (`flutter_secure_storage` / KeyStore / Keychain).
+
+### 10.12 Plataformas: Flutter Mobile vs. Flutter Web
+- **Código Compartido**: Ambas plataformas comparten el 100% del dominio, DAOs de Drift, modelos, lógica de negocio y repositorios.
+- **Especialización de Interfaz**:
+  - **Mobile (Android / iOS)**: Diseñado para ergonomía táctil en campo, ingreso rápido de jornales, registro de visitas offline, captura fotográfica y consulta rápida de saldos.
+  - **Web**: Diseñado para administración en escritorio, reportes consolidados, exportaciones contables, configuración de tarifas y visión global de obras.
+

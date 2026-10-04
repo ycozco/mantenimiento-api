@@ -443,17 +443,28 @@ class Collections extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-// --- ATTACHMENTS (EVIDENCIAS FOTOGRÁFICAS Y COMPROBANTES) ---
+// --- ATTACHMENTS (EVIDENCIAS FOTOGRÁFICAS, COMPROBANTES Y PDFs) ---
 class Attachments extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get parentType => text()();
   TextColumn get parentId => text()();
   TextColumn get stage => text().nullable()();
-  TextColumn get localFilePath => text()();
+  TextColumn get kind => text().withDefault(
+    const Constant('image'),
+  )(); // 'image', 'pdf', 'document'
+  TextColumn get provider => text().withDefault(
+    const Constant('external_url'),
+  )(); // 'external_url', 'server', 'local'
+  TextColumn get url => text().nullable()();
+  TextColumn get storageKey => text().nullable()();
+  TextColumn get localFilePath => text().nullable()();
   TextColumn get fileName => text()();
   IntColumn get fileSizeBytes => integer().withDefault(const Constant(0))();
   TextColumn get mimeType => text().withDefault(const Constant('image/jpeg'))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
   IntColumn get version => integer().withDefault(const Constant(1))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
@@ -464,9 +475,10 @@ class Attachments extends Table {
 // --- SYNC QUEUE (COLA OUTBOX) ---
 class SyncQueue extends Table {
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get entityTable => text()();
   TextColumn get entityId => text()();
-  TextColumn get operation => text()();
+  TextColumn get operation => text()(); // 'UPSERT', 'DELETE'
   TextColumn get payloadJson => text()();
   DateTimeColumn get queuedAt => dateTime().withDefault(currentDateAndTime)();
   IntColumn get attempts => integer().withDefault(const Constant(0))();

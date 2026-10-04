@@ -6,7 +6,7 @@
 ## 1. Resumen Ejecutivo de la Tarea T-02
 - **Objetivo**: Implementar el soporte relacional, de dominio, repositorios reactivos y UI operativa para la gestión de trabajadores de campo (`Worker`) y el registro histórico e inmutable de jornadas laboradas (`WorkLog`), integrando la mano de obra devengada en el cálculo del costo real de las obras (`Project`).
 - **Resultado**: **100% COMPLETADO Y VALIDADO CON PRUEBAS AUTOMATIZADAS**.
-- **Estado del Checkpoint**: `T-02 READY FOR REVIEW`.
+- **Estado del Checkpoint**: `T-02 CLOSED`.
 
 ---
 
@@ -66,22 +66,22 @@
 - **`flutter test`**: **29/29 tests pasados al 100%**:
   - `balance_calculator_test.dart` (3 tests V1 sin regresiones).
   - `drift_migration_test.dart` (12 tests V1 sin regresiones).
-  - `workers_work_logs_test.dart` (14 tests nuevos de T-02):
+  - `workers_work_logs_test.dart` (14 tests específicos de T-02):
     1. Crear trabajador con valores mínimos y `defaultRateCents`.
     2. Editar trabajador actualizando especialidad y tarifa.
-    3. Desactivar trabajador.
-    4. Trabajador inactivo no aparece en selector activo.
-    5. Trabajador inactivo conserva su historial completo.
-    6. WorkLog daily ($1 \times 7000 = 7000$ céntimos).
-    7. WorkLog hourly ($6.5 \times 1200 = 7800$ céntimos).
-    8. WorkLog fixed ($15000$ céntimos fijos).
-    9. Snapshot histórico: cambio de tarifa de trabajador no afecta jornadas previas.
-    10. Override: registrar jornada a tarifa acordada diferente sin alterar la tarifa base del trabajador.
-    11. Costo de obra acumulado: derivación exacta por suma de jornadas de múltiples trabajadores.
-    12. Restricción XOR de contexto: rechaza `projectId + maintenanceVisitId` simultáneos.
-    13. Restricción XOR de contexto: rechaza jornada sin contexto.
-    14. Foreign Key: rechaza inserción con trabajador inexistente.
-    15. Soft Delete: anulación de jornada descuenta automáticamente el costo derivado de la obra.
+    3. Desactivar trabajador: no aparece en selector activo y permanece en listado general.
+    4. Trabajador inactivo conserva su historial completo.
+    5. WorkLog daily ($1 \times 7000 = 7000$ céntimos).
+    6. WorkLog hourly ($6.5 \times 1200 = 7800$ céntimos).
+    7. WorkLog fixed ($15000$ céntimos fijos).
+    8. Snapshot histórico: cambio de tarifa de trabajador no afecta jornadas previas.
+    9. Override: registrar jornada a tarifa acordada diferente sin alterar la tarifa base del trabajador.
+    10. Costo de obra acumulado: derivación exacta por suma de jornadas de múltiples trabajadores.
+    11. Restricción XOR de contexto: rechaza `projectId + maintenanceVisitId` simultáneos.
+    12. Restricción XOR de contexto: rechaza jornada sin contexto.
+    13. Foreign Key: rechaza inserción con trabajador inexistente.
+    14. Soft Delete: anulación de jornada descuenta automáticamente el costo derivado de la obra.
+
 
 ---
 

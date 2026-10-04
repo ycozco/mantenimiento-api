@@ -14089,6 +14089,18 @@ class $AttachmentsTable extends Attachments
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _parentTypeMeta = const VerificationMeta(
     'parentType',
   );
@@ -14120,6 +14132,48 @@ class $AttachmentsTable extends Attachments
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('image'),
+  );
+  static const VerificationMeta _providerMeta = const VerificationMeta(
+    'provider',
+  );
+  @override
+  late final GeneratedColumn<String> provider = GeneratedColumn<String>(
+    'provider',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('external_url'),
+  );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _storageKeyMeta = const VerificationMeta(
+    'storageKey',
+  );
+  @override
+  late final GeneratedColumn<String> storageKey = GeneratedColumn<String>(
+    'storage_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _localFilePathMeta = const VerificationMeta(
     'localFilePath',
   );
@@ -14127,9 +14181,9 @@ class $AttachmentsTable extends Attachments
   late final GeneratedColumn<String> localFilePath = GeneratedColumn<String>(
     'local_file_path',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _fileNameMeta = const VerificationMeta(
     'fileName',
@@ -14178,6 +14232,29 @@ class $AttachmentsTable extends Attachments
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _versionMeta = const VerificationMeta(
     'version',
   );
@@ -14204,14 +14281,21 @@ class $AttachmentsTable extends Attachments
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     parentType,
     parentId,
     stage,
+    kind,
+    provider,
+    url,
+    storageKey,
     localFilePath,
     fileName,
     fileSizeBytes,
     mimeType,
     createdAt,
+    updatedAt,
+    createdBy,
     version,
     deletedAt,
   ];
@@ -14231,6 +14315,15 @@ class $AttachmentsTable extends Attachments
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('parent_type')) {
       context.handle(
@@ -14254,6 +14347,30 @@ class $AttachmentsTable extends Attachments
         stage.isAcceptableOrUnknown(data['stage']!, _stageMeta),
       );
     }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    }
+    if (data.containsKey('provider')) {
+      context.handle(
+        _providerMeta,
+        provider.isAcceptableOrUnknown(data['provider']!, _providerMeta),
+      );
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+        _urlMeta,
+        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
+      );
+    }
+    if (data.containsKey('storage_key')) {
+      context.handle(
+        _storageKeyMeta,
+        storageKey.isAcceptableOrUnknown(data['storage_key']!, _storageKeyMeta),
+      );
+    }
     if (data.containsKey('local_file_path')) {
       context.handle(
         _localFilePathMeta,
@@ -14262,8 +14379,6 @@ class $AttachmentsTable extends Attachments
           _localFilePathMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_localFilePathMeta);
     }
     if (data.containsKey('file_name')) {
       context.handle(
@@ -14294,6 +14409,18 @@ class $AttachmentsTable extends Attachments
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
     if (data.containsKey('version')) {
       context.handle(
         _versionMeta,
@@ -14319,6 +14446,10 @@ class $AttachmentsTable extends Attachments
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       parentType: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}parent_type'],
@@ -14331,10 +14462,26 @@ class $AttachmentsTable extends Attachments
         DriftSqlType.string,
         data['${effectivePrefix}stage'],
       ),
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      provider: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider'],
+      )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      ),
+      storageKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_key'],
+      ),
       localFilePath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}local_file_path'],
-      )!,
+      ),
       fileName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}file_name'],
@@ -14351,6 +14498,14 @@ class $AttachmentsTable extends Attachments
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
       version: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}version'],
@@ -14370,26 +14525,40 @@ class $AttachmentsTable extends Attachments
 
 class Attachment extends DataClass implements Insertable<Attachment> {
   final String id;
+  final String workspaceId;
   final String parentType;
   final String parentId;
   final String? stage;
-  final String localFilePath;
+  final String kind;
+  final String provider;
+  final String? url;
+  final String? storageKey;
+  final String? localFilePath;
   final String fileName;
   final int fileSizeBytes;
   final String mimeType;
   final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? createdBy;
   final int version;
   final DateTime? deletedAt;
   const Attachment({
     required this.id,
+    required this.workspaceId,
     required this.parentType,
     required this.parentId,
     this.stage,
-    required this.localFilePath,
+    required this.kind,
+    required this.provider,
+    this.url,
+    this.storageKey,
+    this.localFilePath,
     required this.fileName,
     required this.fileSizeBytes,
     required this.mimeType,
     required this.createdAt,
+    required this.updatedAt,
+    this.createdBy,
     required this.version,
     this.deletedAt,
   });
@@ -14397,16 +14566,31 @@ class Attachment extends DataClass implements Insertable<Attachment> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['parent_type'] = Variable<String>(parentType);
     map['parent_id'] = Variable<String>(parentId);
     if (!nullToAbsent || stage != null) {
       map['stage'] = Variable<String>(stage);
     }
-    map['local_file_path'] = Variable<String>(localFilePath);
+    map['kind'] = Variable<String>(kind);
+    map['provider'] = Variable<String>(provider);
+    if (!nullToAbsent || url != null) {
+      map['url'] = Variable<String>(url);
+    }
+    if (!nullToAbsent || storageKey != null) {
+      map['storage_key'] = Variable<String>(storageKey);
+    }
+    if (!nullToAbsent || localFilePath != null) {
+      map['local_file_path'] = Variable<String>(localFilePath);
+    }
     map['file_name'] = Variable<String>(fileName);
     map['file_size_bytes'] = Variable<int>(fileSizeBytes);
     map['mime_type'] = Variable<String>(mimeType);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
     map['version'] = Variable<int>(version);
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
@@ -14417,16 +14601,29 @@ class Attachment extends DataClass implements Insertable<Attachment> {
   AttachmentsCompanion toCompanion(bool nullToAbsent) {
     return AttachmentsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       parentType: Value(parentType),
       parentId: Value(parentId),
       stage: stage == null && nullToAbsent
           ? const Value.absent()
           : Value(stage),
-      localFilePath: Value(localFilePath),
+      kind: Value(kind),
+      provider: Value(provider),
+      url: url == null && nullToAbsent ? const Value.absent() : Value(url),
+      storageKey: storageKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storageKey),
+      localFilePath: localFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localFilePath),
       fileName: Value(fileName),
       fileSizeBytes: Value(fileSizeBytes),
       mimeType: Value(mimeType),
       createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
       version: Value(version),
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
@@ -14441,14 +14638,21 @@ class Attachment extends DataClass implements Insertable<Attachment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Attachment(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       parentType: serializer.fromJson<String>(json['parentType']),
       parentId: serializer.fromJson<String>(json['parentId']),
       stage: serializer.fromJson<String?>(json['stage']),
-      localFilePath: serializer.fromJson<String>(json['localFilePath']),
+      kind: serializer.fromJson<String>(json['kind']),
+      provider: serializer.fromJson<String>(json['provider']),
+      url: serializer.fromJson<String?>(json['url']),
+      storageKey: serializer.fromJson<String?>(json['storageKey']),
+      localFilePath: serializer.fromJson<String?>(json['localFilePath']),
       fileName: serializer.fromJson<String>(json['fileName']),
       fileSizeBytes: serializer.fromJson<int>(json['fileSizeBytes']),
       mimeType: serializer.fromJson<String>(json['mimeType']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
       version: serializer.fromJson<int>(json['version']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
@@ -14458,14 +14662,21 @@ class Attachment extends DataClass implements Insertable<Attachment> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'parentType': serializer.toJson<String>(parentType),
       'parentId': serializer.toJson<String>(parentId),
       'stage': serializer.toJson<String?>(stage),
-      'localFilePath': serializer.toJson<String>(localFilePath),
+      'kind': serializer.toJson<String>(kind),
+      'provider': serializer.toJson<String>(provider),
+      'url': serializer.toJson<String?>(url),
+      'storageKey': serializer.toJson<String?>(storageKey),
+      'localFilePath': serializer.toJson<String?>(localFilePath),
       'fileName': serializer.toJson<String>(fileName),
       'fileSizeBytes': serializer.toJson<int>(fileSizeBytes),
       'mimeType': serializer.toJson<String>(mimeType),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
       'version': serializer.toJson<int>(version),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
@@ -14473,37 +14684,62 @@ class Attachment extends DataClass implements Insertable<Attachment> {
 
   Attachment copyWith({
     String? id,
+    String? workspaceId,
     String? parentType,
     String? parentId,
     Value<String?> stage = const Value.absent(),
-    String? localFilePath,
+    String? kind,
+    String? provider,
+    Value<String?> url = const Value.absent(),
+    Value<String?> storageKey = const Value.absent(),
+    Value<String?> localFilePath = const Value.absent(),
     String? fileName,
     int? fileSizeBytes,
     String? mimeType,
     DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<String?> createdBy = const Value.absent(),
     int? version,
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Attachment(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     parentType: parentType ?? this.parentType,
     parentId: parentId ?? this.parentId,
     stage: stage.present ? stage.value : this.stage,
-    localFilePath: localFilePath ?? this.localFilePath,
+    kind: kind ?? this.kind,
+    provider: provider ?? this.provider,
+    url: url.present ? url.value : this.url,
+    storageKey: storageKey.present ? storageKey.value : this.storageKey,
+    localFilePath: localFilePath.present
+        ? localFilePath.value
+        : this.localFilePath,
     fileName: fileName ?? this.fileName,
     fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
     mimeType: mimeType ?? this.mimeType,
     createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
     version: version ?? this.version,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Attachment copyWithCompanion(AttachmentsCompanion data) {
     return Attachment(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       parentType: data.parentType.present
           ? data.parentType.value
           : this.parentType,
       parentId: data.parentId.present ? data.parentId.value : this.parentId,
       stage: data.stage.present ? data.stage.value : this.stage,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      provider: data.provider.present ? data.provider.value : this.provider,
+      url: data.url.present ? data.url.value : this.url,
+      storageKey: data.storageKey.present
+          ? data.storageKey.value
+          : this.storageKey,
       localFilePath: data.localFilePath.present
           ? data.localFilePath.value
           : this.localFilePath,
@@ -14513,6 +14749,8 @@ class Attachment extends DataClass implements Insertable<Attachment> {
           : this.fileSizeBytes,
       mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
       version: data.version.present ? data.version.value : this.version,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
@@ -14522,14 +14760,21 @@ class Attachment extends DataClass implements Insertable<Attachment> {
   String toString() {
     return (StringBuffer('Attachment(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('parentType: $parentType, ')
           ..write('parentId: $parentId, ')
           ..write('stage: $stage, ')
+          ..write('kind: $kind, ')
+          ..write('provider: $provider, ')
+          ..write('url: $url, ')
+          ..write('storageKey: $storageKey, ')
           ..write('localFilePath: $localFilePath, ')
           ..write('fileName: $fileName, ')
           ..write('fileSizeBytes: $fileSizeBytes, ')
           ..write('mimeType: $mimeType, ')
           ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt')
           ..write(')'))
@@ -14539,14 +14784,21 @@ class Attachment extends DataClass implements Insertable<Attachment> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     parentType,
     parentId,
     stage,
+    kind,
+    provider,
+    url,
+    storageKey,
     localFilePath,
     fileName,
     fileSizeBytes,
     mimeType,
     createdAt,
+    updatedAt,
+    createdBy,
     version,
     deletedAt,
   );
@@ -14555,87 +14807,128 @@ class Attachment extends DataClass implements Insertable<Attachment> {
       identical(this, other) ||
       (other is Attachment &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.parentType == this.parentType &&
           other.parentId == this.parentId &&
           other.stage == this.stage &&
+          other.kind == this.kind &&
+          other.provider == this.provider &&
+          other.url == this.url &&
+          other.storageKey == this.storageKey &&
           other.localFilePath == this.localFilePath &&
           other.fileName == this.fileName &&
           other.fileSizeBytes == this.fileSizeBytes &&
           other.mimeType == this.mimeType &&
           other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.createdBy == this.createdBy &&
           other.version == this.version &&
           other.deletedAt == this.deletedAt);
 }
 
 class AttachmentsCompanion extends UpdateCompanion<Attachment> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> parentType;
   final Value<String> parentId;
   final Value<String?> stage;
-  final Value<String> localFilePath;
+  final Value<String> kind;
+  final Value<String> provider;
+  final Value<String?> url;
+  final Value<String?> storageKey;
+  final Value<String?> localFilePath;
   final Value<String> fileName;
   final Value<int> fileSizeBytes;
   final Value<String> mimeType;
   final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String?> createdBy;
   final Value<int> version;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const AttachmentsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.parentType = const Value.absent(),
     this.parentId = const Value.absent(),
     this.stage = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.provider = const Value.absent(),
+    this.url = const Value.absent(),
+    this.storageKey = const Value.absent(),
     this.localFilePath = const Value.absent(),
     this.fileName = const Value.absent(),
     this.fileSizeBytes = const Value.absent(),
     this.mimeType = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AttachmentsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String parentType,
     required String parentId,
     this.stage = const Value.absent(),
-    required String localFilePath,
+    this.kind = const Value.absent(),
+    this.provider = const Value.absent(),
+    this.url = const Value.absent(),
+    this.storageKey = const Value.absent(),
+    this.localFilePath = const Value.absent(),
     required String fileName,
     this.fileSizeBytes = const Value.absent(),
     this.mimeType = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
     this.version = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        parentType = Value(parentType),
        parentId = Value(parentId),
-       localFilePath = Value(localFilePath),
        fileName = Value(fileName);
   static Insertable<Attachment> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? parentType,
     Expression<String>? parentId,
     Expression<String>? stage,
+    Expression<String>? kind,
+    Expression<String>? provider,
+    Expression<String>? url,
+    Expression<String>? storageKey,
     Expression<String>? localFilePath,
     Expression<String>? fileName,
     Expression<int>? fileSizeBytes,
     Expression<String>? mimeType,
     Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? createdBy,
     Expression<int>? version,
     Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (parentType != null) 'parent_type': parentType,
       if (parentId != null) 'parent_id': parentId,
       if (stage != null) 'stage': stage,
+      if (kind != null) 'kind': kind,
+      if (provider != null) 'provider': provider,
+      if (url != null) 'url': url,
+      if (storageKey != null) 'storage_key': storageKey,
       if (localFilePath != null) 'local_file_path': localFilePath,
       if (fileName != null) 'file_name': fileName,
       if (fileSizeBytes != null) 'file_size_bytes': fileSizeBytes,
       if (mimeType != null) 'mime_type': mimeType,
       if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdBy != null) 'created_by': createdBy,
       if (version != null) 'version': version,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
@@ -14644,28 +14937,42 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
 
   AttachmentsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? parentType,
     Value<String>? parentId,
     Value<String?>? stage,
-    Value<String>? localFilePath,
+    Value<String>? kind,
+    Value<String>? provider,
+    Value<String?>? url,
+    Value<String?>? storageKey,
+    Value<String?>? localFilePath,
     Value<String>? fileName,
     Value<int>? fileSizeBytes,
     Value<String>? mimeType,
     Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String?>? createdBy,
     Value<int>? version,
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return AttachmentsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       parentType: parentType ?? this.parentType,
       parentId: parentId ?? this.parentId,
       stage: stage ?? this.stage,
+      kind: kind ?? this.kind,
+      provider: provider ?? this.provider,
+      url: url ?? this.url,
+      storageKey: storageKey ?? this.storageKey,
       localFilePath: localFilePath ?? this.localFilePath,
       fileName: fileName ?? this.fileName,
       fileSizeBytes: fileSizeBytes ?? this.fileSizeBytes,
       mimeType: mimeType ?? this.mimeType,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
       version: version ?? this.version,
       deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
@@ -14678,6 +14985,9 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
+    }
     if (parentType.present) {
       map['parent_type'] = Variable<String>(parentType.value);
     }
@@ -14686,6 +14996,18 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
     }
     if (stage.present) {
       map['stage'] = Variable<String>(stage.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (provider.present) {
+      map['provider'] = Variable<String>(provider.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (storageKey.present) {
+      map['storage_key'] = Variable<String>(storageKey.value);
     }
     if (localFilePath.present) {
       map['local_file_path'] = Variable<String>(localFilePath.value);
@@ -14701,6 +15023,12 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
     }
     if (version.present) {
       map['version'] = Variable<int>(version.value);
@@ -14718,14 +15046,21 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
   String toString() {
     return (StringBuffer('AttachmentsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('parentType: $parentType, ')
           ..write('parentId: $parentId, ')
           ..write('stage: $stage, ')
+          ..write('kind: $kind, ')
+          ..write('provider: $provider, ')
+          ..write('url: $url, ')
+          ..write('storageKey: $storageKey, ')
           ..write('localFilePath: $localFilePath, ')
           ..write('fileName: $fileName, ')
           ..write('fileSizeBytes: $fileSizeBytes, ')
           ..write('mimeType: $mimeType, ')
           ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('createdBy: $createdBy, ')
           ..write('version: $version, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
@@ -14752,6 +15087,18 @@ class $SyncQueueTable extends SyncQueue
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'PRIMARY KEY AUTOINCREMENT',
     ),
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _entityTableMeta = const VerificationMeta(
     'entityTable',
@@ -14835,6 +15182,7 @@ class $SyncQueueTable extends SyncQueue
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     entityTable,
     entityId,
     operation,
@@ -14857,6 +15205,15 @@ class $SyncQueueTable extends SyncQueue
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('entity_table')) {
       context.handle(
@@ -14927,6 +15284,10 @@ class $SyncQueueTable extends SyncQueue
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       entityTable: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}entity_table'],
@@ -14966,6 +15327,7 @@ class $SyncQueueTable extends SyncQueue
 
 class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   final int id;
+  final String workspaceId;
   final String entityTable;
   final String entityId;
   final String operation;
@@ -14975,6 +15337,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   final String? lastError;
   const SyncQueueData({
     required this.id,
+    required this.workspaceId,
     required this.entityTable,
     required this.entityId,
     required this.operation,
@@ -14987,6 +15350,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['entity_table'] = Variable<String>(entityTable);
     map['entity_id'] = Variable<String>(entityId);
     map['operation'] = Variable<String>(operation);
@@ -15002,6 +15366,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   SyncQueueCompanion toCompanion(bool nullToAbsent) {
     return SyncQueueCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       entityTable: Value(entityTable),
       entityId: Value(entityId),
       operation: Value(operation),
@@ -15021,6 +15386,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SyncQueueData(
       id: serializer.fromJson<int>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       entityTable: serializer.fromJson<String>(json['entityTable']),
       entityId: serializer.fromJson<String>(json['entityId']),
       operation: serializer.fromJson<String>(json['operation']),
@@ -15035,6 +15401,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'entityTable': serializer.toJson<String>(entityTable),
       'entityId': serializer.toJson<String>(entityId),
       'operation': serializer.toJson<String>(operation),
@@ -15047,6 +15414,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
 
   SyncQueueData copyWith({
     int? id,
+    String? workspaceId,
     String? entityTable,
     String? entityId,
     String? operation,
@@ -15056,6 +15424,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     Value<String?> lastError = const Value.absent(),
   }) => SyncQueueData(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     entityTable: entityTable ?? this.entityTable,
     entityId: entityId ?? this.entityId,
     operation: operation ?? this.operation,
@@ -15067,6 +15436,9 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   SyncQueueData copyWithCompanion(SyncQueueCompanion data) {
     return SyncQueueData(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       entityTable: data.entityTable.present
           ? data.entityTable.value
           : this.entityTable,
@@ -15085,6 +15457,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   String toString() {
     return (StringBuffer('SyncQueueData(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('entityTable: $entityTable, ')
           ..write('entityId: $entityId, ')
           ..write('operation: $operation, ')
@@ -15099,6 +15472,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     entityTable,
     entityId,
     operation,
@@ -15112,6 +15486,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       identical(this, other) ||
       (other is SyncQueueData &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.entityTable == this.entityTable &&
           other.entityId == this.entityId &&
           other.operation == this.operation &&
@@ -15123,6 +15498,7 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
 
 class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   final Value<int> id;
+  final Value<String> workspaceId;
   final Value<String> entityTable;
   final Value<String> entityId;
   final Value<String> operation;
@@ -15132,6 +15508,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   final Value<String?> lastError;
   const SyncQueueCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.entityTable = const Value.absent(),
     this.entityId = const Value.absent(),
     this.operation = const Value.absent(),
@@ -15142,6 +15519,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   });
   SyncQueueCompanion.insert({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     required String entityTable,
     required String entityId,
     required String operation,
@@ -15155,6 +15533,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
        payloadJson = Value(payloadJson);
   static Insertable<SyncQueueData> custom({
     Expression<int>? id,
+    Expression<String>? workspaceId,
     Expression<String>? entityTable,
     Expression<String>? entityId,
     Expression<String>? operation,
@@ -15165,6 +15544,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (entityTable != null) 'entity_table': entityTable,
       if (entityId != null) 'entity_id': entityId,
       if (operation != null) 'operation': operation,
@@ -15177,6 +15557,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
 
   SyncQueueCompanion copyWith({
     Value<int>? id,
+    Value<String>? workspaceId,
     Value<String>? entityTable,
     Value<String>? entityId,
     Value<String>? operation,
@@ -15187,6 +15568,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   }) {
     return SyncQueueCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       entityTable: entityTable ?? this.entityTable,
       entityId: entityId ?? this.entityId,
       operation: operation ?? this.operation,
@@ -15202,6 +15584,9 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (entityTable.present) {
       map['entity_table'] = Variable<String>(entityTable.value);
@@ -15231,6 +15616,7 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   String toString() {
     return (StringBuffer('SyncQueueCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('entityTable: $entityTable, ')
           ..write('entityId: $entityId, ')
           ..write('operation: $operation, ')
@@ -28387,14 +28773,21 @@ typedef $$CollectionsTableProcessedTableManager =
 typedef $$AttachmentsTableCreateCompanionBuilder =
     AttachmentsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String parentType,
       required String parentId,
       Value<String?> stage,
-      required String localFilePath,
+      Value<String> kind,
+      Value<String> provider,
+      Value<String?> url,
+      Value<String?> storageKey,
+      Value<String?> localFilePath,
       required String fileName,
       Value<int> fileSizeBytes,
       Value<String> mimeType,
       Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<String?> createdBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -28402,14 +28795,21 @@ typedef $$AttachmentsTableCreateCompanionBuilder =
 typedef $$AttachmentsTableUpdateCompanionBuilder =
     AttachmentsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> parentType,
       Value<String> parentId,
       Value<String?> stage,
-      Value<String> localFilePath,
+      Value<String> kind,
+      Value<String> provider,
+      Value<String?> url,
+      Value<String?> storageKey,
+      Value<String?> localFilePath,
       Value<String> fileName,
       Value<int> fileSizeBytes,
       Value<String> mimeType,
       Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<String?> createdBy,
       Value<int> version,
       Value<DateTime?> deletedAt,
       Value<int> rowid,
@@ -28429,6 +28829,11 @@ class $$AttachmentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get parentType => $composableBuilder(
     column: $table.parentType,
     builder: (column) => ColumnFilters(column),
@@ -28441,6 +28846,26 @@ class $$AttachmentsTableFilterComposer
 
   ColumnFilters<String> get stage => $composableBuilder(
     column: $table.stage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get provider => $composableBuilder(
+    column: $table.provider,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storageKey => $composableBuilder(
+    column: $table.storageKey,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -28469,6 +28894,16 @@ class $$AttachmentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get version => $composableBuilder(
     column: $table.version,
     builder: (column) => ColumnFilters(column),
@@ -28494,6 +28929,11 @@ class $$AttachmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get parentType => $composableBuilder(
     column: $table.parentType,
     builder: (column) => ColumnOrderings(column),
@@ -28506,6 +28946,26 @@ class $$AttachmentsTableOrderingComposer
 
   ColumnOrderings<String> get stage => $composableBuilder(
     column: $table.stage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get provider => $composableBuilder(
+    column: $table.provider,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storageKey => $composableBuilder(
+    column: $table.storageKey,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -28534,6 +28994,16 @@ class $$AttachmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get version => $composableBuilder(
     column: $table.version,
     builder: (column) => ColumnOrderings(column),
@@ -28557,6 +29027,11 @@ class $$AttachmentsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get parentType => $composableBuilder(
     column: $table.parentType,
     builder: (column) => column,
@@ -28567,6 +29042,20 @@ class $$AttachmentsTableAnnotationComposer
 
   GeneratedColumn<String> get stage =>
       $composableBuilder(column: $table.stage, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get provider =>
+      $composableBuilder(column: $table.provider, builder: (column) => column);
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<String> get storageKey => $composableBuilder(
+    column: $table.storageKey,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get localFilePath => $composableBuilder(
     column: $table.localFilePath,
@@ -28586,6 +29075,12 @@ class $$AttachmentsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
   GeneratedColumn<int> get version =>
       $composableBuilder(column: $table.version, builder: (column) => column);
@@ -28626,27 +29121,41 @@ class $$AttachmentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> parentType = const Value.absent(),
                 Value<String> parentId = const Value.absent(),
                 Value<String?> stage = const Value.absent(),
-                Value<String> localFilePath = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> provider = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<String?> storageKey = const Value.absent(),
+                Value<String?> localFilePath = const Value.absent(),
                 Value<String> fileName = const Value.absent(),
                 Value<int> fileSizeBytes = const Value.absent(),
                 Value<String> mimeType = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AttachmentsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 parentType: parentType,
                 parentId: parentId,
                 stage: stage,
+                kind: kind,
+                provider: provider,
+                url: url,
+                storageKey: storageKey,
                 localFilePath: localFilePath,
                 fileName: fileName,
                 fileSizeBytes: fileSizeBytes,
                 mimeType: mimeType,
                 createdAt: createdAt,
+                updatedAt: updatedAt,
+                createdBy: createdBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -28654,27 +29163,41 @@ class $$AttachmentsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String parentType,
                 required String parentId,
                 Value<String?> stage = const Value.absent(),
-                required String localFilePath,
+                Value<String> kind = const Value.absent(),
+                Value<String> provider = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<String?> storageKey = const Value.absent(),
+                Value<String?> localFilePath = const Value.absent(),
                 required String fileName,
                 Value<int> fileSizeBytes = const Value.absent(),
                 Value<String> mimeType = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
                 Value<int> version = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AttachmentsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 parentType: parentType,
                 parentId: parentId,
                 stage: stage,
+                kind: kind,
+                provider: provider,
+                url: url,
+                storageKey: storageKey,
                 localFilePath: localFilePath,
                 fileName: fileName,
                 fileSizeBytes: fileSizeBytes,
                 mimeType: mimeType,
                 createdAt: createdAt,
+                updatedAt: updatedAt,
+                createdBy: createdBy,
                 version: version,
                 deletedAt: deletedAt,
                 rowid: rowid,
@@ -28707,6 +29230,7 @@ typedef $$AttachmentsTableProcessedTableManager =
 typedef $$SyncQueueTableCreateCompanionBuilder =
     SyncQueueCompanion Function({
       Value<int> id,
+      Value<String> workspaceId,
       required String entityTable,
       required String entityId,
       required String operation,
@@ -28718,6 +29242,7 @@ typedef $$SyncQueueTableCreateCompanionBuilder =
 typedef $$SyncQueueTableUpdateCompanionBuilder =
     SyncQueueCompanion Function({
       Value<int> id,
+      Value<String> workspaceId,
       Value<String> entityTable,
       Value<String> entityId,
       Value<String> operation,
@@ -28738,6 +29263,11 @@ class $$SyncQueueTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -28791,6 +29321,11 @@ class $$SyncQueueTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get entityTable => $composableBuilder(
     column: $table.entityTable,
     builder: (column) => ColumnOrderings(column),
@@ -28838,6 +29373,11 @@ class $$SyncQueueTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get entityTable => $composableBuilder(
     column: $table.entityTable,
@@ -28897,6 +29437,7 @@ class $$SyncQueueTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> entityTable = const Value.absent(),
                 Value<String> entityId = const Value.absent(),
                 Value<String> operation = const Value.absent(),
@@ -28906,6 +29447,7 @@ class $$SyncQueueTableTableManager
                 Value<String?> lastError = const Value.absent(),
               }) => SyncQueueCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 entityTable: entityTable,
                 entityId: entityId,
                 operation: operation,
@@ -28917,6 +29459,7 @@ class $$SyncQueueTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 required String entityTable,
                 required String entityId,
                 required String operation,
@@ -28926,6 +29469,7 @@ class $$SyncQueueTableTableManager
                 Value<String?> lastError = const Value.absent(),
               }) => SyncQueueCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 entityTable: entityTable,
                 entityId: entityId,
                 operation: operation,
