@@ -7,6 +7,7 @@ import '../../core/models/mantenimiento.dart';
 import '../../core/models/socio.dart';
 import '../../core/theme/app_theme.dart';
 import 'mantenimiento_form_dialog.dart';
+import 'maintenance_plan_detail_screen.dart';
 
 class MantenimientosScreen extends StatefulWidget {
   final LocalStorageService storage;
@@ -181,218 +182,231 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        m.clienteNombre,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        m.titulo,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF94A3B8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: badgeColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    badgeText,
-                    style: TextStyle(
-                      color: badgeTextColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => MaintenancePlanDetailScreen(
+                planId: m.id,
+                storage: widget.storage,
+              ),
             ),
-            const SizedBox(height: 12),
-            const Divider(color: Color(0xFF334155), height: 1),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 8,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      LucideIcons.calendar,
-                      size: 14,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      DateFormat('dd/MM/yyyy').format(m.fechaProximo),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      LucideIcons.repeat,
-                      size: 14,
-                      color: AppTheme.amberSafety,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      m.tipoFrecuencia.etiqueta,
-                      style: const TextStyle(
-                        color: AppTheme.amberSafety,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Socios: ',
-                      style: TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-                    ...m.responsablesIds.map((sid) {
-                      final s = widget.storage.socios.firstWhere(
-                        (socio) => socio.id == sid,
-                        orElse: () => Socio(id: sid, nombre: 'S'),
-                      );
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: Tooltip(
-                          message: s.nombre,
-                          child: CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Color(s.colorValue),
-                            child: Text(
-                              s.nombre.isNotEmpty
-                                  ? s.nombre.substring(0, 1).toUpperCase()
-                                  : 'S',
-                              style: const TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          m.clienteNombre,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
-                      );
-                    }),
-                  ],
-                ),
-              ],
-            ),
-            if (m.descripcion != null && m.descripcion!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                m.descripcion!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF64748B),
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.emeraldSuccess.withValues(
-                        alpha: 0.15,
-                      ),
-                      foregroundColor: AppTheme.emeraldSuccess,
-                      side: const BorderSide(
-                        color: AppTheme.emeraldSuccess,
-                        width: 1,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 8,
-                      ),
+                        const SizedBox(height: 2),
+                        Text(
+                          m.titulo,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
+                      ],
                     ),
-                    icon: const Icon(LucideIcons.check_check, size: 16),
-                    label: const Text(
-                      'Completar',
-                      overflow: TextOverflow.ellipsis,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: badgeColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      badgeText,
                       style: TextStyle(
+                        color: badgeTextColor,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: () {
-                      _mostrarConfirmarCompletar(m);
-                    },
                   ),
-                ),
-                const SizedBox(width: 4),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  icon: const Icon(
-                    LucideIcons.pencil,
-                    size: 18,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => MantenimientoFormDialog(
-                        mantenimientoExistente: m,
-                        clientes: widget.storage.clientes,
-                        socios: widget.storage.socios,
-                        onGuardar: (actualizado) =>
-                            widget.storage.editarMantenimiento(actualizado),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Divider(color: Color(0xFF334155), height: 1),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        LucideIcons.calendar,
+                        size: 14,
+                        color: Colors.grey,
                       ),
-                    );
-                  },
-                ),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  icon: const Icon(
-                    LucideIcons.trash,
-                    size: 18,
-                    color: AppTheme.coralUrgent,
+                      const SizedBox(width: 5),
+                      Text(
+                        DateFormat('dd/MM/yyyy').format(m.fechaProximo),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                  onPressed: () => _confirmarEliminar(m.id),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        LucideIcons.repeat,
+                        size: 14,
+                        color: AppTheme.amberSafety,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        m.tipoFrecuencia.etiqueta,
+                        style: const TextStyle(
+                          color: AppTheme.amberSafety,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Socios: ',
+                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                      ),
+                      ...m.responsablesIds.map((sid) {
+                        final s = widget.storage.socios.firstWhere(
+                          (socio) => socio.id == sid,
+                          orElse: () => Socio(id: sid, nombre: 'S'),
+                        );
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Tooltip(
+                            message: s.nombre,
+                            child: CircleAvatar(
+                              radius: 10,
+                              backgroundColor: Color(s.colorValue),
+                              child: Text(
+                                s.nombre.isNotEmpty
+                                    ? s.nombre.substring(0, 1).toUpperCase()
+                                    : 'S',
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ],
+              ),
+              if (m.descripcion != null && m.descripcion!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  m.descripcion!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF64748B),
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ],
-            ),
-          ],
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.emeraldSuccess.withValues(
+                          alpha: 0.15,
+                        ),
+                        foregroundColor: AppTheme.emeraldSuccess,
+                        side: const BorderSide(
+                          color: AppTheme.emeraldSuccess,
+                          width: 1,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 8,
+                        ),
+                      ),
+                      icon: const Icon(LucideIcons.check_check, size: 16),
+                      label: const Text(
+                        'Completar',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed: () {
+                        _mostrarConfirmarCompletar(m);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(
+                      LucideIcons.pencil,
+                      size: 18,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => MantenimientoFormDialog(
+                          mantenimientoExistente: m,
+                          clientes: widget.storage.clientes,
+                          socios: widget.storage.socios,
+                          onGuardar: (actualizado) =>
+                              widget.storage.editarMantenimiento(actualizado),
+                        ),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(
+                      LucideIcons.trash,
+                      size: 18,
+                      color: AppTheme.coralUrgent,
+                    ),
+                    onPressed: () => _confirmarEliminar(m.id),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

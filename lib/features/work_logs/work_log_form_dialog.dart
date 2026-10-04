@@ -14,6 +14,7 @@ class WorkLogFormDialog extends StatefulWidget {
   final List<Obra> obras;
   final String? obraPreseleccionadaId;
   final String? workerPreseleccionadoId;
+  final String? maintenanceVisitId;
   final WorkLog? workLogExistente;
   final ValueChanged<WorkLog> onGuardar;
 
@@ -23,6 +24,7 @@ class WorkLogFormDialog extends StatefulWidget {
     required this.obras,
     this.obraPreseleccionadaId,
     this.workerPreseleccionadoId,
+    this.maintenanceVisitId,
     this.workLogExistente,
     required this.onGuardar,
   });
@@ -35,6 +37,7 @@ class _WorkLogFormDialogState extends State<WorkLogFormDialog> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedWorkerId;
   String? _selectedProjectId;
+  String? _selectedVisitId;
   late DateTime _fecha;
   late String _tipoPago;
   late TextEditingController _cantidadCtrl;
@@ -51,9 +54,15 @@ class _WorkLogFormDialogState extends State<WorkLogFormDialog> {
       _selectedWorkerId = widget.workers.first.id;
     }
 
-    _selectedProjectId = log?.projectId ?? widget.obraPreseleccionadaId;
-    if (_selectedProjectId == null && widget.obras.isNotEmpty) {
-      _selectedProjectId = widget.obras.first.id;
+    _selectedVisitId = log?.maintenanceVisitId ?? widget.maintenanceVisitId;
+
+    if (_selectedVisitId == null) {
+      _selectedProjectId = log?.projectId ?? widget.obraPreseleccionadaId;
+      if (_selectedProjectId == null && widget.obras.isNotEmpty) {
+        _selectedProjectId = widget.obras.first.id;
+      }
+    } else {
+      _selectedProjectId = null;
     }
 
     _fecha = log?.date ?? DateTime.now();
@@ -131,7 +140,7 @@ class _WorkLogFormDialogState extends State<WorkLogFormDialog> {
   void _guardar() {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedWorkerId == null) return;
-    if (_selectedProjectId == null) return;
+    if (_selectedProjectId == null && _selectedVisitId == null) return;
 
     final qty = double.tryParse(_cantidadCtrl.text.replaceAll(',', '.')) ?? 1.0;
     final rateDouble =
@@ -142,7 +151,8 @@ class _WorkLogFormDialogState extends State<WorkLogFormDialog> {
     final workLog = widget.workLogExistente != null
         ? widget.workLogExistente!.copyWith(
             workerId: _selectedWorkerId!,
-            projectId: _selectedProjectId,
+            projectId: _selectedVisitId != null ? null : _selectedProjectId,
+            maintenanceVisitId: _selectedVisitId,
             date: _fecha,
             paymentType: _tipoPago,
             quantity: qty,
@@ -155,7 +165,8 @@ class _WorkLogFormDialogState extends State<WorkLogFormDialog> {
         : WorkLog(
             id: const Uuid().v4(),
             workerId: _selectedWorkerId!,
-            projectId: _selectedProjectId,
+            projectId: _selectedVisitId != null ? null : _selectedProjectId,
+            maintenanceVisitId: _selectedVisitId,
             date: _fecha,
             paymentType: _tipoPago,
             quantity: qty,
@@ -241,22 +252,55 @@ class _WorkLogFormDialogState extends State<WorkLogFormDialog> {
                   validator: (v) => v == null ? 'Seleccione trabajador' : null,
                 ),
                 const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedProjectId,
-                  decoration: const InputDecoration(
-                    labelText: 'Obra / Proyecto *',
-                    prefixIcon: Icon(LucideIcons.building, size: 18),
+                if (_selectedVisitId != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.emeraldSuccess.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: AppTheme.emeraldSuccess.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          LucideIcons.wrench,
+                          color: AppTheme.emeraldSuccess,
+                          size: 18,
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Jornada asociada a Visita de Mantenimiento',
+                            style: TextStyle(
+                              color: AppTheme.emeraldSuccess,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedProjectId,
+                    decoration: const InputDecoration(
+                      labelText: 'Obra / Proyecto *',
+                      prefixIcon: Icon(LucideIcons.building, size: 18),
+                    ),
+                    dropdownColor: const Color(0xFF0F172A),
+                    items: widget.obras.map((o) {
+                      return DropdownMenuItem(
+                        value: o.id,
+                        child: Text(o.nombre, overflow: TextOverflow.ellipsis),
+                      );
+                    }).toList(),
+                    onChanged: (val) =>
+                        setState(() => _selectedProjectId = val),
+                    validator: (v) => v == null ? 'Seleccione la obra' : null,
                   ),
-                  dropdownColor: const Color(0xFF0F172A),
-                  items: widget.obras.map((o) {
-                    return DropdownMenuItem(
-                      value: o.id,
-                      child: Text(o.nombre, overflow: TextOverflow.ellipsis),
-                    );
-                  }).toList(),
-                  onChanged: (val) => setState(() => _selectedProjectId = val),
-                  validator: (v) => v == null ? 'Seleccione la obra' : null,
-                ),
                 const SizedBox(height: 12),
                 InkWell(
                   onTap: () async {
