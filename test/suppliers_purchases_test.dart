@@ -7,7 +7,6 @@ import 'package:mantenimiento_app/core/models/purchase.dart' as model;
 import 'package:mantenimiento_app/core/models/supplier.dart' as model;
 import 'package:mantenimiento_app/core/repositories/inventory_repository.dart';
 import 'package:mantenimiento_app/core/repositories/purchase_repository.dart';
-import 'package:uuid/uuid.dart';
 
 void main() {
   late AppDatabase db;

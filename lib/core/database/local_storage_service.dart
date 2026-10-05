@@ -22,6 +22,7 @@ import '../repositories/tool_repository.dart';
 import '../repositories/purchase_repository.dart';
 import '../repositories/partner_repository.dart';
 import '../repositories/collection_repository.dart';
+import '../services/project_financial_service.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -37,6 +38,7 @@ class LocalStorageService extends ChangeNotifier {
       _instance._purchaseRepository = PurchaseRepository(database);
       _instance._partnerRepository = PartnerRepository(database);
       _instance._collectionRepository = CollectionRepository(database);
+      _instance._projectFinancialService = ProjectFinancialService(database);
     }
     return _instance;
   }
@@ -79,6 +81,10 @@ class LocalStorageService extends ChangeNotifier {
   CollectionRepository? _collectionRepository;
   CollectionRepository get collectionRepository =>
       _collectionRepository ??= CollectionRepository(db);
+
+  ProjectFinancialService? _projectFinancialService;
+  ProjectFinancialService get projectFinancialService =>
+      _projectFinancialService ??= ProjectFinancialService(db);
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];

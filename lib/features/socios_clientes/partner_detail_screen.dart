@@ -237,8 +237,8 @@ class _PartnerDetailScreenState extends State<PartnerDetailScreen> {
                     return ListTile(
                       leading: CircleAvatar(
                         backgroundColor: isCredit
-                            ? Colors.green.withOpacity(0.15)
-                            : Colors.orange.withOpacity(0.15),
+                            ? Colors.green.withValues(alpha: 0.15)
+                            : Colors.orange.withValues(alpha: 0.15),
                         child: Icon(
                           isCredit ? Icons.add : Icons.remove,
                           color: isCredit ? Colors.green : Colors.orange,

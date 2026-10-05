@@ -69,9 +69,9 @@ class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
                       ],
                     ),
                   );
-                  if (confirm == true && mounted) {
+                  if (confirm == true && context.mounted) {
                     await repo.deleteSupplier(supplier.id);
-                    if (mounted) {
+                    if (context.mounted) {
                       Navigator.pop(context);
                     }
                   }

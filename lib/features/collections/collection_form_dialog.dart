@@ -258,10 +258,13 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
                           ),
                           onChanged: (_) => setState(() {}),
                           validator: (val) {
-                            if (val == null || val.trim().isEmpty)
+                            if (val == null || val.trim().isEmpty) {
                               return 'Ingrese monto';
+                            }
                             final p = double.tryParse(val.replaceAll(',', '.'));
-                            if (p == null || p <= 0) return 'Monto inválido';
+                            if (p == null || p <= 0) {
+                              return 'Monto inválido';
+                            }
                             return null;
                           },
                         ),

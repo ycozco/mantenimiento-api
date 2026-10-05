@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/capital_movement.dart';
-import '../../core/models/obra.dart';
 
 class CapitalMovementFormDialog extends StatefulWidget {
   final String partnerId;
@@ -115,10 +114,13 @@ class _CapitalMovementFormDialogState extends State<CapitalMovementFormDialog> {
                   decimal: true,
                 ),
                 validator: (val) {
-                  if (val == null || val.trim().isEmpty)
+                  if (val == null || val.trim().isEmpty) {
                     return 'Ingrese el monto';
+                  }
                   final p = double.tryParse(val.replaceAll(',', '.'));
-                  if (p == null || p <= 0) return 'Monto inválido';
+                  if (p == null || p <= 0) {
+                    return 'Monto inválido';
+                  }
                   return null;
                 },
               ),
