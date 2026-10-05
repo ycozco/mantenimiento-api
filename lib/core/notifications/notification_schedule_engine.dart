@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../models/maintenance_visit.dart';
 
 class ScheduledVisitNotification {
@@ -22,9 +23,22 @@ class NotificationScheduleEngine {
   static const List<int> defaultOffsetsDays = [7, 3, 2, 1];
   static const int defaultHour = 9;
 
-  /// Genera un ID determinístico de 32 bits a partir de visitId y días de anticipación
+  /// Algoritmo FNV-1a de 32 bits estándar
+  static int fnv1a32(String input) {
+    var hash = 0x811c9dc5; // 2166136261
+    final bytes = utf8.encode(input);
+    for (final b in bytes) {
+      hash ^= b;
+      hash = (hash * 0x01000193) & 0xFFFFFFFF; // 16777619
+    }
+    return hash;
+  }
+
+  /// Genera un ID determinístico de 31 bits positivo a partir de visitId y días de anticipación.
+  /// Es 100% independiente de Dart String.hashCode, determinístico, reproducible entre reinicios
+  /// y compatible con el rango entero positivo de Android.
   static int generateNotificationId(String visitId, int daysBefore) {
-    return (visitId.hashCode.abs() % 10000000) * 10 + (daysBefore % 10);
+    return fnv1a32('$visitId:$daysBefore') & 0x7FFFFFFF;
   }
 
   /// Retorna los IDs determinísticos que deben ser cancelados para una visita dada

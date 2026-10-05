@@ -884,7 +884,7 @@ void main() {
         final backupJson = await backupService.exportBackupJson();
         final decoded = jsonDecode(backupJson) as Map<String, dynamic>;
         expect(decoded['backupFormatVersion'], 2);
-        expect(decoded['schemaVersion'], 3);
+        expect(decoded['schemaVersion'], 4);
 
         // 3. Crear una segunda base de datos en blanco
         final db2 = AppDatabase(

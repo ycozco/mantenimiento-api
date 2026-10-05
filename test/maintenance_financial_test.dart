@@ -452,7 +452,7 @@ void main() {
         // Exportar a JSON
         final jsonStr = await backupService.exportBackupJson();
         final map = jsonDecode(jsonStr) as Map<String, dynamic>;
-        expect(map['schemaVersion'], equals(3));
+        expect(map['schemaVersion'], equals(4));
 
         final plansJson = (map['data']['maintenancePlans'] as List);
         final planRestoredJson = plansJson.firstWhere(

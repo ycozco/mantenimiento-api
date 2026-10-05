@@ -22,6 +22,7 @@ class Users extends Table {
 // --- PARTNERS (SOCIOS) ---
 class Partners extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get userId => text().nullable().customConstraint(
     'REFERENCES users(id) ON DELETE SET NULL',
   )();
@@ -66,6 +67,7 @@ class Workers extends Table {
 // --- CLIENTS ---
 class Clients extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get name => text()();
   TextColumn get contactPerson => text().nullable()();
   TextColumn get phone => text().nullable()();
@@ -84,6 +86,7 @@ class Clients extends Table {
 // --- CLIENT LOCATIONS (SEDES/DIRECCIONES DEL CLIENTE) ---
 class ClientLocations extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get clientId => text().customConstraint(
     'NOT NULL REFERENCES clients(id) ON DELETE CASCADE',
   )();
@@ -105,6 +108,7 @@ class ClientLocations extends Table {
 // --- PROJECTS (OBRAS) ---
 class Projects extends Table {
   TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get code => text().nullable()();
   TextColumn get name => text()();
   TextColumn get clientId => text().nullable().customConstraint(
@@ -534,6 +538,12 @@ class Collections extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (((project_id IS NOT NULL) + (visit_id IS NOT NULL) + (plan_id IS NOT NULL)) = 1)',
+    'CHECK (amount_cents > 0)',
+  ];
 }
 
 // --- ATTACHMENTS (EVIDENCIAS FOTOGRÁFICAS, COMPROBANTES Y PDFs) ---

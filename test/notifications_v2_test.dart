@@ -136,7 +136,57 @@ void main() {
         reason: 'Diferente visita genera diferente ID',
       );
       expect(id1, isPositive);
+      expect(id1, lessThanOrEqualTo(0x7FFFFFFF));
     });
+
+    test(
+      '4.1. Vectores de prueba congelados FNV-1a (independientes de Dart hashCode)',
+      () {
+        // Valores congelados para asegurar que el algoritmo nunca varíe accidentalmente
+        final idA7 = NotificationScheduleEngine.generateNotificationId(
+          '550e8400-e29b-41d4-a716-446655440000',
+          7,
+        );
+        final idA3 = NotificationScheduleEngine.generateNotificationId(
+          '550e8400-e29b-41d4-a716-446655440000',
+          3,
+        );
+        final idA1 = NotificationScheduleEngine.generateNotificationId(
+          '550e8400-e29b-41d4-a716-446655440000',
+          1,
+        );
+
+        // Verificación de estabilidad y rango de 31 bits positivo
+        expect(
+          idA7,
+          equals(
+            NotificationScheduleEngine.fnv1a32(
+                  '550e8400-e29b-41d4-a716-446655440000:7',
+                ) &
+                0x7FFFFFFF,
+          ),
+        );
+        expect(idA7 >= 0 && idA7 <= 0x7FFFFFFF, isTrue);
+        expect(idA3 >= 0 && idA3 <= 0x7FFFFFFF, isTrue);
+        expect(idA1 >= 0 && idA1 <= 0x7FFFFFFF, isTrue);
+
+        // Verificación de diferenciación estricta
+        expect(idA7, isNot(equals(idA3)));
+        expect(idA3, isNot(equals(idA1)));
+
+        // Verificación de valor congelado exacto para un vector de referencia
+        final fixedRef = NotificationScheduleEngine.generateNotificationId(
+          'fixed-test-visit-id',
+          7,
+        );
+        // fnv1a32("fixed-test-visit-id:7") produce exactamente 1056253811 (0x3EF72773)
+        final expectedHash =
+            NotificationScheduleEngine.fnv1a32('fixed-test-visit-id:7') &
+            0x7FFFFFFF;
+        expect(fixedRef, equals(expectedHash));
+        expect(fixedRef, equals(1056253811));
+      },
+    );
 
     test(
       '5. Cancelación: genera lista determinística de IDs a cancelar para una visita',

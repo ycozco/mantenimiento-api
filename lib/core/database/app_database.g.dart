@@ -674,6 +674,18 @@ class $PartnersTable extends Partners with TableInfo<$PartnersTable, Partner> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
   @override
   late final GeneratedColumn<String> userId = GeneratedColumn<String>(
@@ -791,6 +803,7 @@ class $PartnersTable extends Partners with TableInfo<$PartnersTable, Partner> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     userId,
     name,
     phone,
@@ -818,6 +831,15 @@ class $PartnersTable extends Partners with TableInfo<$PartnersTable, Partner> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('user_id')) {
       context.handle(
@@ -900,6 +922,10 @@ class $PartnersTable extends Partners with TableInfo<$PartnersTable, Partner> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       userId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}user_id'],
@@ -951,6 +977,7 @@ class $PartnersTable extends Partners with TableInfo<$PartnersTable, Partner> {
 
 class Partner extends DataClass implements Insertable<Partner> {
   final String id;
+  final String workspaceId;
   final String? userId;
   final String name;
   final String? phone;
@@ -963,6 +990,7 @@ class Partner extends DataClass implements Insertable<Partner> {
   final DateTime? deletedAt;
   const Partner({
     required this.id,
+    required this.workspaceId,
     this.userId,
     required this.name,
     this.phone,
@@ -978,6 +1006,7 @@ class Partner extends DataClass implements Insertable<Partner> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     if (!nullToAbsent || userId != null) {
       map['user_id'] = Variable<String>(userId);
     }
@@ -1000,6 +1029,7 @@ class Partner extends DataClass implements Insertable<Partner> {
   PartnersCompanion toCompanion(bool nullToAbsent) {
     return PartnersCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       userId: userId == null && nullToAbsent
           ? const Value.absent()
           : Value(userId),
@@ -1026,6 +1056,7 @@ class Partner extends DataClass implements Insertable<Partner> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Partner(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       userId: serializer.fromJson<String?>(json['userId']),
       name: serializer.fromJson<String>(json['name']),
       phone: serializer.fromJson<String?>(json['phone']),
@@ -1043,6 +1074,7 @@ class Partner extends DataClass implements Insertable<Partner> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'userId': serializer.toJson<String?>(userId),
       'name': serializer.toJson<String>(name),
       'phone': serializer.toJson<String?>(phone),
@@ -1058,6 +1090,7 @@ class Partner extends DataClass implements Insertable<Partner> {
 
   Partner copyWith({
     String? id,
+    String? workspaceId,
     Value<String?> userId = const Value.absent(),
     String? name,
     Value<String?> phone = const Value.absent(),
@@ -1070,6 +1103,7 @@ class Partner extends DataClass implements Insertable<Partner> {
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Partner(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     userId: userId.present ? userId.value : this.userId,
     name: name ?? this.name,
     phone: phone.present ? phone.value : this.phone,
@@ -1084,6 +1118,9 @@ class Partner extends DataClass implements Insertable<Partner> {
   Partner copyWithCompanion(PartnersCompanion data) {
     return Partner(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       userId: data.userId.present ? data.userId.value : this.userId,
       name: data.name.present ? data.name.value : this.name,
       phone: data.phone.present ? data.phone.value : this.phone,
@@ -1105,6 +1142,7 @@ class Partner extends DataClass implements Insertable<Partner> {
   String toString() {
     return (StringBuffer('Partner(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('userId: $userId, ')
           ..write('name: $name, ')
           ..write('phone: $phone, ')
@@ -1122,6 +1160,7 @@ class Partner extends DataClass implements Insertable<Partner> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     userId,
     name,
     phone,
@@ -1138,6 +1177,7 @@ class Partner extends DataClass implements Insertable<Partner> {
       identical(this, other) ||
       (other is Partner &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.userId == this.userId &&
           other.name == this.name &&
           other.phone == this.phone &&
@@ -1152,6 +1192,7 @@ class Partner extends DataClass implements Insertable<Partner> {
 
 class PartnersCompanion extends UpdateCompanion<Partner> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String?> userId;
   final Value<String> name;
   final Value<String?> phone;
@@ -1165,6 +1206,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
   final Value<int> rowid;
   const PartnersCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.userId = const Value.absent(),
     this.name = const Value.absent(),
     this.phone = const Value.absent(),
@@ -1179,6 +1221,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
   });
   PartnersCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     this.userId = const Value.absent(),
     required String name,
     this.phone = const Value.absent(),
@@ -1194,6 +1237,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
        name = Value(name);
   static Insertable<Partner> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? userId,
     Expression<String>? name,
     Expression<String>? phone,
@@ -1208,6 +1252,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (userId != null) 'user_id': userId,
       if (name != null) 'name': name,
       if (phone != null) 'phone': phone,
@@ -1224,6 +1269,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
 
   PartnersCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String?>? userId,
     Value<String>? name,
     Value<String?>? phone,
@@ -1238,6 +1284,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
   }) {
     return PartnersCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       userId: userId ?? this.userId,
       name: name ?? this.name,
       phone: phone ?? this.phone,
@@ -1257,6 +1304,9 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (userId.present) {
       map['user_id'] = Variable<String>(userId.value);
@@ -1298,6 +1348,7 @@ class PartnersCompanion extends UpdateCompanion<Partner> {
   String toString() {
     return (StringBuffer('PartnersCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('userId: $userId, ')
           ..write('name: $name, ')
           ..write('phone: $phone, ')
@@ -2182,6 +2233,18 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -2288,6 +2351,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     name,
     contactPerson,
     phone,
@@ -2315,6 +2379,15 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -2394,6 +2467,10 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -2445,6 +2522,7 @@ class $ClientsTable extends Clients with TableInfo<$ClientsTable, Client> {
 
 class Client extends DataClass implements Insertable<Client> {
   final String id;
+  final String workspaceId;
   final String name;
   final String? contactPerson;
   final String? phone;
@@ -2457,6 +2535,7 @@ class Client extends DataClass implements Insertable<Client> {
   final DateTime? deletedAt;
   const Client({
     required this.id,
+    required this.workspaceId,
     required this.name,
     this.contactPerson,
     this.phone,
@@ -2472,6 +2551,7 @@ class Client extends DataClass implements Insertable<Client> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || contactPerson != null) {
       map['contact_person'] = Variable<String>(contactPerson);
@@ -2500,6 +2580,7 @@ class Client extends DataClass implements Insertable<Client> {
   ClientsCompanion toCompanion(bool nullToAbsent) {
     return ClientsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       name: Value(name),
       contactPerson: contactPerson == null && nullToAbsent
           ? const Value.absent()
@@ -2532,6 +2613,7 @@ class Client extends DataClass implements Insertable<Client> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Client(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       name: serializer.fromJson<String>(json['name']),
       contactPerson: serializer.fromJson<String?>(json['contactPerson']),
       phone: serializer.fromJson<String?>(json['phone']),
@@ -2549,6 +2631,7 @@ class Client extends DataClass implements Insertable<Client> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'name': serializer.toJson<String>(name),
       'contactPerson': serializer.toJson<String?>(contactPerson),
       'phone': serializer.toJson<String?>(phone),
@@ -2564,6 +2647,7 @@ class Client extends DataClass implements Insertable<Client> {
 
   Client copyWith({
     String? id,
+    String? workspaceId,
     String? name,
     Value<String?> contactPerson = const Value.absent(),
     Value<String?> phone = const Value.absent(),
@@ -2576,6 +2660,7 @@ class Client extends DataClass implements Insertable<Client> {
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Client(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     name: name ?? this.name,
     contactPerson: contactPerson.present
         ? contactPerson.value
@@ -2592,6 +2677,9 @@ class Client extends DataClass implements Insertable<Client> {
   Client copyWithCompanion(ClientsCompanion data) {
     return Client(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       name: data.name.present ? data.name.value : this.name,
       contactPerson: data.contactPerson.present
           ? data.contactPerson.value
@@ -2611,6 +2699,7 @@ class Client extends DataClass implements Insertable<Client> {
   String toString() {
     return (StringBuffer('Client(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('name: $name, ')
           ..write('contactPerson: $contactPerson, ')
           ..write('phone: $phone, ')
@@ -2628,6 +2717,7 @@ class Client extends DataClass implements Insertable<Client> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     name,
     contactPerson,
     phone,
@@ -2644,6 +2734,7 @@ class Client extends DataClass implements Insertable<Client> {
       identical(this, other) ||
       (other is Client &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.name == this.name &&
           other.contactPerson == this.contactPerson &&
           other.phone == this.phone &&
@@ -2658,6 +2749,7 @@ class Client extends DataClass implements Insertable<Client> {
 
 class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> name;
   final Value<String?> contactPerson;
   final Value<String?> phone;
@@ -2671,6 +2763,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   final Value<int> rowid;
   const ClientsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.name = const Value.absent(),
     this.contactPerson = const Value.absent(),
     this.phone = const Value.absent(),
@@ -2685,6 +2778,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   });
   ClientsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String name,
     this.contactPerson = const Value.absent(),
     this.phone = const Value.absent(),
@@ -2700,6 +2794,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
        name = Value(name);
   static Insertable<Client> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? name,
     Expression<String>? contactPerson,
     Expression<String>? phone,
@@ -2714,6 +2809,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (name != null) 'name': name,
       if (contactPerson != null) 'contact_person': contactPerson,
       if (phone != null) 'phone': phone,
@@ -2730,6 +2826,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
 
   ClientsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? name,
     Value<String?>? contactPerson,
     Value<String?>? phone,
@@ -2744,6 +2841,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   }) {
     return ClientsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       name: name ?? this.name,
       contactPerson: contactPerson ?? this.contactPerson,
       phone: phone ?? this.phone,
@@ -2763,6 +2861,9 @@ class ClientsCompanion extends UpdateCompanion<Client> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -2804,6 +2905,7 @@ class ClientsCompanion extends UpdateCompanion<Client> {
   String toString() {
     return (StringBuffer('ClientsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('name: $name, ')
           ..write('contactPerson: $contactPerson, ')
           ..write('phone: $phone, ')
@@ -2834,6 +2936,18 @@ class $ClientLocationsTable extends ClientLocations
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _clientIdMeta = const VerificationMeta(
     'clientId',
@@ -2962,6 +3076,7 @@ class $ClientLocationsTable extends ClientLocations
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     clientId,
     name,
     address,
@@ -2990,6 +3105,15 @@ class $ClientLocationsTable extends ClientLocations
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('client_id')) {
       context.handle(
@@ -3074,6 +3198,10 @@ class $ClientLocationsTable extends ClientLocations
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       clientId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}client_id'],
@@ -3129,6 +3257,7 @@ class $ClientLocationsTable extends ClientLocations
 
 class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   final String id;
+  final String workspaceId;
   final String clientId;
   final String name;
   final String address;
@@ -3142,6 +3271,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   final DateTime? deletedAt;
   const ClientLocation({
     required this.id,
+    required this.workspaceId,
     required this.clientId,
     required this.name,
     required this.address,
@@ -3158,6 +3288,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     map['client_id'] = Variable<String>(clientId);
     map['name'] = Variable<String>(name);
     map['address'] = Variable<String>(address);
@@ -3185,6 +3316,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   ClientLocationsCompanion toCompanion(bool nullToAbsent) {
     return ClientLocationsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       clientId: Value(clientId),
       name: Value(name),
       address: Value(address),
@@ -3216,6 +3348,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ClientLocation(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       clientId: serializer.fromJson<String>(json['clientId']),
       name: serializer.fromJson<String>(json['name']),
       address: serializer.fromJson<String>(json['address']),
@@ -3234,6 +3367,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'clientId': serializer.toJson<String>(clientId),
       'name': serializer.toJson<String>(name),
       'address': serializer.toJson<String>(address),
@@ -3250,6 +3384,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
 
   ClientLocation copyWith({
     String? id,
+    String? workspaceId,
     String? clientId,
     String? name,
     String? address,
@@ -3263,6 +3398,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => ClientLocation(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     clientId: clientId ?? this.clientId,
     name: name ?? this.name,
     address: address ?? this.address,
@@ -3278,6 +3414,9 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   ClientLocation copyWithCompanion(ClientLocationsCompanion data) {
     return ClientLocation(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       name: data.name.present ? data.name.value : this.name,
       address: data.address.present ? data.address.value : this.address,
@@ -3296,6 +3435,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   String toString() {
     return (StringBuffer('ClientLocation(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('clientId: $clientId, ')
           ..write('name: $name, ')
           ..write('address: $address, ')
@@ -3314,6 +3454,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     clientId,
     name,
     address,
@@ -3331,6 +3472,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
       identical(this, other) ||
       (other is ClientLocation &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.clientId == this.clientId &&
           other.name == this.name &&
           other.address == this.address &&
@@ -3346,6 +3488,7 @@ class ClientLocation extends DataClass implements Insertable<ClientLocation> {
 
 class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String> clientId;
   final Value<String> name;
   final Value<String> address;
@@ -3360,6 +3503,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
   final Value<int> rowid;
   const ClientLocationsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.name = const Value.absent(),
     this.address = const Value.absent(),
@@ -3375,6 +3519,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
   });
   ClientLocationsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     required String clientId,
     this.name = const Value.absent(),
     required String address,
@@ -3392,6 +3537,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
        address = Value(address);
   static Insertable<ClientLocation> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? clientId,
     Expression<String>? name,
     Expression<String>? address,
@@ -3407,6 +3553,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (clientId != null) 'client_id': clientId,
       if (name != null) 'name': name,
       if (address != null) 'address': address,
@@ -3424,6 +3571,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
 
   ClientLocationsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String>? clientId,
     Value<String>? name,
     Value<String>? address,
@@ -3439,6 +3587,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
   }) {
     return ClientLocationsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       clientId: clientId ?? this.clientId,
       name: name ?? this.name,
       address: address ?? this.address,
@@ -3459,6 +3608,9 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -3503,6 +3655,7 @@ class ClientLocationsCompanion extends UpdateCompanion<ClientLocation> {
   String toString() {
     return (StringBuffer('ClientLocationsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('clientId: $clientId, ')
           ..write('name: $name, ')
           ..write('address: $address, ')
@@ -3533,6 +3686,18 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('default'),
   );
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
@@ -3706,6 +3871,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    workspaceId,
     code,
     name,
     clientId,
@@ -3738,6 +3904,15 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
     }
     if (data.containsKey('code')) {
       context.handle(
@@ -3861,6 +4036,10 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
       code: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}code'],
@@ -3932,6 +4111,7 @@ class $ProjectsTable extends Projects with TableInfo<$ProjectsTable, Project> {
 
 class Project extends DataClass implements Insertable<Project> {
   final String id;
+  final String workspaceId;
   final String? code;
   final String name;
   final String? clientId;
@@ -3949,6 +4129,7 @@ class Project extends DataClass implements Insertable<Project> {
   final DateTime? deletedAt;
   const Project({
     required this.id,
+    required this.workspaceId,
     this.code,
     required this.name,
     this.clientId,
@@ -3969,6 +4150,7 @@ class Project extends DataClass implements Insertable<Project> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['workspace_id'] = Variable<String>(workspaceId);
     if (!nullToAbsent || code != null) {
       map['code'] = Variable<String>(code);
     }
@@ -4004,6 +4186,7 @@ class Project extends DataClass implements Insertable<Project> {
   ProjectsCompanion toCompanion(bool nullToAbsent) {
     return ProjectsCompanion(
       id: Value(id),
+      workspaceId: Value(workspaceId),
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       name: Value(name),
       clientId: clientId == null && nullToAbsent
@@ -4041,6 +4224,7 @@ class Project extends DataClass implements Insertable<Project> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Project(
       id: serializer.fromJson<String>(json['id']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
       code: serializer.fromJson<String?>(json['code']),
       name: serializer.fromJson<String>(json['name']),
       clientId: serializer.fromJson<String?>(json['clientId']),
@@ -4065,6 +4249,7 @@ class Project extends DataClass implements Insertable<Project> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'workspaceId': serializer.toJson<String>(workspaceId),
       'code': serializer.toJson<String?>(code),
       'name': serializer.toJson<String>(name),
       'clientId': serializer.toJson<String?>(clientId),
@@ -4087,6 +4272,7 @@ class Project extends DataClass implements Insertable<Project> {
 
   Project copyWith({
     String? id,
+    String? workspaceId,
     Value<String?> code = const Value.absent(),
     String? name,
     Value<String?> clientId = const Value.absent(),
@@ -4104,6 +4290,7 @@ class Project extends DataClass implements Insertable<Project> {
     Value<DateTime?> deletedAt = const Value.absent(),
   }) => Project(
     id: id ?? this.id,
+    workspaceId: workspaceId ?? this.workspaceId,
     code: code.present ? code.value : this.code,
     name: name ?? this.name,
     clientId: clientId.present ? clientId.value : this.clientId,
@@ -4128,6 +4315,9 @@ class Project extends DataClass implements Insertable<Project> {
   Project copyWithCompanion(ProjectsCompanion data) {
     return Project(
       id: data.id.present ? data.id.value : this.id,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
       code: data.code.present ? data.code.value : this.code,
       name: data.name.present ? data.name.value : this.name,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
@@ -4162,6 +4352,7 @@ class Project extends DataClass implements Insertable<Project> {
   String toString() {
     return (StringBuffer('Project(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('code: $code, ')
           ..write('name: $name, ')
           ..write('clientId: $clientId, ')
@@ -4184,6 +4375,7 @@ class Project extends DataClass implements Insertable<Project> {
   @override
   int get hashCode => Object.hash(
     id,
+    workspaceId,
     code,
     name,
     clientId,
@@ -4205,6 +4397,7 @@ class Project extends DataClass implements Insertable<Project> {
       identical(this, other) ||
       (other is Project &&
           other.id == this.id &&
+          other.workspaceId == this.workspaceId &&
           other.code == this.code &&
           other.name == this.name &&
           other.clientId == this.clientId &&
@@ -4224,6 +4417,7 @@ class Project extends DataClass implements Insertable<Project> {
 
 class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<String> id;
+  final Value<String> workspaceId;
   final Value<String?> code;
   final Value<String> name;
   final Value<String?> clientId;
@@ -4242,6 +4436,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   final Value<int> rowid;
   const ProjectsCompanion({
     this.id = const Value.absent(),
+    this.workspaceId = const Value.absent(),
     this.code = const Value.absent(),
     this.name = const Value.absent(),
     this.clientId = const Value.absent(),
@@ -4261,6 +4456,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   });
   ProjectsCompanion.insert({
     required String id,
+    this.workspaceId = const Value.absent(),
     this.code = const Value.absent(),
     required String name,
     this.clientId = const Value.absent(),
@@ -4282,6 +4478,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
        startDate = Value(startDate);
   static Insertable<Project> custom({
     Expression<String>? id,
+    Expression<String>? workspaceId,
     Expression<String>? code,
     Expression<String>? name,
     Expression<String>? clientId,
@@ -4301,6 +4498,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (workspaceId != null) 'workspace_id': workspaceId,
       if (code != null) 'code': code,
       if (name != null) 'name': name,
       if (clientId != null) 'client_id': clientId,
@@ -4323,6 +4521,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
 
   ProjectsCompanion copyWith({
     Value<String>? id,
+    Value<String>? workspaceId,
     Value<String?>? code,
     Value<String>? name,
     Value<String?>? clientId,
@@ -4342,6 +4541,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   }) {
     return ProjectsCompanion(
       id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
       code: code ?? this.code,
       name: name ?? this.name,
       clientId: clientId ?? this.clientId,
@@ -4367,6 +4567,9 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
@@ -4425,6 +4628,7 @@ class ProjectsCompanion extends UpdateCompanion<Project> {
   String toString() {
     return (StringBuffer('ProjectsCompanion(')
           ..write('id: $id, ')
+          ..write('workspaceId: $workspaceId, ')
           ..write('code: $code, ')
           ..write('name: $name, ')
           ..write('clientId: $clientId, ')
@@ -20023,6 +20227,7 @@ typedef $$UsersTableProcessedTableManager =
 typedef $$PartnersTableCreateCompanionBuilder =
     PartnersCompanion Function({
       required String id,
+      Value<String> workspaceId,
       Value<String?> userId,
       required String name,
       Value<String?> phone,
@@ -20038,6 +20243,7 @@ typedef $$PartnersTableCreateCompanionBuilder =
 typedef $$PartnersTableUpdateCompanionBuilder =
     PartnersCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String?> userId,
       Value<String> name,
       Value<String?> phone,
@@ -20192,6 +20398,11 @@ class $$PartnersTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20403,6 +20614,11 @@ class $$PartnersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -20483,6 +20699,11 @@ class $$PartnersTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -20700,6 +20921,7 @@ class $$PartnersTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> userId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
@@ -20713,6 +20935,7 @@ class $$PartnersTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => PartnersCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 userId: userId,
                 name: name,
                 phone: phone,
@@ -20728,6 +20951,7 @@ class $$PartnersTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> userId = const Value.absent(),
                 required String name,
                 Value<String?> phone = const Value.absent(),
@@ -20741,6 +20965,7 @@ class $$PartnersTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => PartnersCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 userId: userId,
                 name: name,
                 phone: phone,
@@ -21647,6 +21872,7 @@ typedef $$WorkersTableProcessedTableManager =
 typedef $$ClientsTableCreateCompanionBuilder =
     ClientsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String name,
       Value<String?> contactPerson,
       Value<String?> phone,
@@ -21662,6 +21888,7 @@ typedef $$ClientsTableCreateCompanionBuilder =
 typedef $$ClientsTableUpdateCompanionBuilder =
     ClientsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> name,
       Value<String?> contactPerson,
       Value<String?> phone,
@@ -21771,6 +21998,11 @@ class $$ClientsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -21939,6 +22171,11 @@ class $$ClientsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -22001,6 +22238,11 @@ class $$ClientsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -22169,6 +22411,7 @@ class $$ClientsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> contactPerson = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
@@ -22182,6 +22425,7 @@ class $$ClientsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 name: name,
                 contactPerson: contactPerson,
                 phone: phone,
@@ -22197,6 +22441,7 @@ class $$ClientsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String name,
                 Value<String?> contactPerson = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
@@ -22210,6 +22455,7 @@ class $$ClientsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ClientsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 name: name,
                 contactPerson: contactPerson,
                 phone: phone,
@@ -22362,6 +22608,7 @@ typedef $$ClientsTableProcessedTableManager =
 typedef $$ClientLocationsTableCreateCompanionBuilder =
     ClientLocationsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       required String clientId,
       Value<String> name,
       required String address,
@@ -22378,6 +22625,7 @@ typedef $$ClientLocationsTableCreateCompanionBuilder =
 typedef $$ClientLocationsTableUpdateCompanionBuilder =
     ClientLocationsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String> clientId,
       Value<String> name,
       Value<String> address,
@@ -22477,6 +22725,11 @@ class $$ClientLocationsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -22618,6 +22871,11 @@ class $$ClientLocationsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get name => $composableBuilder(
     column: $table.name,
     builder: (column) => ColumnOrderings(column),
@@ -22703,6 +22961,11 @@ class $$ClientLocationsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -22843,6 +23106,7 @@ class $$ClientLocationsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String> clientId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String> address = const Value.absent(),
@@ -22857,6 +23121,7 @@ class $$ClientLocationsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ClientLocationsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 clientId: clientId,
                 name: name,
                 address: address,
@@ -22873,6 +23138,7 @@ class $$ClientLocationsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 required String clientId,
                 Value<String> name = const Value.absent(),
                 required String address,
@@ -22887,6 +23153,7 @@ class $$ClientLocationsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ClientLocationsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 clientId: clientId,
                 name: name,
                 address: address,
@@ -23027,6 +23294,7 @@ typedef $$ClientLocationsTableProcessedTableManager =
 typedef $$ProjectsTableCreateCompanionBuilder =
     ProjectsCompanion Function({
       required String id,
+      Value<String> workspaceId,
       Value<String?> code,
       required String name,
       Value<String?> clientId,
@@ -23047,6 +23315,7 @@ typedef $$ProjectsTableCreateCompanionBuilder =
 typedef $$ProjectsTableUpdateCompanionBuilder =
     ProjectsCompanion Function({
       Value<String> id,
+      Value<String> workspaceId,
       Value<String?> code,
       Value<String> name,
       Value<String?> clientId,
@@ -23258,6 +23527,11 @@ class $$ProjectsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23562,6 +23836,11 @@ class $$ProjectsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnOrderings(column),
@@ -23685,6 +23964,11 @@ class $$ProjectsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
@@ -23996,6 +24280,7 @@ class $$ProjectsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> code = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String?> clientId = const Value.absent(),
@@ -24014,6 +24299,7 @@ class $$ProjectsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion(
                 id: id,
+                workspaceId: workspaceId,
                 code: code,
                 name: name,
                 clientId: clientId,
@@ -24034,6 +24320,7 @@ class $$ProjectsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String> workspaceId = const Value.absent(),
                 Value<String?> code = const Value.absent(),
                 required String name,
                 Value<String?> clientId = const Value.absent(),
@@ -24052,6 +24339,7 @@ class $$ProjectsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => ProjectsCompanion.insert(
                 id: id,
+                workspaceId: workspaceId,
                 code: code,
                 name: name,
                 clientId: clientId,

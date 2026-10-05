@@ -226,6 +226,7 @@ void main() {
       for (final m in methods) {
         final c = model.Collection.create(
           clientId: clientId,
+          projectId: projectId,
           amountCents: 10000,
           date: DateTime.now(),
           paymentMethod: m,
@@ -237,6 +238,7 @@ void main() {
       expect(
         () => model.Collection.create(
           clientId: clientId,
+          projectId: projectId,
           amountCents: 10000,
           date: DateTime.now(),
           paymentMethod: 'crypto_invalido',
@@ -252,6 +254,7 @@ void main() {
           () async => await collectionRepo.recordCollection(
             model.Collection.create(
               clientId: 'cliente-fantasma-inexistente',
+              projectId: projectId,
               amountCents: 50000,
               date: DateTime.now(),
             ),
@@ -267,6 +270,7 @@ void main() {
         expect(
           () => model.Collection.create(
             clientId: clientId,
+            projectId: projectId,
             amountCents: 0,
             date: DateTime.now(),
           ),
@@ -276,6 +280,7 @@ void main() {
         expect(
           () => model.Collection.create(
             clientId: clientId,
+            projectId: projectId,
             amountCents: -1500,
             date: DateTime.now(),
           ),
@@ -302,5 +307,100 @@ void main() {
       expect(summary.receivableCents, agreedBudgetCents - 123456);
       expect(summary.collected, 1234.56);
     });
+
+    test(
+      '10. Exclusividad estricta de contexto (Exactamente uno: project, visit o plan)',
+      () async {
+        // 10.1 Válidos individuales
+        final colProj = model.Collection.create(
+          clientId: clientId,
+          projectId: projectId,
+          amountCents: 10000,
+          date: DateTime.now(),
+        );
+        expect(colProj.projectId, equals(projectId));
+        expect(colProj.visitId, isNull);
+        expect(colProj.planId, isNull);
+
+        final colVisit = model.Collection.create(
+          clientId: clientId,
+          visitId: 'visit-123',
+          amountCents: 10000,
+          date: DateTime.now(),
+        );
+        expect(colVisit.projectId, isNull);
+        expect(colVisit.visitId, equals('visit-123'));
+        expect(colVisit.planId, isNull);
+
+        final colPlan = model.Collection.create(
+          clientId: clientId,
+          planId: 'plan-456',
+          amountCents: 10000,
+          date: DateTime.now(),
+        );
+        expect(colPlan.projectId, isNull);
+        expect(colPlan.visitId, isNull);
+        expect(colPlan.planId, equals('plan-456'));
+
+        // 10.2 Inválidos: Cero contextos (huérfano)
+        expect(
+          () => model.Collection.create(
+            clientId: clientId,
+            amountCents: 10000,
+            date: DateTime.now(),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+
+        // 10.3 Inválidos: project + visit
+        expect(
+          () => model.Collection.create(
+            clientId: clientId,
+            projectId: projectId,
+            visitId: 'visit-123',
+            amountCents: 10000,
+            date: DateTime.now(),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+
+        // 10.4 Inválidos: project + plan
+        expect(
+          () => model.Collection.create(
+            clientId: clientId,
+            projectId: projectId,
+            planId: 'plan-456',
+            amountCents: 10000,
+            date: DateTime.now(),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+
+        // 10.5 Inválidos: visit + plan
+        expect(
+          () => model.Collection.create(
+            clientId: clientId,
+            visitId: 'visit-123',
+            planId: 'plan-456',
+            amountCents: 10000,
+            date: DateTime.now(),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+
+        // 10.6 Inválidos: los tres simultáneos
+        expect(
+          () => model.Collection.create(
+            clientId: clientId,
+            projectId: projectId,
+            visitId: 'visit-123',
+            planId: 'plan-456',
+            amountCents: 10000,
+            date: DateTime.now(),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      },
+    );
   });
 }

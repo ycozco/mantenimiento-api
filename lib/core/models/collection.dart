@@ -72,9 +72,13 @@ class Collection {
       throw ArgumentError('El monto del cobro debe ser mayor a cero.');
     }
 
-    if (projectId != null && (visitId != null || planId != null)) {
+    final contextCount =
+        (projectId != null ? 1 : 0) +
+        (visitId != null ? 1 : 0) +
+        (planId != null ? 1 : 0);
+    if (contextCount != 1) {
       throw ArgumentError(
-        'Un cobro no puede asociarse simultáneamente a una Obra y a un Mantenimiento.',
+        'Un cobro debe estar asociado exactamente a un único contexto: Obra (projectId), Visita (visitId) o Plan (planId).',
       );
     }
 
