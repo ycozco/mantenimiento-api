@@ -9,6 +9,7 @@ import '../../core/models/worker.dart';
 import '../../core/theme/app_theme.dart';
 import '../workers/worker_form_dialog.dart';
 import '../workers/worker_detail_screen.dart';
+import 'partner_detail_screen.dart';
 
 class SociosClientesScreen extends StatefulWidget {
   final LocalStorageService storage;
@@ -152,6 +153,14 @@ class _SociosClientesScreenState extends State<SociosClientesScreen>
                         ),
                       )
                     : null,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PartnerDetailScreen(socio: s),
+                    ),
+                  );
+                },
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
