@@ -333,36 +333,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Future<void> _handleEventTap(BuildContext context, CalendarEvent event) async {
+  Future<void> _handleEventTap(
+    BuildContext context,
+    CalendarEvent event,
+  ) async {
     switch (event.sourceType) {
       case CalendarSourceType.project:
-        final matches = widget.storage.obras.where((o) => o.id == event.sourceId);
+        final matches = widget.storage.obras.where(
+          (o) => o.id == event.sourceId,
+        );
         if (matches.isNotEmpty && context.mounted) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  ObraDetailScreen(obra: matches.first, storage: widget.storage),
-            ),
-          );
-        }
-        break;
-      case CalendarSourceType.toolReturn:
-        final tool = await widget.storage.toolRepository.getTool(event.sourceId);
-        if (tool != null && context.mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ToolDetailScreen(
-                tool: tool,
+              builder: (_) => ObraDetailScreen(
+                obra: matches.first,
                 storage: widget.storage,
               ),
             ),
           );
         }
         break;
+      case CalendarSourceType.toolReturn:
+        final tool = await widget.storage.toolRepository.getTool(
+          event.sourceId,
+        );
+        if (tool != null && context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  ToolDetailScreen(tool: tool, storage: widget.storage),
+            ),
+          );
+        }
+        break;
       case CalendarSourceType.maintenanceVisit:
-        final visit = await widget.storage.maintenanceRepository.getVisitById(event.sourceId);
+        final visit = await widget.storage.maintenanceRepository.getVisitById(
+          event.sourceId,
+        );
         if (visit != null && context.mounted) {
           Navigator.push(
             context,

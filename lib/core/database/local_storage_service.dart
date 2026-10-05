@@ -23,9 +23,11 @@ import '../repositories/purchase_repository.dart';
 import '../repositories/partner_repository.dart';
 import '../repositories/collection_repository.dart';
 import '../repositories/attachment_repository.dart';
+import '../repositories/settings_repository.dart';
 import '../services/project_financial_service.dart';
 import '../services/dashboard_service.dart';
 import '../services/calendar_service.dart';
+import '../services/device_preferences_service.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -100,6 +102,14 @@ class LocalStorageService extends ChangeNotifier {
   CalendarService? _calendarService;
   CalendarService get calendarService =>
       _calendarService ??= CalendarService(db);
+
+  SettingsRepository? _settingsRepository;
+  SettingsRepository get settingsRepository =>
+      _settingsRepository ??= SettingsRepository(db);
+
+  DevicePreferencesService? _devicePreferencesService;
+  DevicePreferencesService get devicePreferencesService =>
+      _devicePreferencesService ??= DevicePreferencesService();
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];
