@@ -331,3 +331,26 @@ mantenimiento/
   - **Mobile (Android / iOS)**: Diseñado para ergonomía táctil en campo, ingreso rápido de jornales, registro de visitas offline, captura fotográfica y consulta rápida de saldos.
   - **Web**: Diseñado para administración en escritorio, reportes consolidados, exportaciones contables, configuración de tarifas y visión global de obras.
 
+---
+
+## 11. Servicios y Módulos Operacionales V2 (T-11 a T-16)
+
+### 11.1 Dashboard Operacional (`DashboardService` / T-11)
+Servicio central de agregación en tiempo real que recopila indicadores accionables de obras activas, presupuestos, cobros, margen bruto, saldo laboral pendiente, productos bajo stock mínimo/agotados, visitas programadas/vencidas y herramientas asignadas sin duplicar cálculos de `ProjectFinancialService`.
+
+### 11.2 Calendario y Agenda Unificada (`CalendarService` / T-12)
+Modelo derivado en memoria (`CalendarEvent`) que consolida cronológicamente eventos desde tres fuentes operativas (Visitas de Mantenimiento, Hitos/Fechas de Obras y Devoluciones de Herramientas) con filtrado y navegación directa al detalle.
+
+### 11.3 Gestión de Adjuntos (`AttachmentRepository` / T-13)
+Almacenamiento de evidencias y documentación respetando la regla de **cero BLOBs / cero Base64 en SQLite**. Admite URLs externas con validación estricta de esquemas HTTPS y referencias a PDFs locales con verificación segura de existencia física en el dispositivo (`isLocalFileAvailable`).
+
+### 11.4 Separación Empresa vs. Dispositivo (`SettingsRepository` & `DevicePreferencesService` / T-14)
+- **Configuración de Empresa/Workspace (`CompanySettings`)**: Persistida en SQLite (`app_metadata`), sincronizable y respaldable (Nombre comercial, RUC, moneda PEN, zona horaria Lima, switch de stock negativo).
+- **Preferencias del Dispositivo (`DevicePreferences`)**: Almacenadas en `SharedPreferences` locales, no sincronizables ni exportadas al backup de negocio (tema visual, notificaciones locales).
+
+### 11.5 Notificaciones Locales V2 (`NotificationScheduleEngine` / T-15)
+Motor puro de cálculo que programa alertas anticipadas para visitas de mantenimiento (`MaintenanceVisit.scheduledDate`) a los -7, -3, -2 y -1 días a las 09:00 AM, empleando IDs determinísticos de 32 bits para cancelación exacta en reprogramaciones o completados.
+
+### 11.6 Respaldo y Restauración Integral V2 (`BackupRestoreService` / T-16)
+Exportación e importación transaccional (`backupFormatVersion: 2`, `schemaVersion: 2`) que cubre las 21 tablas de negocio en Drift respetando el orden estricto de Foreign Keys, garantizando reversión atómica (ROLLBACK) ante cualquier inconsistencia, y excluyendo infraestructura efímera (`sync_queue`).
+
