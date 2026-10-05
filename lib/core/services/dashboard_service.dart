@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import '../database/app_database.dart';
 import '../models/dashboard_summary.dart';
 import 'project_financial_service.dart';
+import 'maintenance_financial_service.dart';
 
 class DashboardService {
   final AppDatabase _db;
@@ -18,6 +19,7 @@ class DashboardService {
           'SELECT 1',
           readsFrom: {
             _db.projects,
+            _db.maintenancePlans,
             _db.maintenanceVisits,
             _db.workers,
             _db.tools,
@@ -207,6 +209,11 @@ class DashboardService {
         ? (totalAccruedLaborCents - totalPaidLaborCents)
         : 0;
 
+    // 7. Cobros Pendientes de Mantenimiento
+    final maintenanceFinancialService = MaintenanceFinancialService(_db);
+    final maintenanceReceivableCents = await maintenanceFinancialService
+        .getTotalMaintenanceReceivableCents();
+
     return DashboardSummary(
       activeProjectsCount: activeProjects.length,
       activeWorkersCount: activeWorkersCount,
@@ -222,6 +229,7 @@ class DashboardService {
       activeProjectsGrossMarginPercent: activeProjectsGrossMarginPercent,
       activeProjectsCollectedCents: activeProjectsCollectedCents,
       activeProjectsReceivableCents: activeProjectsReceivableCents,
+      maintenanceReceivableCents: maintenanceReceivableCents,
       totalPendingLaborDebtCents: totalPendingLaborDebtCents,
       lowStockItemsCount: lowStockItemsCount,
       outOfStockItemsCount: outOfStockItemsCount,

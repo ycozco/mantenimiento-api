@@ -11,6 +11,8 @@ class MaintenancePlan {
   final int intervalDays;
   final DateTime nextDate;
   final int estimatedCostCents;
+  final String billingType; // 'perVisit', 'monthly', 'custom'
+  final int agreedAmountCents;
   final List<String> assignedPartnerIds;
   final bool isActive;
   final DateTime createdAt;
@@ -31,6 +33,8 @@ class MaintenancePlan {
     this.intervalDays = 30,
     required this.nextDate,
     this.estimatedCostCents = 0,
+    this.billingType = 'perVisit',
+    this.agreedAmountCents = 0,
     this.assignedPartnerIds = const [],
     this.isActive = true,
     DateTime? createdAt,
@@ -45,6 +49,7 @@ class MaintenancePlan {
        updatedAt = updatedAt ?? DateTime.now();
 
   double get estimatedCost => estimatedCostCents / 100.0;
+  double get agreedAmount => agreedAmountCents / 100.0;
   bool get isDeleted => deletedAt != null;
 
   DateTime calculateNextCycle([DateTime? fromDate]) {
@@ -63,6 +68,8 @@ class MaintenancePlan {
     int? intervalDays,
     DateTime? nextDate,
     int? estimatedCostCents,
+    String? billingType,
+    int? agreedAmountCents,
     List<String>? assignedPartnerIds,
     bool? isActive,
     DateTime? createdAt,
@@ -83,6 +90,8 @@ class MaintenancePlan {
       intervalDays: intervalDays ?? this.intervalDays,
       nextDate: nextDate ?? this.nextDate,
       estimatedCostCents: estimatedCostCents ?? this.estimatedCostCents,
+      billingType: billingType ?? this.billingType,
+      agreedAmountCents: agreedAmountCents ?? this.agreedAmountCents,
       assignedPartnerIds: assignedPartnerIds ?? this.assignedPartnerIds,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,

@@ -39,6 +39,9 @@ class DashboardSummary {
   final int activeProjectsCollectedCents;
   final int activeProjectsReceivableCents;
 
+  // Finanzas de Mantenimientos
+  final int maintenanceReceivableCents;
+
   // Pasivos Laborales
   final int totalPendingLaborDebtCents;
 
@@ -62,6 +65,7 @@ class DashboardSummary {
     this.activeProjectsGrossMarginPercent = 0.0,
     this.activeProjectsCollectedCents = 0,
     this.activeProjectsReceivableCents = 0,
+    this.maintenanceReceivableCents = 0,
     this.totalPendingLaborDebtCents = 0,
     this.lowStockItemsCount = 0,
     this.outOfStockItemsCount = 0,
@@ -76,6 +80,9 @@ class DashboardSummary {
       activeProjectsGrossMarginCents / 100.0;
   double get activeProjectsCollected => activeProjectsCollectedCents / 100.0;
   double get activeProjectsReceivable => activeProjectsReceivableCents / 100.0;
+  double get maintenanceReceivable => maintenanceReceivableCents / 100.0;
+  double get totalReceivable =>
+      (activeProjectsReceivableCents + maintenanceReceivableCents) / 100.0;
   double get totalPendingLaborDebt => totalPendingLaborDebtCents / 100.0;
 
   bool get hasUrgentAlerts =>

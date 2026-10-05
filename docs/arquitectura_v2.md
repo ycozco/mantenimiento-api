@@ -352,5 +352,21 @@ Almacenamiento de evidencias y documentación respetando la regla de **cero BLOB
 Motor puro de cálculo que programa alertas anticipadas para visitas de mantenimiento (`MaintenanceVisit.scheduledDate`) a los -7, -3, -2 y -1 días a las 09:00 AM, empleando IDs determinísticos de 32 bits para cancelación exacta en reprogramaciones o completados.
 
 ### 11.6 Respaldo y Restauración Integral V2 (`BackupRestoreService` / T-16)
-Exportación e importación transaccional (`backupFormatVersion: 2`, `schemaVersion: 2`) que cubre las 21 tablas de negocio en Drift respetando el orden estricto de Foreign Keys, garantizando reversión atómica (ROLLBACK) ante cualquier inconsistencia, y excluyendo infraestructura efímera (`sync_queue`).
+Exportación e importación transaccional (`backupFormatVersion: 2`, `schemaVersion: 3`) que cubre las 21 tablas de negocio en Drift respetando el orden estricto de Foreign Keys, garantizando reversión atómica (ROLLBACK) ante cualquier inconsistencia, y excluyendo infraestructura efímera (`sync_queue`).
+
+### 11.7 Navegación y Adaptabilidad Multiplataforma (`AppResponsive` / T-17)
+- **Breakpoints Centralizados**: Definición unificada de tres anchos clave (`compact` < 600px, `medium` 600-840px, `expanded` >= 840px) en `AppResponsive`.
+- **Navegación Adaptativa**: `HomeScreen` conmuta automáticamente entre `NavigationBar` en pantallas compactas/móviles y `NavigationRail` en tabletas/escritorio/web.
+- **Jerarquía Simplificada**: 5 destinos principales (Inicio/Dashboard, Obras, Mantenimientos, Finanzas, Más) con acceso directo a sub-módulos y vistas especializadas (Inventario, Herramientas, Personal, Socios, Clientes, Calendario, Ajustes).
+- **Vistas de Estado Estandarizadas**: Componentes reactivos reutilizables (`LoadingStateView`, `EmptyStateView`, `ErrorStateView`) para garantizar retroalimentación visual en toda la app sin pantallas en blanco ni overflows.
+
+### 11.8 Modelo Económico de Mantenimientos (`MaintenanceFinancialService` / T-18)
+- **Modalidades de Cobro**:
+  - `perVisit`: Tarifa pactada cobrada por visita individual.
+  - `monthly`: Tarifa mensual fija para el plan de mantenimiento. Las visitas dentro del mismo mes se agrupan cronológicamente (`year * 12 + month`) para no multiplicar falsamente los ingresos.
+  - `custom`: Importe presupuestado ad-hoc o variable.
+- **Snapshot Histórico Inmutable**: Toda visita (`MaintenanceVisit`) almacena su `agreedPriceCents` congelado al momento de su creación/ejecución. Modificaciones posteriores a la tarifa del plan padre no alteran el precio acordado de visitas históricas.
+- **Asociación de Cobros**: `Collection` soporta imputación directa a `projectId`, `visitId` o `planId` bajo regla estricta XOR.
+- **Métricas Financieras Derivadas Puras**: `MaintenanceFinancialService` calcula en tiempo real `revenueCents`, `collectedCents`, `receivableCents`, `laborCostCents`, `materialCostCents`, `expensesCents`, `totalCostCents`, `grossMarginCents` y `grossMarginPercent` sin almacenar valores calculados en SQLite.
+
 

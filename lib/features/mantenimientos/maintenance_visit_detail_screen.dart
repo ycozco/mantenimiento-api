@@ -5,11 +5,14 @@ import 'package:intl/intl.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/maintenance_plan.dart';
 import '../../core/models/maintenance_visit.dart';
+import '../../core/models/maintenance_financial_summary.dart';
+import '../../core/models/collection.dart';
 import '../../core/models/work_log.dart';
 import '../../core/models/stock_movement.dart';
 import '../../core/models/tool_assignment.dart';
 import '../../core/theme/app_theme.dart';
 import '../attachments/attachment_list_widget.dart';
+import '../collections/collection_form_dialog.dart';
 import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
 
@@ -309,104 +312,274 @@ class _MaintenanceVisitDetailScreenState
                     ),
                     const SizedBox(height: 16),
 
-                    // Costos y Jornadas de la Visita (Mano de Obra + Materiales)
-                    StreamBuilder<int>(
-                      stream: widget.storage.maintenanceRepository
-                          .watchVisitLaborCostCents(visit.id),
-                      builder: (context, laborSnapshot) {
-                        final laborCost = (laborSnapshot.data ?? 0) / 100.0;
+                    // Economía Completa de la Visita (Tarifa Snapshot, Costos, Margen y Cobros)
+                    StreamBuilder<MaintenanceFinancialSummary>(
+                      stream: widget.storage.maintenanceFinancialService
+                          .watchVisitFinancials(visit.id),
+                      builder: (context, finSnapshot) {
+                        final summary = finSnapshot.data;
+                        final priceSnapshot =
+                            ((summary?.revenueCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
+                        final laborCost =
+                            ((summary?.laborCostCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
+                        final matCost =
+                            ((summary?.materialCostCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
+                        final expCost = ((summary?.expensesCents ?? 0) / 100.0)
+                            .toStringAsFixed(2);
+                        final totalCost =
+                            ((summary?.totalCostCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
+                        final margin =
+                            ((summary?.grossMarginCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
+                        final marginPct = (summary?.grossMarginPercent ?? 0.0)
+                            .toStringAsFixed(1);
+                        final collected =
+                            ((summary?.collectedCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
+                        final receivable =
+                            ((summary?.receivableCents ?? 0) / 100.0)
+                                .toStringAsFixed(2);
 
-                        return StreamBuilder<int>(
-                          stream: widget.storage.inventoryRepository
-                              .watchVisitMaterialCostCents(visit.id),
-                          builder: (context, matSnapshot) {
-                            final matCost = (matSnapshot.data ?? 0) / 100.0;
-                            final totalCost = laborCost + matCost;
-
-                            return Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0F172A),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: const Color(0xFF1E293B),
-                                ),
-                              ),
-                              child: Column(
+                        return Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF0F172A),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: const Color(0xFF1E293B)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  const Row(
                                     children: [
-                                      const Text(
-                                        'Mano de Obra:',
+                                      Icon(
+                                        LucideIcons.banknote,
+                                        size: 16,
+                                        color: AppTheme.emeraldSuccess,
+                                      ),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        'Tarifa Acordada (Snapshot):',
                                         style: TextStyle(
                                           fontSize: 13,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Text(
-                                        'S/ ${laborCost.toStringAsFixed(2)}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.skyAccent,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Insumos / Materiales:',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Text(
-                                        'S/ ${matCost.toStringAsFixed(2)}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.emeraldSuccess,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Divider(
-                                    height: 16,
-                                    color: Color(0xFF334155),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Costo Total de la Visita:',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w600,
                                           color: Colors.white,
                                         ),
                                       ),
-                                      Text(
-                                        'S/ ${totalCost.toStringAsFixed(2)}',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.amberSafety,
-                                        ),
-                                      ),
                                     ],
+                                  ),
+                                  Text(
+                                    'S/ $priceSnapshot',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.skyAccent,
+                                    ),
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                              const Divider(
+                                height: 16,
+                                color: Color(0xFF334155),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Mano de Obra (Jornadas):',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'S/ $laborCost',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.skyAccent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Insumos / Materiales:',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'S/ $matCost',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.emeraldSuccess,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if ((summary?.expensesCents ?? 0) > 0) ...[
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Gastos Operativos:',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      'S/ $expCost',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.amberSafety,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                              const Divider(
+                                height: 14,
+                                color: Color(0xFF334155),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Costo Total de la Visita:',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    'S/ $totalCost',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.coralUrgent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Margen Operativo:',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    'S/ $margin ($marginPct%)',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          (summary?.grossMarginCents ?? 0) >= 0
+                                          ? AppTheme.emeraldSuccess
+                                          : AppTheme.coralUrgent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Divider(
+                                height: 14,
+                                color: Color(0xFF334155),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Cobrado: S/ $collected',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppTheme.emeraldSuccess,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Pendiente: S/ $receivable',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppTheme.amberSafety,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: AppTheme.emeraldSuccess,
+                                    side: const BorderSide(
+                                      color: AppTheme.emeraldSuccess,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                  ),
+                                  icon: const Icon(
+                                    LucideIcons.receipt,
+                                    size: 16,
+                                  ),
+                                  label: const Text(
+                                    'Registrar Cobro de Visita',
+                                  ),
+                                  onPressed: () async {
+                                    final col = await showDialog(
+                                      context: context,
+                                      builder: (_) => CollectionFormDialog(
+                                        visitId: visit.id,
+                                        initialClientId: plan?.clientId,
+                                        targetAmountCents:
+                                            (summary?.revenueCents ?? 0) > 0
+                                            ? ((summary?.receivableCents ?? 0) >
+                                                      0
+                                                  ? summary!.receivableCents
+                                                  : summary!.revenueCents)
+                                            : null,
+                                        title: 'Cobro Visita #${visit.version}',
+                                      ),
+                                    );
+                                    if (col != null) {
+                                      await widget.storage.collectionRepository
+                                          .recordCollection(col);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),
@@ -796,6 +969,142 @@ class _MaintenanceVisitDetailScreenState
                                   ),
                                 );
                               },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    // Historial de Cobros de esta Visita
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Cobros Registrados en esta Visita',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppTheme.emeraldSuccess,
+                          ),
+                          icon: const Icon(LucideIcons.plus, size: 16),
+                          label: const Text('Nuevo Cobro'),
+                          onPressed: () async {
+                            final col = await showDialog(
+                              context: context,
+                              builder: (_) => CollectionFormDialog(
+                                visitId: visit.id,
+                                initialClientId: plan?.clientId,
+                                targetAmountCents: visit.agreedPriceCents,
+                                title: 'Cobro Visita #${visit.version}',
+                              ),
+                            );
+                            if (col != null) {
+                              await widget.storage.collectionRepository
+                                  .recordCollection(col);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    StreamBuilder<List<Collection>>(
+                      stream: widget.storage.collectionRepository
+                          .watchVisitCollections(visit.id),
+                      builder: (context, colSnap) {
+                        final collections = colSnap.data ?? [];
+                        if (collections.isEmpty) {
+                          return Container(
+                            padding: const EdgeInsets.all(16),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF1E293B,
+                              ).withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'No se han registrado cobros específicos para esta visita.',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: collections.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                          itemBuilder: (context, idx) {
+                            final c = collections[idx];
+                            return Card(
+                              margin: EdgeInsets.zero,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: AppTheme.emeraldSuccess
+                                      .withValues(alpha: 0.15),
+                                  child: const Icon(
+                                    LucideIcons.banknote,
+                                    color: AppTheme.emeraldSuccess,
+                                    size: 18,
+                                  ),
+                                ),
+                                title: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'S/ ${(c.amountCents / 100.0).toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppTheme.emeraldSuccess,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      dateFormat.format(c.date),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Text(
+                                  'Método: ${c.paymentMethodLabel}${c.reference != null ? " • Ref: ${c.reference}" : ""}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                trailing: PopupMenuButton<String>(
+                                  icon: const Icon(
+                                    LucideIcons.ellipsis_vertical,
+                                    size: 16,
+                                  ),
+                                  onSelected: (val) async {
+                                    if (val == 'delete') {
+                                      await widget.storage.collectionRepository
+                                          .deleteCollection(c.id);
+                                    }
+                                  },
+                                  itemBuilder: (_) => [
+                                    const PopupMenuItem(
+                                      value: 'delete',
+                                      child: Text(
+                                        'Anular cobro',
+                                        style: TextStyle(
+                                          color: AppTheme.coralUrgent,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           },
                         );

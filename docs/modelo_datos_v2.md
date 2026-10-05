@@ -47,10 +47,11 @@ erDiagram
     PARTNER ||--o{ CAPITAL_MOVEMENT : funds_or_withdraws
 
     PROJECT ||--o{ COLLECTION : generates_income
+    MAINTENANCE_PLAN ||--o{ COLLECTION : generates_income
     MAINTENANCE_VISIT ||--o{ COLLECTION : generates_income
     CLIENT ||--o{ COLLECTION : pays
     PARTNER ||--o{ COLLECTION : receives_money
-
+    
     PROJECT ||--o{ ATTACHMENT : documents
     MAINTENANCE_VISIT ||--o{ ATTACHMENT : documents
     EXPENSE ||--o{ ATTACHMENT : receipts
@@ -141,6 +142,8 @@ erDiagram
 - `frequency_type` (TEXT, Not Null, Default 'monthly')
 - `interval_days` (INTEGER, Not Null, Default 30)
 - `estimated_cost` (DECIMAL, Not Null, Default 0.0)
+- `billing_type` (TEXT, Not Null, Default 'perVisit') — 'perVisit' | 'monthly' | 'custom'
+- `agreed_amount_cents` (INTEGER, Not Null, Default 0) — Tarifa pactada en céntimos
 - `is_active` (BOOLEAN, Not Null, Default true, Index)
 - `created_at`, `updated_at`, `version`, `deleted_at`
 
@@ -151,6 +154,7 @@ erDiagram
 - `completed_date` (DATETIME, Nullable)
 - `status` (TEXT, Not Null, Default 'scheduled', Index)
 - `technician_notes` (TEXT, Nullable)
+- `agreed_price_cents` (INTEGER, Nullable) — Snapshot inmutable del precio acordado para la visita
 - `created_at`, `updated_at`, `version`, `deleted_at`
 
 ---
@@ -259,12 +263,14 @@ erDiagram
 - `client_id` (UUID, Not Null, FK `clients.id`, Index)
 - `project_id` (UUID, Nullable, FK `projects.id`, Index)
 - `visit_id` (UUID, Nullable, FK `maintenance_visits.id`, Index)
+- `plan_id` (UUID, Nullable, FK `maintenance_plans.id`, Index)
 - `amount` (DECIMAL, Not Null, Default 0.0)
 - `date` (DATE, Not Null, Index)
 - `received_by_partner_id` (UUID, Not Null, FK `partners.id`, Index)
 - `payment_method` (TEXT, Not Null, Default 'cash')
 - `notes` (TEXT, Nullable)
 - `created_at`, `updated_at`, `version`, `deleted_at`
+- *Constraints*: Debe asociarse a exactamente una entidad de destino: `project_id` XOR `visit_id` XOR `plan_id`.
 
 #### `suppliers` (Proveedores)
 - `id` (UUID, PK, Auto)

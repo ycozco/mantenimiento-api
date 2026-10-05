@@ -5,8 +5,21 @@ import '../../core/models/obra.dart';
 
 class CollectionFormDialog extends StatefulWidget {
   final Obra? obra;
+  final String? visitId;
+  final String? planId;
+  final String? initialClientId;
+  final int? targetAmountCents;
+  final String? title;
 
-  const CollectionFormDialog({super.key, this.obra});
+  const CollectionFormDialog({
+    super.key,
+    this.obra,
+    this.visitId,
+    this.planId,
+    this.initialClientId,
+    this.targetAmountCents,
+    this.title,
+  });
 
   @override
   State<CollectionFormDialog> createState() => _CollectionFormDialogState();
@@ -33,6 +46,8 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
     if (widget.obra != null) {
       _selectedProjectId = widget.obra!.id;
       _selectedClientId = widget.obra!.clienteId;
+    } else if (widget.initialClientId != null) {
+      _selectedClientId = widget.initialClientId;
     }
     _loadInitialData();
   }
@@ -50,6 +65,19 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
             ((widget.obra?.presupuesto ?? 0) * 100).round(),
           );
       _previouslyCollectedCents = summary.collectedCents;
+    } else if (widget.visitId != null) {
+      _previouslyCollectedCents = await storage.collectionRepository
+          .getVisitCollectedCents(widget.visitId!);
+    } else if (widget.planId != null) {
+      _previouslyCollectedCents = await storage.collectionRepository
+          .getPlanCollectedCents(widget.planId!);
+    }
+
+    if (widget.targetAmountCents != null && widget.targetAmountCents! > 0) {
+      final remaining = widget.targetAmountCents! - _previouslyCollectedCents;
+      if (remaining > 0 && _amountController.text.isEmpty) {
+        _amountController.text = (remaining / 100.0).toStringAsFixed(2);
+      }
     }
 
     if (mounted) {
@@ -90,6 +118,8 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
     final collection = Collection.create(
       clientId: _selectedClientId!,
       projectId: _selectedProjectId,
+      visitId: widget.visitId,
+      planId: widget.planId,
       amountCents: amountCents,
       date: _date,
       receivedByPartnerId: _receivedByPartnerId,
@@ -111,13 +141,24 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
     final clientes = storage.clientes;
     final socios = storage.socios;
 
-    final budgetCents = ((widget.obra?.presupuesto ?? 0) * 100).round();
+    final targetCents =
+        widget.targetAmountCents ??
+        ((widget.obra?.presupuesto ?? 0) * 100).round();
+    final hasTarget = targetCents > 0;
     final thisPaymentAmount =
         double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
     final thisPaymentCents = (thisPaymentAmount * 100).round();
     final newTotalCollectedCents = _previouslyCollectedCents + thisPaymentCents;
-    final newReceivableCents = budgetCents - newTotalCollectedCents;
-    final isOverpaid = newReceivableCents < 0;
+    final newReceivableCents = targetCents - newTotalCollectedCents;
+    final isOverpaid = hasTarget && newReceivableCents < 0;
+
+    final dialogTitle =
+        widget.title ??
+        (widget.visitId != null
+            ? 'Registrar Cobro de Visita'
+            : (widget.planId != null
+                  ? 'Registrar Cobro de Plan'
+                  : 'Registrar Cobro a Cliente'));
 
     return Dialog(
       child: ConstrainedBox(
@@ -135,7 +176,7 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Registrar Cobro a Cliente',
+                        dialogTitle,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -148,8 +189,8 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
                   ),
                   const Divider(),
 
-                  // Panel Informativo de Saldos de la Obra
-                  if (widget.obra != null && !_loadingBalance) ...[
+                  // Panel Informativo de Saldos (Obra o Mantenimiento con Tarifa)
+                  if (hasTarget && !_loadingBalance) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -163,9 +204,13 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Presupuesto de Venta:'),
                               Text(
-                                'S/ ${widget.obra!.presupuesto.toStringAsFixed(2)}',
+                                widget.obra != null
+                                    ? 'Presupuesto de Venta:'
+                                    : 'Monto Acordado:',
+                              ),
+                              Text(
+                                'S/ ${(targetCents / 100.0).toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -207,7 +252,7 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
                             Padding(
                               padding: const EdgeInsets.only(top: 6),
                               child: Text(
-                                '⚠️ Advertencia: El cobro supera el presupuesto acordado.',
+                                '⚠️ Advertencia: El cobro supera el monto acordado.',
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.amber.shade800,
@@ -221,7 +266,8 @@ class _CollectionFormDialogState extends State<CollectionFormDialog> {
                   ],
 
                   // Cliente
-                  if (widget.obra == null) ...[
+                  if (widget.obra == null &&
+                      widget.initialClientId == null) ...[
                     DropdownButtonFormField<String>(
                       initialValue: _selectedClientId,
                       decoration: const InputDecoration(

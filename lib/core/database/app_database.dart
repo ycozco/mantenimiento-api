@@ -38,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(DatabaseConnection super.connection);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
@@ -62,6 +62,15 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(purchases, purchases.notes);
         await m.addColumn(capitalMovements, capitalMovements.projectId);
         await m.addColumn(collections, collections.reference);
+      }
+      if (from < 3) {
+        await m.addColumn(maintenancePlans, maintenancePlans.billingType);
+        await m.addColumn(maintenancePlans, maintenancePlans.agreedAmountCents);
+        await m.addColumn(
+          maintenanceVisits,
+          maintenanceVisits.agreedPriceCents,
+        );
+        await m.addColumn(collections, collections.planId);
       }
     },
   );

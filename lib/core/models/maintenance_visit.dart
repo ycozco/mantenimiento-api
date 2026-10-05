@@ -57,6 +57,7 @@ class MaintenanceVisit {
   final DateTime? completedDate;
   final VisitStatus status;
   final String? technicianNotes;
+  final int? agreedPriceCents;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? createdBy;
@@ -72,6 +73,7 @@ class MaintenanceVisit {
     this.completedDate,
     this.status = VisitStatus.scheduled,
     this.technicianNotes,
+    this.agreedPriceCents,
     DateTime? createdAt,
     DateTime? updatedAt,
     this.createdBy,
@@ -83,6 +85,8 @@ class MaintenanceVisit {
        createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now();
 
+  double? get agreedPrice =>
+      agreedPriceCents != null ? agreedPriceCents! / 100.0 : null;
   bool get isCompleted => status == VisitStatus.completed;
   bool get isCancelled => status == VisitStatus.cancelled;
   bool get isInProgress => status == VisitStatus.inProgress;
@@ -97,6 +101,7 @@ class MaintenanceVisit {
     DateTime? completedDate,
     VisitStatus? status,
     String? technicianNotes,
+    int? agreedPriceCents,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? createdBy,
@@ -112,6 +117,7 @@ class MaintenanceVisit {
       completedDate: completedDate ?? this.completedDate,
       status: status ?? this.status,
       technicianNotes: technicianNotes ?? this.technicianNotes,
+      agreedPriceCents: agreedPriceCents ?? this.agreedPriceCents,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       createdBy: createdBy ?? this.createdBy,

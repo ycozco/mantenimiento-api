@@ -5,14 +5,12 @@ import 'package:intl/intl.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/collection.dart';
 import '../../core/models/labor_payment.dart';
-import '../../core/models/obra.dart';
 import '../../core/models/purchase.dart';
 import '../../core/theme/app_responsive.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/state_views.dart';
 import '../collections/collection_form_dialog.dart';
 import '../gastos/gastos_screen.dart';
-import '../payments/labor_payment_form_dialog.dart';
 import '../purchases/purchase_form_dialog.dart';
 import '../socios_clientes/socios_clientes_screen.dart';
 

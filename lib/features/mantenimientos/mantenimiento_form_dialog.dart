@@ -32,12 +32,14 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
   late TextEditingController _tituloCtrl;
   late TextEditingController _descCtrl;
   late TextEditingController _diasCustomCtrl;
+  late TextEditingController _amountCtrl;
 
   String? _clienteIdSeleccionado;
   String _clienteNombre = '';
   TipoFrecuencia _tipoFrecuencia = TipoFrecuencia.unMes;
   DateTime _fechaProximo = DateTime.now().add(const Duration(days: 30));
   final Set<String> _sociosSeleccionados = {};
+  String _billingType = 'perVisit';
 
   @override
   void initState() {
@@ -48,8 +50,13 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
     _diasCustomCtrl = TextEditingController(
       text: (m?.diasPersonalizados ?? 15).toString(),
     );
-
+    _amountCtrl = TextEditingController(
+      text: m != null && m.agreedAmountCents > 0
+          ? (m.agreedAmountCents / 100.0).toStringAsFixed(2)
+          : '',
+    );
     if (m != null) {
+      _billingType = m.billingType;
       _clienteIdSeleccionado = m.clienteId;
       _clienteNombre = m.clienteNombre;
       _tipoFrecuencia = m.tipoFrecuencia;
@@ -69,6 +76,7 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
     _tituloCtrl.dispose();
     _descCtrl.dispose();
     _diasCustomCtrl.dispose();
+    _amountCtrl.dispose();
     super.dispose();
   }
 
@@ -433,6 +441,71 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
 
                         const SizedBox(height: 16),
 
+                        // Modelo Económico y Tarifa
+                        const Text(
+                          'Facturación y Tarifa Acordada',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: DropdownButtonFormField<String>(
+                                initialValue: _billingType,
+                                decoration: const InputDecoration(
+                                  labelText: 'Modalidad de Cobro',
+                                  prefixIcon: Icon(
+                                    LucideIcons.banknote,
+                                    size: 18,
+                                  ),
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: 'perVisit',
+                                    child: Text('Cobro por Visita'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'monthly',
+                                    child: Text('Tarifa Mensual'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'custom',
+                                    child: Text('Personalizada / Eventual'),
+                                  ),
+                                ],
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() => _billingType = val);
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                controller: _amountCtrl,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                decoration: const InputDecoration(
+                                  labelText: 'Tarifa (S/)',
+                                  hintText: '350.00',
+                                  prefixText: 'S/ ',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
                         // Notas adicionales
                         const Text(
                           'Notas / Descripción',
@@ -470,6 +543,11 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                     ElevatedButton.icon(
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
+                          final tariffDouble =
+                              double.tryParse(
+                                _amountCtrl.text.replaceAll(',', '.'),
+                              ) ??
+                              0.0;
                           final nuevo = Mantenimiento(
                             id:
                                 widget.mantenimientoExistente?.id ??
@@ -485,6 +563,8 @@ class _MantenimientoFormDialogState extends State<MantenimientoFormDialog> {
                                 int.tryParse(_diasCustomCtrl.text) ?? 30,
                             fechaProximo: _fechaProximo,
                             responsablesIds: _sociosSeleccionados.toList(),
+                            billingType: _billingType,
+                            agreedAmountCents: (tariffDouble * 100).round(),
                           );
                           widget.onGuardar(nuevo);
                           Navigator.pop(context);

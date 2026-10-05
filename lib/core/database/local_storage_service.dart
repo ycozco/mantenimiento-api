@@ -25,6 +25,7 @@ import '../repositories/collection_repository.dart';
 import '../repositories/attachment_repository.dart';
 import '../repositories/settings_repository.dart';
 import '../services/project_financial_service.dart';
+import '../services/maintenance_financial_service.dart';
 import '../services/dashboard_service.dart';
 import '../services/calendar_service.dart';
 import '../services/device_preferences_service.dart';
@@ -45,6 +46,9 @@ class LocalStorageService extends ChangeNotifier {
       _instance._partnerRepository = PartnerRepository(database);
       _instance._collectionRepository = CollectionRepository(database);
       _instance._projectFinancialService = ProjectFinancialService(database);
+      _instance._maintenanceFinancialService = MaintenanceFinancialService(
+        database,
+      );
     }
     return _instance;
   }
@@ -95,6 +99,10 @@ class LocalStorageService extends ChangeNotifier {
   ProjectFinancialService? _projectFinancialService;
   ProjectFinancialService get projectFinancialService =>
       _projectFinancialService ??= ProjectFinancialService(db);
+
+  MaintenanceFinancialService? _maintenanceFinancialService;
+  MaintenanceFinancialService get maintenanceFinancialService =>
+      _maintenanceFinancialService ??= MaintenanceFinancialService(db);
 
   DashboardService? _dashboardService;
   DashboardService get dashboardService =>
@@ -263,6 +271,8 @@ class LocalStorageService extends ChangeNotifier {
           responsablesIds: respons,
           activo: plan.isActive,
           completado: nextVisit == null && lastVisit != null,
+          billingType: plan.billingType,
+          agreedAmountCents: plan.agreedAmountCents,
         );
       }).toList();
 
@@ -432,6 +442,8 @@ class LocalStorageService extends ChangeNotifier {
               nextDate: Value(m.fechaProximo),
               assignedPartnerIdsJson: Value(jsonEncode(m.responsablesIds)),
               isActive: Value(m.activo),
+              billingType: Value(m.billingType),
+              agreedAmountCents: Value(m.agreedAmountCents),
             ),
             mode: InsertMode.insertOrReplace,
           );
@@ -445,6 +457,9 @@ class LocalStorageService extends ChangeNotifier {
               scheduledDate: m.fechaProximo,
               completedDate: Value(m.fechaUltimo),
               status: Value(m.completado ? 'completed' : 'scheduled'),
+              agreedPriceCents: Value(
+                m.billingType == 'perVisit' ? m.agreedAmountCents : null,
+              ),
             ),
             mode: InsertMode.insertOrReplace,
           );
@@ -469,6 +484,8 @@ class LocalStorageService extends ChangeNotifier {
           nextDate: Value(m.fechaProximo),
           assignedPartnerIdsJson: Value(jsonEncode(m.responsablesIds)),
           isActive: Value(m.activo),
+          billingType: Value(m.billingType),
+          agreedAmountCents: Value(m.agreedAmountCents),
           updatedAt: Value(DateTime.now()),
         ),
       );

@@ -188,11 +188,20 @@ class DashboardScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           _buildFinancialRow(
-                            'Por Cobrar a Clientes:',
+                            'Por Cobrar (Obras):',
                             currency.format(summary.activeProjectsReceivable),
                             AppTheme.skyAccent,
                             isBold: true,
                           ),
+                          if (summary.maintenanceReceivableCents > 0) ...[
+                            const SizedBox(height: 6),
+                            _buildFinancialRow(
+                              'Por Cobrar (Mantenimiento):',
+                              currency.format(summary.maintenanceReceivable),
+                              AppTheme.amberSafety,
+                              isBold: true,
+                            ),
+                          ],
                           if (summary.totalPendingLaborDebtCents > 0) ...[
                             const Divider(height: 16),
                             _buildFinancialRow(

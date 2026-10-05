@@ -72,13 +72,10 @@ class CollectionRepository {
     return query.watch().asyncMap((rows) async {
       final collections = <model.Collection>[];
       for (final r in rows) {
-        String? clientName;
-        if (r.clientId != null) {
-          final client = await (_db.select(
-            _db.clients,
-          )..where((tbl) => tbl.id.equals(r.clientId!))).getSingleOrNull();
-          clientName = client?.name;
-        }
+        final client = await (_db.select(
+          _db.clients,
+        )..where((tbl) => tbl.id.equals(r.clientId))).getSingleOrNull();
+        final clientName = client?.name;
 
         String? projectName;
         if (r.projectId != null) {
@@ -115,6 +112,13 @@ class CollectionRepository {
       throw ArgumentError('El monto del cobro debe ser mayor a cero.');
     }
 
+    if (collection.projectId != null &&
+        (collection.visitId != null || collection.planId != null)) {
+      throw ArgumentError(
+        'Un cobro no puede asociarse simultáneamente a una Obra y a un Mantenimiento.',
+      );
+    }
+
     await _db
         .into(_db.collections)
         .insert(
@@ -124,6 +128,7 @@ class CollectionRepository {
             clientId: Value(collection.clientId),
             projectId: Value(collection.projectId),
             visitId: Value(collection.visitId),
+            planId: Value(collection.planId),
             amountCents: Value(collection.amountCents),
             date: Value(collection.date),
             receivedByPartnerId: Value(collection.receivedByPartnerId),
@@ -135,6 +140,99 @@ class CollectionRepository {
             version: Value(collection.version),
           ),
         );
+  }
+
+  Stream<List<model.Collection>> watchVisitCollections(String visitId) {
+    final query = (_db.select(_db.collections)
+      ..where((tbl) => tbl.visitId.equals(visitId) & tbl.deletedAt.isNull())
+      ..orderBy([(tbl) => OrderingTerm.desc(tbl.date)]));
+
+    return query.watch().asyncMap((rows) async {
+      final collections = <model.Collection>[];
+      for (final r in rows) {
+        String? clientName;
+        final client = await (_db.select(
+          _db.clients,
+        )..where((tbl) => tbl.id.equals(r.clientId))).getSingleOrNull();
+        clientName = client?.name;
+        collections.add(_mapRowToModel(r, clientName: clientName));
+      }
+      return collections;
+    });
+  }
+
+  Stream<List<model.Collection>> watchPlanCollections(String planId) {
+    return (_db.select(_db.maintenanceVisits)
+          ..where((tbl) => tbl.planId.equals(planId) & tbl.deletedAt.isNull()))
+        .watch()
+        .asyncMap((visits) async {
+          final visitIds = visits.map((v) => v.id).toList();
+          final query = _db.select(_db.collections)
+            ..where(
+              (tbl) =>
+                  (tbl.planId.equals(planId) |
+                      (visitIds.isNotEmpty
+                          ? tbl.visitId.isIn(visitIds)
+                          : const Constant(false))) &
+                  tbl.deletedAt.isNull(),
+            )
+            ..orderBy([(tbl) => OrderingTerm.desc(tbl.date)]);
+          final rows = await query.get();
+          return rows.map(_mapRowToModel).toList();
+        });
+  }
+
+  Stream<int> watchVisitCollectedCents(String visitId) {
+    return (_db.select(
+          _db.collections,
+        )..where((tbl) => tbl.visitId.equals(visitId) & tbl.deletedAt.isNull()))
+        .watch()
+        .map((rows) {
+          int total = 0;
+          for (final r in rows) {
+            total += r.amountCents;
+          }
+          return total;
+        });
+  }
+
+  Future<int> getVisitCollectedCents(String visitId) async {
+    final rows =
+        await (_db.select(_db.collections)..where(
+              (tbl) => tbl.visitId.equals(visitId) & tbl.deletedAt.isNull(),
+            ))
+            .get();
+    int total = 0;
+    for (final r in rows) {
+      total += r.amountCents;
+    }
+    return total;
+  }
+
+  Stream<int> watchPlanCollectedCents(String planId) {
+    return _db
+        .customSelect(
+          'SELECT COALESCE(SUM(c.amount_cents), 0) AS total FROM collections c '
+          'LEFT JOIN maintenance_visits v ON c.visit_id = v.id '
+          'WHERE (c.plan_id = ? OR v.plan_id = ?) AND c.deleted_at IS NULL',
+          variables: [Variable.withString(planId), Variable.withString(planId)],
+          readsFrom: {_db.collections, _db.maintenanceVisits},
+        )
+        .watchSingle()
+        .map((row) => row.read<int>('total'));
+  }
+
+  Future<int> getPlanCollectedCents(String planId) async {
+    final row = await _db
+        .customSelect(
+          'SELECT COALESCE(SUM(c.amount_cents), 0) AS total FROM collections c '
+          'LEFT JOIN maintenance_visits v ON c.visit_id = v.id '
+          'WHERE (c.plan_id = ? OR v.plan_id = ?) AND c.deleted_at IS NULL',
+          variables: [Variable.withString(planId), Variable.withString(planId)],
+          readsFrom: {_db.collections, _db.maintenanceVisits},
+        )
+        .getSingle();
+    return row.read<int>('total');
   }
 
   Future<void> deleteCollection(String collectionId) async {
@@ -211,6 +309,7 @@ class CollectionRepository {
       clientId: row.clientId,
       projectId: row.projectId,
       visitId: row.visitId,
+      planId: row.planId,
       amountCents: row.amountCents,
       date: row.date,
       receivedByPartnerId: row.receivedByPartnerId,

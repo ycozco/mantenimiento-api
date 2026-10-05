@@ -147,6 +147,9 @@ class MaintenancePlans extends Table {
   DateTimeColumn get nextDate => dateTime().nullable()();
   IntColumn get estimatedCostCents =>
       integer().withDefault(const Constant(0))();
+  TextColumn get billingType =>
+      text().withDefault(const Constant('perVisit'))();
+  IntColumn get agreedAmountCents => integer().withDefault(const Constant(0))();
   TextColumn get assignedPartnerIdsJson =>
       text().withDefault(const Constant('[]'))();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
@@ -172,6 +175,7 @@ class MaintenanceVisits extends Table {
   DateTimeColumn get completedDate => dateTime().nullable()();
   TextColumn get status => text().withDefault(const Constant('scheduled'))();
   TextColumn get technicianNotes => text().nullable()();
+  IntColumn get agreedPriceCents => integer().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   TextColumn get createdBy => text().nullable()();
@@ -509,6 +513,9 @@ class Collections extends Table {
   )();
   TextColumn get visitId => text().nullable().customConstraint(
     'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
+  )();
+  TextColumn get planId => text().nullable().customConstraint(
+    'REFERENCES maintenance_plans(id) ON DELETE SET NULL',
   )();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
   DateTimeColumn get date => dateTime()();

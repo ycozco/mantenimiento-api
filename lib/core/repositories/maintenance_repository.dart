@@ -63,6 +63,8 @@ class MaintenanceRepository {
               intervalDays: Value(plan.intervalDays),
               nextDate: Value(scheduledFirstDate),
               estimatedCostCents: Value(plan.estimatedCostCents),
+              billingType: Value(plan.billingType),
+              agreedAmountCents: Value(plan.agreedAmountCents),
               assignedPartnerIdsJson: Value(
                 jsonEncode(plan.assignedPartnerIds),
               ),
@@ -76,11 +78,17 @@ class MaintenanceRepository {
             ),
           );
 
-      // 2. Programar automáticamente la primera visita
+      // 2. Programar automáticamente la primera visita congelando el precio si es perVisit
+      final initialPrice =
+          plan.billingType == 'perVisit' && plan.agreedAmountCents > 0
+          ? plan.agreedAmountCents
+          : null;
+
       final firstVisit = MaintenanceVisit(
         planId: plan.id,
         scheduledDate: scheduledFirstDate,
         status: VisitStatus.scheduled,
+        agreedPriceCents: initialPrice,
       );
 
       await db
@@ -92,6 +100,7 @@ class MaintenanceRepository {
               planId: firstVisit.planId,
               scheduledDate: firstVisit.scheduledDate,
               status: Value(firstVisit.status.nameCode),
+              agreedPriceCents: Value(firstVisit.agreedPriceCents),
               createdAt: Value(firstVisit.createdAt),
               updatedAt: Value(firstVisit.updatedAt),
               version: Value(firstVisit.version),
@@ -116,6 +125,8 @@ class MaintenanceRepository {
         intervalDays: Value(plan.intervalDays),
         nextDate: Value(plan.nextDate),
         estimatedCostCents: Value(plan.estimatedCostCents),
+        billingType: Value(plan.billingType),
+        agreedAmountCents: Value(plan.agreedAmountCents),
         assignedPartnerIdsJson: Value(jsonEncode(plan.assignedPartnerIds)),
         isActive: Value(plan.isActive),
         updatedAt: Value(DateTime.now()),
@@ -174,6 +185,16 @@ class MaintenanceRepository {
   }
 
   Future<void> createVisit(MaintenanceVisit visit) async {
+    int? price = visit.agreedPriceCents;
+    if (price == null) {
+      final plan = await getPlanById(visit.planId);
+      if (plan != null &&
+          plan.billingType == 'perVisit' &&
+          plan.agreedAmountCents > 0) {
+        price = plan.agreedAmountCents;
+      }
+    }
+
     await db
         .into(db.maintenanceVisits)
         .insert(
@@ -185,6 +206,7 @@ class MaintenanceRepository {
             completedDate: Value(visit.completedDate),
             status: Value(visit.status.nameCode),
             technicianNotes: Value(visit.technicianNotes),
+            agreedPriceCents: Value(price),
             createdAt: Value(visit.createdAt),
             updatedAt: Value(visit.updatedAt),
             version: Value(visit.version),
@@ -254,11 +276,17 @@ class MaintenanceRepository {
         ),
       );
 
-      // 6. Programar la siguiente visita
+      // 6. Programar la siguiente visita preservando la tarifa aplicable
+      final nextPrice =
+          plan.billingType == 'perVisit' && plan.agreedAmountCents > 0
+          ? plan.agreedAmountCents
+          : null;
+
       final nextVisit = MaintenanceVisit(
         planId: plan.id,
         scheduledDate: nextDate,
         status: VisitStatus.scheduled,
+        agreedPriceCents: nextPrice,
       );
 
       await db
@@ -270,6 +298,7 @@ class MaintenanceRepository {
               planId: nextVisit.planId,
               scheduledDate: nextVisit.scheduledDate,
               status: Value(nextVisit.status.nameCode),
+              agreedPriceCents: Value(nextVisit.agreedPriceCents),
               createdAt: Value(nextVisit.createdAt),
               updatedAt: Value(nextVisit.updatedAt),
               version: Value(nextVisit.version),
@@ -394,6 +423,8 @@ class MaintenanceRepository {
       intervalDays: row.intervalDays,
       nextDate: row.nextDate ?? DateTime.now(),
       estimatedCostCents: row.estimatedCostCents,
+      billingType: row.billingType ?? 'perVisit',
+      agreedAmountCents: row.agreedAmountCents ?? 0,
       assignedPartnerIds: partnerIds,
       isActive: row.isActive,
       createdAt: row.createdAt,
@@ -414,6 +445,7 @@ class MaintenanceRepository {
       completedDate: row.completedDate,
       status: VisitStatusExt.fromString(row.status),
       technicianNotes: row.technicianNotes,
+      agreedPriceCents: row.agreedPriceCents,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       createdBy: row.createdBy,

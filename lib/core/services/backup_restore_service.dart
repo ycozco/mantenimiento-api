@@ -39,7 +39,7 @@ class BackupRestoreResult {
 class BackupRestoreService {
   final AppDatabase db;
   static const int currentBackupFormatVersion = 2;
-  static const int currentSchemaVersion = 2;
+  static const int currentSchemaVersion = 3;
   static const String appVersion = '1.0.0+1';
 
   BackupRestoreService(this.db);
@@ -411,7 +411,19 @@ class BackupRestoreService {
     try {
       final migrationService = DataMigrationService(db);
       await db.transaction(() async {
+        await db.delete(db.attachments).go();
+        await db.delete(db.collections).go();
+        await db.delete(db.capitalMovements).go();
         await db.delete(db.expenses).go();
+        await db.delete(db.laborPayments).go();
+        await db.delete(db.workLogs).go();
+        await db.delete(db.toolAssignments).go();
+        await db.delete(db.stockMovements).go();
+        await db.delete(db.purchaseItems).go();
+        await db.delete(db.purchases).go();
+        await db.delete(db.tools).go();
+        await db.delete(db.inventoryItems).go();
+        await db.delete(db.suppliers).go();
         await db.delete(db.maintenanceVisits).go();
         await db.delete(db.maintenancePlans).go();
         await db.delete(db.projects).go();

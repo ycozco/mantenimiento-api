@@ -32,7 +32,7 @@ void main() {
       final map = jsonDecode(jsonStr) as Map<String, dynamic>;
 
       expect(map['backupFormatVersion'], equals(2));
-      expect(map['schemaVersion'], equals(2));
+      expect(map['schemaVersion'], equals(3));
       expect(map['workspaceId'], equals('default'));
       expect(map['createdAt'], isNotNull);
 

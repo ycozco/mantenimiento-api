@@ -6,6 +6,7 @@ class Collection {
   final String clientId;
   final String? projectId;
   final String? visitId;
+  final String? planId;
   final int amountCents;
   final DateTime date;
   final String? receivedByPartnerId;
@@ -30,6 +31,7 @@ class Collection {
     required this.clientId,
     this.projectId,
     this.visitId,
+    this.planId,
     required this.amountCents,
     required this.date,
     this.receivedByPartnerId,
@@ -54,6 +56,7 @@ class Collection {
     required String clientId,
     String? projectId,
     String? visitId,
+    String? planId,
     required int amountCents,
     required DateTime date,
     String? receivedByPartnerId,
@@ -69,6 +72,12 @@ class Collection {
       throw ArgumentError('El monto del cobro debe ser mayor a cero.');
     }
 
+    if (projectId != null && (visitId != null || planId != null)) {
+      throw ArgumentError(
+        'Un cobro no puede asociarse simultáneamente a una Obra y a un Mantenimiento.',
+      );
+    }
+
     final validMethods = ['cash', 'yape', 'plin', 'transfer', 'other'];
     if (!validMethods.contains(paymentMethod)) {
       throw ArgumentError('Método de pago no válido: $paymentMethod');
@@ -81,6 +90,7 @@ class Collection {
       clientId: clientId,
       projectId: projectId,
       visitId: visitId,
+      planId: planId,
       amountCents: amountCents,
       date: date,
       receivedByPartnerId: receivedByPartnerId,

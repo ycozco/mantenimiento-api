@@ -59,6 +59,8 @@ class Mantenimiento {
   final List<String> responsablesIds; // IDs de los socios encargados
   final bool activo;
   final bool completado;
+  final String billingType;
+  final int agreedAmountCents;
 
   const Mantenimiento({
     required this.id,
@@ -73,6 +75,8 @@ class Mantenimiento {
     this.responsablesIds = const [],
     this.activo = true,
     this.completado = false,
+    this.billingType = 'perVisit',
+    this.agreedAmountCents = 0,
   });
 
   int get diasIntervalo {
@@ -116,6 +120,8 @@ class Mantenimiento {
     'responsablesIds': responsablesIds,
     'activo': activo,
     'completado': completado,
+    'billingType': billingType,
+    'agreedAmountCents': agreedAmountCents,
   };
 
   factory Mantenimiento.fromJson(Map<String, dynamic> json) => Mantenimiento(
@@ -139,6 +145,8 @@ class Mantenimiento {
         [],
     activo: json['activo'] as bool? ?? true,
     completado: json['completado'] as bool? ?? false,
+    billingType: json['billingType'] as String? ?? 'perVisit',
+    agreedAmountCents: json['agreedAmountCents'] as int? ?? 0,
   );
 
   Mantenimiento copyWith({
@@ -154,6 +162,8 @@ class Mantenimiento {
     List<String>? responsablesIds,
     bool? activo,
     bool? completado,
+    String? billingType,
+    int? agreedAmountCents,
   }) => Mantenimiento(
     id: id ?? this.id,
     clienteId: clienteId ?? this.clienteId,
@@ -167,5 +177,7 @@ class Mantenimiento {
     responsablesIds: responsablesIds ?? this.responsablesIds,
     activo: activo ?? this.activo,
     completado: completado ?? this.completado,
+    billingType: billingType ?? this.billingType,
+    agreedAmountCents: agreedAmountCents ?? this.agreedAmountCents,
   );
 }

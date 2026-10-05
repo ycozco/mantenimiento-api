@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/maintenance_plan.dart';
 import '../../core/models/maintenance_visit.dart';
+import '../../core/models/maintenance_financial_summary.dart';
 import '../../core/theme/app_theme.dart';
+import '../collections/collection_form_dialog.dart';
 import 'maintenance_visit_detail_screen.dart';
 
 class MaintenancePlanDetailScreen extends StatelessWidget {
@@ -178,6 +180,238 @@ class MaintenancePlanDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                ),
+                const SizedBox(height: 16),
+
+                // Resumen Financiero del Plan
+                StreamBuilder<MaintenanceFinancialSummary>(
+                  stream: storage.maintenanceFinancialService
+                      .watchPlanFinancials(plan.id),
+                  builder: (context, finSnapshot) {
+                    final summary = finSnapshot.data;
+                    final billingLabel = plan.billingType == 'monthly'
+                        ? 'Tarifa Mensual'
+                        : (plan.billingType == 'custom'
+                              ? 'Tarifa Personalizada'
+                              : 'Tarifa por Visita');
+                    final agreedTariff = (plan.agreedAmountCents / 100.0)
+                        .toStringAsFixed(2);
+                    final revenue = ((summary?.revenueCents ?? 0) / 100.0)
+                        .toStringAsFixed(2);
+                    final collected = ((summary?.collectedCents ?? 0) / 100.0)
+                        .toStringAsFixed(2);
+                    final receivable = ((summary?.receivableCents ?? 0) / 100.0)
+                        .toStringAsFixed(2);
+                    final totalCost = ((summary?.totalCostCents ?? 0) / 100.0)
+                        .toStringAsFixed(2);
+                    final margin = ((summary?.grossMarginCents ?? 0) / 100.0)
+                        .toStringAsFixed(2);
+                    final marginPct = (summary?.grossMarginPercent ?? 0.0)
+                        .toStringAsFixed(1);
+
+                    return Card(
+                      color: const Color(0xFF0F172A),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: const BorderSide(color: Color(0xFF1E293B)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      LucideIcons.banknote,
+                                      size: 18,
+                                      color: AppTheme.emeraldSuccess,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Economía del Plan ($billingLabel)',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  'S/ $agreedTariff',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: AppTheme.skyAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 20, color: Color(0xFF334155)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Facturación / Ingresos',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'S/ $revenue',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Costos Operativos',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'S/ $totalCost',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: AppTheme.coralUrgent,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    const Text(
+                                      'Margen Bruto',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'S/ $margin ($marginPct%)',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color:
+                                            (summary?.grossMarginCents ?? 0) >=
+                                                0
+                                            ? AppTheme.emeraldSuccess
+                                            : AppTheme.coralUrgent,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Cobrado',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'S/ $collected',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: AppTheme.emeraldSuccess,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    const Text(
+                                      'Saldo por Cobrar',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'S/ $receivable',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: AppTheme.amberSafety,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppTheme.emeraldSuccess,
+                                  side: const BorderSide(
+                                    color: AppTheme.emeraldSuccess,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                ),
+                                icon: const Icon(LucideIcons.receipt, size: 16),
+                                label: const Text('Registrar Cobro al Plan'),
+                                onPressed: () async {
+                                  final col = await showDialog(
+                                    context: context,
+                                    builder: (_) => CollectionFormDialog(
+                                      planId: plan.id,
+                                      initialClientId: plan.clientId,
+                                      targetAmountCents:
+                                          (summary?.receivableCents ?? 0) > 0
+                                          ? summary!.receivableCents
+                                          : plan.agreedAmountCents,
+                                      title: 'Cobro de Plan: ${plan.title}',
+                                    ),
+                                  );
+                                  if (col != null) {
+                                    await storage.collectionRepository
+                                        .recordCollection(col);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
 

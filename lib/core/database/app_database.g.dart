@@ -4563,6 +4563,30 @@ class $MaintenancePlansTable extends MaintenancePlans
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _billingTypeMeta = const VerificationMeta(
+    'billingType',
+  );
+  @override
+  late final GeneratedColumn<String> billingType = GeneratedColumn<String>(
+    'billing_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('perVisit'),
+  );
+  static const VerificationMeta _agreedAmountCentsMeta = const VerificationMeta(
+    'agreedAmountCents',
+  );
+  @override
+  late final GeneratedColumn<int> agreedAmountCents = GeneratedColumn<int>(
+    'agreed_amount_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _assignedPartnerIdsJsonMeta =
       const VerificationMeta('assignedPartnerIdsJson');
   @override
@@ -4671,6 +4695,8 @@ class $MaintenancePlansTable extends MaintenancePlans
     intervalDays,
     nextDate,
     estimatedCostCents,
+    billingType,
+    agreedAmountCents,
     assignedPartnerIdsJson,
     isActive,
     createdAt,
@@ -4767,6 +4793,24 @@ class $MaintenancePlansTable extends MaintenancePlans
         estimatedCostCents.isAcceptableOrUnknown(
           data['estimated_cost_cents']!,
           _estimatedCostCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('billing_type')) {
+      context.handle(
+        _billingTypeMeta,
+        billingType.isAcceptableOrUnknown(
+          data['billing_type']!,
+          _billingTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('agreed_amount_cents')) {
+      context.handle(
+        _agreedAmountCentsMeta,
+        agreedAmountCents.isAcceptableOrUnknown(
+          data['agreed_amount_cents']!,
+          _agreedAmountCentsMeta,
         ),
       );
     }
@@ -4870,6 +4914,14 @@ class $MaintenancePlansTable extends MaintenancePlans
         DriftSqlType.int,
         data['${effectivePrefix}estimated_cost_cents'],
       )!,
+      billingType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}billing_type'],
+      )!,
+      agreedAmountCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}agreed_amount_cents'],
+      )!,
       assignedPartnerIdsJson: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}assigned_partner_ids_json'],
@@ -4922,6 +4974,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
   final int intervalDays;
   final DateTime? nextDate;
   final int estimatedCostCents;
+  final String billingType;
+  final int agreedAmountCents;
   final String assignedPartnerIdsJson;
   final bool isActive;
   final DateTime createdAt;
@@ -4941,6 +4995,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     required this.intervalDays,
     this.nextDate,
     required this.estimatedCostCents,
+    required this.billingType,
+    required this.agreedAmountCents,
     required this.assignedPartnerIdsJson,
     required this.isActive,
     required this.createdAt,
@@ -4969,6 +5025,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       map['next_date'] = Variable<DateTime>(nextDate);
     }
     map['estimated_cost_cents'] = Variable<int>(estimatedCostCents);
+    map['billing_type'] = Variable<String>(billingType);
+    map['agreed_amount_cents'] = Variable<int>(agreedAmountCents);
     map['assigned_partner_ids_json'] = Variable<String>(assignedPartnerIdsJson);
     map['is_active'] = Variable<bool>(isActive);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -5004,6 +5062,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
           ? const Value.absent()
           : Value(nextDate),
       estimatedCostCents: Value(estimatedCostCents),
+      billingType: Value(billingType),
+      agreedAmountCents: Value(agreedAmountCents),
       assignedPartnerIdsJson: Value(assignedPartnerIdsJson),
       isActive: Value(isActive),
       createdAt: Value(createdAt),
@@ -5037,6 +5097,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       intervalDays: serializer.fromJson<int>(json['intervalDays']),
       nextDate: serializer.fromJson<DateTime?>(json['nextDate']),
       estimatedCostCents: serializer.fromJson<int>(json['estimatedCostCents']),
+      billingType: serializer.fromJson<String>(json['billingType']),
+      agreedAmountCents: serializer.fromJson<int>(json['agreedAmountCents']),
       assignedPartnerIdsJson: serializer.fromJson<String>(
         json['assignedPartnerIdsJson'],
       ),
@@ -5063,6 +5125,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       'intervalDays': serializer.toJson<int>(intervalDays),
       'nextDate': serializer.toJson<DateTime?>(nextDate),
       'estimatedCostCents': serializer.toJson<int>(estimatedCostCents),
+      'billingType': serializer.toJson<String>(billingType),
+      'agreedAmountCents': serializer.toJson<int>(agreedAmountCents),
       'assignedPartnerIdsJson': serializer.toJson<String>(
         assignedPartnerIdsJson,
       ),
@@ -5087,6 +5151,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     int? intervalDays,
     Value<DateTime?> nextDate = const Value.absent(),
     int? estimatedCostCents,
+    String? billingType,
+    int? agreedAmountCents,
     String? assignedPartnerIdsJson,
     bool? isActive,
     DateTime? createdAt,
@@ -5106,6 +5172,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     intervalDays: intervalDays ?? this.intervalDays,
     nextDate: nextDate.present ? nextDate.value : this.nextDate,
     estimatedCostCents: estimatedCostCents ?? this.estimatedCostCents,
+    billingType: billingType ?? this.billingType,
+    agreedAmountCents: agreedAmountCents ?? this.agreedAmountCents,
     assignedPartnerIdsJson:
         assignedPartnerIdsJson ?? this.assignedPartnerIdsJson,
     isActive: isActive ?? this.isActive,
@@ -5140,6 +5208,12 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
       estimatedCostCents: data.estimatedCostCents.present
           ? data.estimatedCostCents.value
           : this.estimatedCostCents,
+      billingType: data.billingType.present
+          ? data.billingType.value
+          : this.billingType,
+      agreedAmountCents: data.agreedAmountCents.present
+          ? data.agreedAmountCents.value
+          : this.agreedAmountCents,
       assignedPartnerIdsJson: data.assignedPartnerIdsJson.present
           ? data.assignedPartnerIdsJson.value
           : this.assignedPartnerIdsJson,
@@ -5166,6 +5240,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
           ..write('intervalDays: $intervalDays, ')
           ..write('nextDate: $nextDate, ')
           ..write('estimatedCostCents: $estimatedCostCents, ')
+          ..write('billingType: $billingType, ')
+          ..write('agreedAmountCents: $agreedAmountCents, ')
           ..write('assignedPartnerIdsJson: $assignedPartnerIdsJson, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
@@ -5190,6 +5266,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
     intervalDays,
     nextDate,
     estimatedCostCents,
+    billingType,
+    agreedAmountCents,
     assignedPartnerIdsJson,
     isActive,
     createdAt,
@@ -5213,6 +5291,8 @@ class MaintenancePlan extends DataClass implements Insertable<MaintenancePlan> {
           other.intervalDays == this.intervalDays &&
           other.nextDate == this.nextDate &&
           other.estimatedCostCents == this.estimatedCostCents &&
+          other.billingType == this.billingType &&
+          other.agreedAmountCents == this.agreedAmountCents &&
           other.assignedPartnerIdsJson == this.assignedPartnerIdsJson &&
           other.isActive == this.isActive &&
           other.createdAt == this.createdAt &&
@@ -5234,6 +5314,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
   final Value<int> intervalDays;
   final Value<DateTime?> nextDate;
   final Value<int> estimatedCostCents;
+  final Value<String> billingType;
+  final Value<int> agreedAmountCents;
   final Value<String> assignedPartnerIdsJson;
   final Value<bool> isActive;
   final Value<DateTime> createdAt;
@@ -5254,6 +5336,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     this.intervalDays = const Value.absent(),
     this.nextDate = const Value.absent(),
     this.estimatedCostCents = const Value.absent(),
+    this.billingType = const Value.absent(),
+    this.agreedAmountCents = const Value.absent(),
     this.assignedPartnerIdsJson = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -5275,6 +5359,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     this.intervalDays = const Value.absent(),
     this.nextDate = const Value.absent(),
     this.estimatedCostCents = const Value.absent(),
+    this.billingType = const Value.absent(),
+    this.agreedAmountCents = const Value.absent(),
     this.assignedPartnerIdsJson = const Value.absent(),
     this.isActive = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -5298,6 +5384,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     Expression<int>? intervalDays,
     Expression<DateTime>? nextDate,
     Expression<int>? estimatedCostCents,
+    Expression<String>? billingType,
+    Expression<int>? agreedAmountCents,
     Expression<String>? assignedPartnerIdsJson,
     Expression<bool>? isActive,
     Expression<DateTime>? createdAt,
@@ -5320,6 +5408,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
       if (nextDate != null) 'next_date': nextDate,
       if (estimatedCostCents != null)
         'estimated_cost_cents': estimatedCostCents,
+      if (billingType != null) 'billing_type': billingType,
+      if (agreedAmountCents != null) 'agreed_amount_cents': agreedAmountCents,
       if (assignedPartnerIdsJson != null)
         'assigned_partner_ids_json': assignedPartnerIdsJson,
       if (isActive != null) 'is_active': isActive,
@@ -5344,6 +5434,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     Value<int>? intervalDays,
     Value<DateTime?>? nextDate,
     Value<int>? estimatedCostCents,
+    Value<String>? billingType,
+    Value<int>? agreedAmountCents,
     Value<String>? assignedPartnerIdsJson,
     Value<bool>? isActive,
     Value<DateTime>? createdAt,
@@ -5365,6 +5457,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
       intervalDays: intervalDays ?? this.intervalDays,
       nextDate: nextDate ?? this.nextDate,
       estimatedCostCents: estimatedCostCents ?? this.estimatedCostCents,
+      billingType: billingType ?? this.billingType,
+      agreedAmountCents: agreedAmountCents ?? this.agreedAmountCents,
       assignedPartnerIdsJson:
           assignedPartnerIdsJson ?? this.assignedPartnerIdsJson,
       isActive: isActive ?? this.isActive,
@@ -5411,6 +5505,12 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
     if (estimatedCostCents.present) {
       map['estimated_cost_cents'] = Variable<int>(estimatedCostCents.value);
     }
+    if (billingType.present) {
+      map['billing_type'] = Variable<String>(billingType.value);
+    }
+    if (agreedAmountCents.present) {
+      map['agreed_amount_cents'] = Variable<int>(agreedAmountCents.value);
+    }
     if (assignedPartnerIdsJson.present) {
       map['assigned_partner_ids_json'] = Variable<String>(
         assignedPartnerIdsJson.value,
@@ -5456,6 +5556,8 @@ class MaintenancePlansCompanion extends UpdateCompanion<MaintenancePlan> {
           ..write('intervalDays: $intervalDays, ')
           ..write('nextDate: $nextDate, ')
           ..write('estimatedCostCents: $estimatedCostCents, ')
+          ..write('billingType: $billingType, ')
+          ..write('agreedAmountCents: $agreedAmountCents, ')
           ..write('assignedPartnerIdsJson: $assignedPartnerIdsJson, ')
           ..write('isActive: $isActive, ')
           ..write('createdAt: $createdAt, ')
@@ -5553,6 +5655,17 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _agreedPriceCentsMeta = const VerificationMeta(
+    'agreedPriceCents',
+  );
+  @override
+  late final GeneratedColumn<int> agreedPriceCents = GeneratedColumn<int>(
+    'agreed_price_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -5631,6 +5744,7 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
     completedDate,
     status,
     technicianNotes,
+    agreedPriceCents,
     createdAt,
     updatedAt,
     createdBy,
@@ -5707,6 +5821,15 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
         ),
       );
     }
+    if (data.containsKey('agreed_price_cents')) {
+      context.handle(
+        _agreedPriceCentsMeta,
+        agreedPriceCents.isAcceptableOrUnknown(
+          data['agreed_price_cents']!,
+          _agreedPriceCentsMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -5780,6 +5903,10 @@ class $MaintenanceVisitsTable extends MaintenanceVisits
         DriftSqlType.string,
         data['${effectivePrefix}technician_notes'],
       ),
+      agreedPriceCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}agreed_price_cents'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -5822,6 +5949,7 @@ class MaintenanceVisit extends DataClass
   final DateTime? completedDate;
   final String status;
   final String? technicianNotes;
+  final int? agreedPriceCents;
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? createdBy;
@@ -5836,6 +5964,7 @@ class MaintenanceVisit extends DataClass
     this.completedDate,
     required this.status,
     this.technicianNotes,
+    this.agreedPriceCents,
     required this.createdAt,
     required this.updatedAt,
     this.createdBy,
@@ -5856,6 +5985,9 @@ class MaintenanceVisit extends DataClass
     map['status'] = Variable<String>(status);
     if (!nullToAbsent || technicianNotes != null) {
       map['technician_notes'] = Variable<String>(technicianNotes);
+    }
+    if (!nullToAbsent || agreedPriceCents != null) {
+      map['agreed_price_cents'] = Variable<int>(agreedPriceCents);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -5885,6 +6017,9 @@ class MaintenanceVisit extends DataClass
       technicianNotes: technicianNotes == null && nullToAbsent
           ? const Value.absent()
           : Value(technicianNotes),
+      agreedPriceCents: agreedPriceCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(agreedPriceCents),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       createdBy: createdBy == null && nullToAbsent
@@ -5913,6 +6048,7 @@ class MaintenanceVisit extends DataClass
       completedDate: serializer.fromJson<DateTime?>(json['completedDate']),
       status: serializer.fromJson<String>(json['status']),
       technicianNotes: serializer.fromJson<String?>(json['technicianNotes']),
+      agreedPriceCents: serializer.fromJson<int?>(json['agreedPriceCents']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
@@ -5932,6 +6068,7 @@ class MaintenanceVisit extends DataClass
       'completedDate': serializer.toJson<DateTime?>(completedDate),
       'status': serializer.toJson<String>(status),
       'technicianNotes': serializer.toJson<String?>(technicianNotes),
+      'agreedPriceCents': serializer.toJson<int?>(agreedPriceCents),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'createdBy': serializer.toJson<String?>(createdBy),
@@ -5949,6 +6086,7 @@ class MaintenanceVisit extends DataClass
     Value<DateTime?> completedDate = const Value.absent(),
     String? status,
     Value<String?> technicianNotes = const Value.absent(),
+    Value<int?> agreedPriceCents = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<String?> createdBy = const Value.absent(),
@@ -5967,6 +6105,9 @@ class MaintenanceVisit extends DataClass
     technicianNotes: technicianNotes.present
         ? technicianNotes.value
         : this.technicianNotes,
+    agreedPriceCents: agreedPriceCents.present
+        ? agreedPriceCents.value
+        : this.agreedPriceCents,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
@@ -5991,6 +6132,9 @@ class MaintenanceVisit extends DataClass
       technicianNotes: data.technicianNotes.present
           ? data.technicianNotes.value
           : this.technicianNotes,
+      agreedPriceCents: data.agreedPriceCents.present
+          ? data.agreedPriceCents.value
+          : this.agreedPriceCents,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
@@ -6010,6 +6154,7 @@ class MaintenanceVisit extends DataClass
           ..write('completedDate: $completedDate, ')
           ..write('status: $status, ')
           ..write('technicianNotes: $technicianNotes, ')
+          ..write('agreedPriceCents: $agreedPriceCents, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('createdBy: $createdBy, ')
@@ -6029,6 +6174,7 @@ class MaintenanceVisit extends DataClass
     completedDate,
     status,
     technicianNotes,
+    agreedPriceCents,
     createdAt,
     updatedAt,
     createdBy,
@@ -6047,6 +6193,7 @@ class MaintenanceVisit extends DataClass
           other.completedDate == this.completedDate &&
           other.status == this.status &&
           other.technicianNotes == this.technicianNotes &&
+          other.agreedPriceCents == this.agreedPriceCents &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.createdBy == this.createdBy &&
@@ -6063,6 +6210,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
   final Value<DateTime?> completedDate;
   final Value<String> status;
   final Value<String?> technicianNotes;
+  final Value<int?> agreedPriceCents;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<String?> createdBy;
@@ -6078,6 +6226,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     this.completedDate = const Value.absent(),
     this.status = const Value.absent(),
     this.technicianNotes = const Value.absent(),
+    this.agreedPriceCents = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -6094,6 +6243,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     this.completedDate = const Value.absent(),
     this.status = const Value.absent(),
     this.technicianNotes = const Value.absent(),
+    this.agreedPriceCents = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -6112,6 +6262,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     Expression<DateTime>? completedDate,
     Expression<String>? status,
     Expression<String>? technicianNotes,
+    Expression<int>? agreedPriceCents,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<String>? createdBy,
@@ -6128,6 +6279,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
       if (completedDate != null) 'completed_date': completedDate,
       if (status != null) 'status': status,
       if (technicianNotes != null) 'technician_notes': technicianNotes,
+      if (agreedPriceCents != null) 'agreed_price_cents': agreedPriceCents,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (createdBy != null) 'created_by': createdBy,
@@ -6146,6 +6298,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     Value<DateTime?>? completedDate,
     Value<String>? status,
     Value<String?>? technicianNotes,
+    Value<int?>? agreedPriceCents,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<String?>? createdBy,
@@ -6162,6 +6315,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
       completedDate: completedDate ?? this.completedDate,
       status: status ?? this.status,
       technicianNotes: technicianNotes ?? this.technicianNotes,
+      agreedPriceCents: agreedPriceCents ?? this.agreedPriceCents,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       createdBy: createdBy ?? this.createdBy,
@@ -6195,6 +6349,9 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
     }
     if (technicianNotes.present) {
       map['technician_notes'] = Variable<String>(technicianNotes.value);
+    }
+    if (agreedPriceCents.present) {
+      map['agreed_price_cents'] = Variable<int>(agreedPriceCents.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -6230,6 +6387,7 @@ class MaintenanceVisitsCompanion extends UpdateCompanion<MaintenanceVisit> {
           ..write('completedDate: $completedDate, ')
           ..write('status: $status, ')
           ..write('technicianNotes: $technicianNotes, ')
+          ..write('agreedPriceCents: $agreedPriceCents, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('createdBy: $createdBy, ')
@@ -16398,6 +16556,16 @@ class $CollectionsTable extends Collections
     requiredDuringInsert: false,
     $customConstraints: 'REFERENCES maintenance_visits(id) ON DELETE SET NULL',
   );
+  static const VerificationMeta _planIdMeta = const VerificationMeta('planId');
+  @override
+  late final GeneratedColumn<String> planId = GeneratedColumn<String>(
+    'plan_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES maintenance_plans(id) ON DELETE SET NULL',
+  );
   static const VerificationMeta _amountCentsMeta = const VerificationMeta(
     'amountCents',
   );
@@ -16539,6 +16707,7 @@ class $CollectionsTable extends Collections
     clientId,
     projectId,
     visitId,
+    planId,
     amountCents,
     date,
     receivedByPartnerId,
@@ -16596,6 +16765,12 @@ class $CollectionsTable extends Collections
       context.handle(
         _visitIdMeta,
         visitId.isAcceptableOrUnknown(data['visit_id']!, _visitIdMeta),
+      );
+    }
+    if (data.containsKey('plan_id')) {
+      context.handle(
+        _planIdMeta,
+        planId.isAcceptableOrUnknown(data['plan_id']!, _planIdMeta),
       );
     }
     if (data.containsKey('amount_cents')) {
@@ -16710,6 +16885,10 @@ class $CollectionsTable extends Collections
         DriftSqlType.string,
         data['${effectivePrefix}visit_id'],
       ),
+      planId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plan_id'],
+      ),
       amountCents: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}amount_cents'],
@@ -16773,6 +16952,7 @@ class Collection extends DataClass implements Insertable<Collection> {
   final String clientId;
   final String? projectId;
   final String? visitId;
+  final String? planId;
   final int amountCents;
   final DateTime date;
   final String? receivedByPartnerId;
@@ -16791,6 +16971,7 @@ class Collection extends DataClass implements Insertable<Collection> {
     required this.clientId,
     this.projectId,
     this.visitId,
+    this.planId,
     required this.amountCents,
     required this.date,
     this.receivedByPartnerId,
@@ -16815,6 +16996,9 @@ class Collection extends DataClass implements Insertable<Collection> {
     }
     if (!nullToAbsent || visitId != null) {
       map['visit_id'] = Variable<String>(visitId);
+    }
+    if (!nullToAbsent || planId != null) {
+      map['plan_id'] = Variable<String>(planId);
     }
     map['amount_cents'] = Variable<int>(amountCents);
     map['date'] = Variable<DateTime>(date);
@@ -16854,6 +17038,9 @@ class Collection extends DataClass implements Insertable<Collection> {
       visitId: visitId == null && nullToAbsent
           ? const Value.absent()
           : Value(visitId),
+      planId: planId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(planId),
       amountCents: Value(amountCents),
       date: Value(date),
       receivedByPartnerId: receivedByPartnerId == null && nullToAbsent
@@ -16892,6 +17079,7 @@ class Collection extends DataClass implements Insertable<Collection> {
       clientId: serializer.fromJson<String>(json['clientId']),
       projectId: serializer.fromJson<String?>(json['projectId']),
       visitId: serializer.fromJson<String?>(json['visitId']),
+      planId: serializer.fromJson<String?>(json['planId']),
       amountCents: serializer.fromJson<int>(json['amountCents']),
       date: serializer.fromJson<DateTime>(json['date']),
       receivedByPartnerId: serializer.fromJson<String?>(
@@ -16917,6 +17105,7 @@ class Collection extends DataClass implements Insertable<Collection> {
       'clientId': serializer.toJson<String>(clientId),
       'projectId': serializer.toJson<String?>(projectId),
       'visitId': serializer.toJson<String?>(visitId),
+      'planId': serializer.toJson<String?>(planId),
       'amountCents': serializer.toJson<int>(amountCents),
       'date': serializer.toJson<DateTime>(date),
       'receivedByPartnerId': serializer.toJson<String?>(receivedByPartnerId),
@@ -16938,6 +17127,7 @@ class Collection extends DataClass implements Insertable<Collection> {
     String? clientId,
     Value<String?> projectId = const Value.absent(),
     Value<String?> visitId = const Value.absent(),
+    Value<String?> planId = const Value.absent(),
     int? amountCents,
     DateTime? date,
     Value<String?> receivedByPartnerId = const Value.absent(),
@@ -16956,6 +17146,7 @@ class Collection extends DataClass implements Insertable<Collection> {
     clientId: clientId ?? this.clientId,
     projectId: projectId.present ? projectId.value : this.projectId,
     visitId: visitId.present ? visitId.value : this.visitId,
+    planId: planId.present ? planId.value : this.planId,
     amountCents: amountCents ?? this.amountCents,
     date: date ?? this.date,
     receivedByPartnerId: receivedByPartnerId.present
@@ -16980,6 +17171,7 @@ class Collection extends DataClass implements Insertable<Collection> {
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
       visitId: data.visitId.present ? data.visitId.value : this.visitId,
+      planId: data.planId.present ? data.planId.value : this.planId,
       amountCents: data.amountCents.present
           ? data.amountCents.value
           : this.amountCents,
@@ -17009,6 +17201,7 @@ class Collection extends DataClass implements Insertable<Collection> {
           ..write('clientId: $clientId, ')
           ..write('projectId: $projectId, ')
           ..write('visitId: $visitId, ')
+          ..write('planId: $planId, ')
           ..write('amountCents: $amountCents, ')
           ..write('date: $date, ')
           ..write('receivedByPartnerId: $receivedByPartnerId, ')
@@ -17032,6 +17225,7 @@ class Collection extends DataClass implements Insertable<Collection> {
     clientId,
     projectId,
     visitId,
+    planId,
     amountCents,
     date,
     receivedByPartnerId,
@@ -17054,6 +17248,7 @@ class Collection extends DataClass implements Insertable<Collection> {
           other.clientId == this.clientId &&
           other.projectId == this.projectId &&
           other.visitId == this.visitId &&
+          other.planId == this.planId &&
           other.amountCents == this.amountCents &&
           other.date == this.date &&
           other.receivedByPartnerId == this.receivedByPartnerId &&
@@ -17074,6 +17269,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
   final Value<String> clientId;
   final Value<String?> projectId;
   final Value<String?> visitId;
+  final Value<String?> planId;
   final Value<int> amountCents;
   final Value<DateTime> date;
   final Value<String?> receivedByPartnerId;
@@ -17093,6 +17289,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     this.clientId = const Value.absent(),
     this.projectId = const Value.absent(),
     this.visitId = const Value.absent(),
+    this.planId = const Value.absent(),
     this.amountCents = const Value.absent(),
     this.date = const Value.absent(),
     this.receivedByPartnerId = const Value.absent(),
@@ -17113,6 +17310,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     required String clientId,
     this.projectId = const Value.absent(),
     this.visitId = const Value.absent(),
+    this.planId = const Value.absent(),
     this.amountCents = const Value.absent(),
     required DateTime date,
     this.receivedByPartnerId = const Value.absent(),
@@ -17135,6 +17333,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     Expression<String>? clientId,
     Expression<String>? projectId,
     Expression<String>? visitId,
+    Expression<String>? planId,
     Expression<int>? amountCents,
     Expression<DateTime>? date,
     Expression<String>? receivedByPartnerId,
@@ -17155,6 +17354,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
       if (clientId != null) 'client_id': clientId,
       if (projectId != null) 'project_id': projectId,
       if (visitId != null) 'visit_id': visitId,
+      if (planId != null) 'plan_id': planId,
       if (amountCents != null) 'amount_cents': amountCents,
       if (date != null) 'date': date,
       if (receivedByPartnerId != null)
@@ -17178,6 +17378,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     Value<String>? clientId,
     Value<String?>? projectId,
     Value<String?>? visitId,
+    Value<String?>? planId,
     Value<int>? amountCents,
     Value<DateTime>? date,
     Value<String?>? receivedByPartnerId,
@@ -17198,6 +17399,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
       clientId: clientId ?? this.clientId,
       projectId: projectId ?? this.projectId,
       visitId: visitId ?? this.visitId,
+      planId: planId ?? this.planId,
       amountCents: amountCents ?? this.amountCents,
       date: date ?? this.date,
       receivedByPartnerId: receivedByPartnerId ?? this.receivedByPartnerId,
@@ -17231,6 +17433,9 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
     }
     if (visitId.present) {
       map['visit_id'] = Variable<String>(visitId.value);
+    }
+    if (planId.present) {
+      map['plan_id'] = Variable<String>(planId.value);
     }
     if (amountCents.present) {
       map['amount_cents'] = Variable<int>(amountCents.value);
@@ -17284,6 +17489,7 @@ class CollectionsCompanion extends UpdateCompanion<Collection> {
           ..write('clientId: $clientId, ')
           ..write('projectId: $projectId, ')
           ..write('visitId: $visitId, ')
+          ..write('planId: $planId, ')
           ..write('amountCents: $amountCents, ')
           ..write('date: $date, ')
           ..write('receivedByPartnerId: $receivedByPartnerId, ')
@@ -19382,6 +19588,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'maintenance_visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('collections', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'maintenance_plans',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('collections', kind: UpdateKind.update)],
@@ -24125,6 +24338,8 @@ typedef $$MaintenancePlansTableCreateCompanionBuilder =
       Value<int> intervalDays,
       Value<DateTime?> nextDate,
       Value<int> estimatedCostCents,
+      Value<String> billingType,
+      Value<int> agreedAmountCents,
       Value<String> assignedPartnerIdsJson,
       Value<bool> isActive,
       Value<DateTime> createdAt,
@@ -24147,6 +24362,8 @@ typedef $$MaintenancePlansTableUpdateCompanionBuilder =
       Value<int> intervalDays,
       Value<DateTime?> nextDate,
       Value<int> estimatedCostCents,
+      Value<String> billingType,
+      Value<int> agreedAmountCents,
       Value<String> assignedPartnerIdsJson,
       Value<bool> isActive,
       Value<DateTime> createdAt,
@@ -24231,6 +24448,27 @@ final class $$MaintenancePlansTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$CollectionsTable, List<Collection>>
+  _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.collections,
+    aliasName: $_aliasNameGenerator(
+      db.maintenancePlans.id,
+      db.collections.planId,
+    ),
+  );
+
+  $$CollectionsTableProcessedTableManager get collectionsRefs {
+    final manager = $$CollectionsTableTableManager(
+      $_db,
+      $_db.collections,
+    ).filter((f) => f.planId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_collectionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$MaintenancePlansTableFilterComposer
@@ -24279,6 +24517,16 @@ class $$MaintenancePlansTableFilterComposer
 
   ColumnFilters<int> get estimatedCostCents => $composableBuilder(
     column: $table.estimatedCostCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get billingType => $composableBuilder(
+    column: $table.billingType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get agreedAmountCents => $composableBuilder(
+    column: $table.agreedAmountCents,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24392,6 +24640,31 @@ class $$MaintenancePlansTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> collectionsRefs(
+    Expression<bool> Function($$CollectionsTableFilterComposer f) f,
+  ) {
+    final $$CollectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.planId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MaintenancePlansTableOrderingComposer
@@ -24440,6 +24713,16 @@ class $$MaintenancePlansTableOrderingComposer
 
   ColumnOrderings<int> get estimatedCostCents => $composableBuilder(
     column: $table.estimatedCostCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get billingType => $composableBuilder(
+    column: $table.billingType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get agreedAmountCents => $composableBuilder(
+    column: $table.agreedAmountCents,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24573,6 +24856,16 @@ class $$MaintenancePlansTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get billingType => $composableBuilder(
+    column: $table.billingType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get agreedAmountCents => $composableBuilder(
+    column: $table.agreedAmountCents,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get assignedPartnerIdsJson => $composableBuilder(
     column: $table.assignedPartnerIdsJson,
     builder: (column) => column,
@@ -24670,6 +24963,31 @@ class $$MaintenancePlansTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> collectionsRefs<T extends Object>(
+    Expression<T> Function($$CollectionsTableAnnotationComposer a) f,
+  ) {
+    final $$CollectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.planId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MaintenancePlansTableTableManager
@@ -24689,6 +25007,7 @@ class $$MaintenancePlansTableTableManager
             bool clientId,
             bool locationId,
             bool maintenanceVisitsRefs,
+            bool collectionsRefs,
           })
         > {
   $$MaintenancePlansTableTableManager(
@@ -24716,6 +25035,8 @@ class $$MaintenancePlansTableTableManager
                 Value<int> intervalDays = const Value.absent(),
                 Value<DateTime?> nextDate = const Value.absent(),
                 Value<int> estimatedCostCents = const Value.absent(),
+                Value<String> billingType = const Value.absent(),
+                Value<int> agreedAmountCents = const Value.absent(),
                 Value<String> assignedPartnerIdsJson = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -24736,6 +25057,8 @@ class $$MaintenancePlansTableTableManager
                 intervalDays: intervalDays,
                 nextDate: nextDate,
                 estimatedCostCents: estimatedCostCents,
+                billingType: billingType,
+                agreedAmountCents: agreedAmountCents,
                 assignedPartnerIdsJson: assignedPartnerIdsJson,
                 isActive: isActive,
                 createdAt: createdAt,
@@ -24758,6 +25081,8 @@ class $$MaintenancePlansTableTableManager
                 Value<int> intervalDays = const Value.absent(),
                 Value<DateTime?> nextDate = const Value.absent(),
                 Value<int> estimatedCostCents = const Value.absent(),
+                Value<String> billingType = const Value.absent(),
+                Value<int> agreedAmountCents = const Value.absent(),
                 Value<String> assignedPartnerIdsJson = const Value.absent(),
                 Value<bool> isActive = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -24778,6 +25103,8 @@ class $$MaintenancePlansTableTableManager
                 intervalDays: intervalDays,
                 nextDate: nextDate,
                 estimatedCostCents: estimatedCostCents,
+                billingType: billingType,
+                agreedAmountCents: agreedAmountCents,
                 assignedPartnerIdsJson: assignedPartnerIdsJson,
                 isActive: isActive,
                 createdAt: createdAt,
@@ -24801,11 +25128,13 @@ class $$MaintenancePlansTableTableManager
                 clientId = false,
                 locationId = false,
                 maintenanceVisitsRefs = false,
+                collectionsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (maintenanceVisitsRefs) db.maintenanceVisits,
+                    if (collectionsRefs) db.collections,
                   ],
                   addJoins:
                       <
@@ -24879,6 +25208,27 @@ class $$MaintenancePlansTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (collectionsRefs)
+                        await $_getPrefetchedData<
+                          MaintenancePlan,
+                          $MaintenancePlansTable,
+                          Collection
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaintenancePlansTableReferences
+                              ._collectionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaintenancePlansTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).collectionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.planId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -24903,6 +25253,7 @@ typedef $$MaintenancePlansTableProcessedTableManager =
         bool clientId,
         bool locationId,
         bool maintenanceVisitsRefs,
+        bool collectionsRefs,
       })
     >;
 typedef $$MaintenanceVisitsTableCreateCompanionBuilder =
@@ -24914,6 +25265,7 @@ typedef $$MaintenanceVisitsTableCreateCompanionBuilder =
       Value<DateTime?> completedDate,
       Value<String> status,
       Value<String?> technicianNotes,
+      Value<int?> agreedPriceCents,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<String?> createdBy,
@@ -24931,6 +25283,7 @@ typedef $$MaintenanceVisitsTableUpdateCompanionBuilder =
       Value<DateTime?> completedDate,
       Value<String> status,
       Value<String?> technicianNotes,
+      Value<int?> agreedPriceCents,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<String?> createdBy,
@@ -25120,6 +25473,11 @@ class $$MaintenanceVisitsTableFilterComposer
 
   ColumnFilters<String> get technicianNotes => $composableBuilder(
     column: $table.technicianNotes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get agreedPriceCents => $composableBuilder(
+    column: $table.agreedPriceCents,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -25341,6 +25699,11 @@ class $$MaintenanceVisitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get agreedPriceCents => $composableBuilder(
+    column: $table.agreedPriceCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -25427,6 +25790,11 @@ class $$MaintenanceVisitsTableAnnotationComposer
 
   GeneratedColumn<String> get technicianNotes => $composableBuilder(
     column: $table.technicianNotes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get agreedPriceCents => $composableBuilder(
+    column: $table.agreedPriceCents,
     builder: (column) => column,
   );
 
@@ -25644,6 +26012,7 @@ class $$MaintenanceVisitsTableTableManager
                 Value<DateTime?> completedDate = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<String?> technicianNotes = const Value.absent(),
+                Value<int?> agreedPriceCents = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -25659,6 +26028,7 @@ class $$MaintenanceVisitsTableTableManager
                 completedDate: completedDate,
                 status: status,
                 technicianNotes: technicianNotes,
+                agreedPriceCents: agreedPriceCents,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 createdBy: createdBy,
@@ -25676,6 +26046,7 @@ class $$MaintenanceVisitsTableTableManager
                 Value<DateTime?> completedDate = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<String?> technicianNotes = const Value.absent(),
+                Value<int?> agreedPriceCents = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -25691,6 +26062,7 @@ class $$MaintenanceVisitsTableTableManager
                 completedDate: completedDate,
                 status: status,
                 technicianNotes: technicianNotes,
+                agreedPriceCents: agreedPriceCents,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 createdBy: createdBy,
@@ -33531,6 +33903,7 @@ typedef $$CollectionsTableCreateCompanionBuilder =
       required String clientId,
       Value<String?> projectId,
       Value<String?> visitId,
+      Value<String?> planId,
       Value<int> amountCents,
       required DateTime date,
       Value<String?> receivedByPartnerId,
@@ -33552,6 +33925,7 @@ typedef $$CollectionsTableUpdateCompanionBuilder =
       Value<String> clientId,
       Value<String?> projectId,
       Value<String?> visitId,
+      Value<String?> planId,
       Value<int> amountCents,
       Value<DateTime> date,
       Value<String?> receivedByPartnerId,
@@ -33622,6 +33996,25 @@ final class $$CollectionsTableReferences
       $_db.maintenanceVisits,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $MaintenancePlansTable _planIdTable(_$AppDatabase db) =>
+      db.maintenancePlans.createAlias(
+        $_aliasNameGenerator(db.collections.planId, db.maintenancePlans.id),
+      );
+
+  $$MaintenancePlansTableProcessedTableManager? get planId {
+    final $_column = $_itemColumn<String>('plan_id');
+    if ($_column == null) return null;
+    final manager = $$MaintenancePlansTableTableManager(
+      $_db,
+      $_db.maintenancePlans,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_planIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -33785,6 +34178,29 @@ class $$CollectionsTableFilterComposer
           }) => $$MaintenanceVisitsTableFilterComposer(
             $db: $db,
             $table: $db.maintenanceVisits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$MaintenancePlansTableFilterComposer get planId {
+    final $$MaintenancePlansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableFilterComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -33961,6 +34377,29 @@ class $$CollectionsTableOrderingComposer
     return composer;
   }
 
+  $$MaintenancePlansTableOrderingComposer get planId {
+    final $$MaintenancePlansTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableOrderingComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$PartnersTableOrderingComposer get receivedByPartnerId {
     final $$PartnersTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -34109,6 +34548,29 @@ class $$CollectionsTableAnnotationComposer
     return composer;
   }
 
+  $$MaintenancePlansTableAnnotationComposer get planId {
+    final $$MaintenancePlansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.planId,
+      referencedTable: $db.maintenancePlans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaintenancePlansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.maintenancePlans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$PartnersTableAnnotationComposer get receivedByPartnerId {
     final $$PartnersTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -34150,6 +34612,7 @@ class $$CollectionsTableTableManager
             bool clientId,
             bool projectId,
             bool visitId,
+            bool planId,
             bool receivedByPartnerId,
           })
         > {
@@ -34171,6 +34634,7 @@ class $$CollectionsTableTableManager
                 Value<String> clientId = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
                 Value<String?> visitId = const Value.absent(),
+                Value<String?> planId = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<String?> receivedByPartnerId = const Value.absent(),
@@ -34190,6 +34654,7 @@ class $$CollectionsTableTableManager
                 clientId: clientId,
                 projectId: projectId,
                 visitId: visitId,
+                planId: planId,
                 amountCents: amountCents,
                 date: date,
                 receivedByPartnerId: receivedByPartnerId,
@@ -34211,6 +34676,7 @@ class $$CollectionsTableTableManager
                 required String clientId,
                 Value<String?> projectId = const Value.absent(),
                 Value<String?> visitId = const Value.absent(),
+                Value<String?> planId = const Value.absent(),
                 Value<int> amountCents = const Value.absent(),
                 required DateTime date,
                 Value<String?> receivedByPartnerId = const Value.absent(),
@@ -34230,6 +34696,7 @@ class $$CollectionsTableTableManager
                 clientId: clientId,
                 projectId: projectId,
                 visitId: visitId,
+                planId: planId,
                 amountCents: amountCents,
                 date: date,
                 receivedByPartnerId: receivedByPartnerId,
@@ -34257,6 +34724,7 @@ class $$CollectionsTableTableManager
                 clientId = false,
                 projectId = false,
                 visitId = false,
+                planId = false,
                 receivedByPartnerId = false,
               }) {
                 return PrefetchHooks(
@@ -34323,6 +34791,21 @@ class $$CollectionsTableTableManager
                                   )
                                   as T;
                         }
+                        if (planId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.planId,
+                                    referencedTable:
+                                        $$CollectionsTableReferences
+                                            ._planIdTable(db),
+                                    referencedColumn:
+                                        $$CollectionsTableReferences
+                                            ._planIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
                         if (receivedByPartnerId) {
                           state =
                               state.withJoin(
@@ -34366,6 +34849,7 @@ typedef $$CollectionsTableProcessedTableManager =
         bool clientId,
         bool projectId,
         bool visitId,
+        bool planId,
         bool receivedByPartnerId,
       })
     >;
