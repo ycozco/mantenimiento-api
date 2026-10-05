@@ -18,6 +18,7 @@ part 'app_database.g.dart';
     InventoryItems,
     Suppliers,
     Purchases,
+    PurchaseItems,
     StockMovements,
     Tools,
     ToolAssignments,
@@ -37,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(DatabaseConnection super.connection);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
@@ -50,6 +51,18 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON;');
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(purchaseItems);
+        await m.addColumn(suppliers, suppliers.contactName);
+        await m.addColumn(suppliers, suppliers.email);
+        await m.addColumn(suppliers, suppliers.isActive);
+        await m.addColumn(purchases, purchases.documentType);
+        await m.addColumn(purchases, purchases.notes);
+        await m.addColumn(capitalMovements, capitalMovements.projectId);
+        await m.addColumn(collections, collections.reference);
+      }
     },
   );
 }

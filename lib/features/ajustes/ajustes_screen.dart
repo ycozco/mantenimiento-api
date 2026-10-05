@@ -6,6 +6,7 @@ import '../../core/notifications/notification_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../inventory/inventory_screen.dart';
 import '../tools/tools_screen.dart';
+import '../suppliers/suppliers_screen.dart';
 
 class AjustesScreen extends StatelessWidget {
   final LocalStorageService storage;
@@ -100,9 +101,40 @@ class AjustesScreen extends StatelessWidget {
                     );
                   },
                 ),
+                const Divider(height: 1, color: Color(0xFF334155)),
+                ListTile(
+                  leading: const Icon(
+                    LucideIcons.store,
+                    color: AppTheme.emeraldSuccess,
+                  ),
+                  title: const Text(
+                    'Proveedores de Insumos',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  subtitle: const Text(
+                    'Directorio de viveros, ferreterías y proveedores con RUC y condiciones.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  trailing: const Icon(
+                    LucideIcons.chevron_right,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SuppliersScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
+
           const SizedBox(height: 24),
 
           // Sección Respaldo Local

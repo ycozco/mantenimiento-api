@@ -211,9 +211,12 @@ class Suppliers extends Table {
   TextColumn get id => text()();
   TextColumn get workspaceId => text().withDefault(const Constant('default'))();
   TextColumn get name => text()();
+  TextColumn get contactName => text().nullable()();
   TextColumn get phone => text().nullable()();
+  TextColumn get email => text().nullable()();
   TextColumn get taxId => text().nullable()();
   TextColumn get address => text().nullable()();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
@@ -233,11 +236,39 @@ class Purchases extends Table {
   TextColumn get supplierId => text().nullable().customConstraint(
     'REFERENCES suppliers(id) ON DELETE SET NULL',
   )();
-  TextColumn get paidByPartnerId =>
-      text().customConstraint('NOT NULL REFERENCES partners(id)')();
+  TextColumn get paidByPartnerId => text().nullable().customConstraint(
+    'REFERENCES partners(id) ON DELETE SET NULL',
+  )();
   IntColumn get totalAmountCents => integer()();
   DateTimeColumn get date => dateTime()();
+  TextColumn get documentType =>
+      text().withDefault(const Constant('invoice'))();
   TextColumn get invoiceNumber => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
+  IntColumn get version => integer().withDefault(const Constant(1))();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// --- PURCHASE ITEMS (DETALLE DE LÍNEAS DE COMPRA) ---
+class PurchaseItems extends Table {
+  TextColumn get id => text()();
+  TextColumn get workspaceId => text().withDefault(const Constant('default'))();
+  TextColumn get purchaseId => text().customConstraint(
+    'NOT NULL REFERENCES purchases(id) ON DELETE CASCADE',
+  )();
+  TextColumn get itemId => text().customConstraint(
+    'NOT NULL REFERENCES inventory_items(id) ON DELETE RESTRICT',
+  )();
+  RealColumn get quantity => real()();
+  IntColumn get unitCostCents => integer()();
+  IntColumn get totalCostCents => integer()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   TextColumn get createdBy => text().nullable()();
@@ -448,7 +479,10 @@ class CapitalMovements extends Table {
   TextColumn get partnerId => text().customConstraint(
     'NOT NULL REFERENCES partners(id) ON DELETE CASCADE',
   )();
-  TextColumn get type => text().withDefault(const Constant('investment'))();
+  TextColumn get projectId => text().nullable().customConstraint(
+    'REFERENCES projects(id) ON DELETE SET NULL',
+  )();
+  TextColumn get type => text().withDefault(const Constant('contribution'))();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
   DateTimeColumn get date => dateTime()();
   TextColumn get notes => text().nullable()();
@@ -478,9 +512,11 @@ class Collections extends Table {
   )();
   IntColumn get amountCents => integer().withDefault(const Constant(0))();
   DateTimeColumn get date => dateTime()();
-  TextColumn get receivedByPartnerId =>
-      text().customConstraint('NOT NULL REFERENCES partners(id)')();
+  TextColumn get receivedByPartnerId => text().nullable().customConstraint(
+    'REFERENCES partners(id) ON DELETE SET NULL',
+  )();
   TextColumn get paymentMethod => text().withDefault(const Constant('cash'))();
+  TextColumn get reference => text().nullable()();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();

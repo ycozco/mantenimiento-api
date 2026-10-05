@@ -7,6 +7,7 @@ import '../../core/models/inventory_item.dart';
 import '../../core/theme/app_theme.dart';
 import 'inventory_item_detail_screen.dart';
 import 'inventory_item_form_dialog.dart';
+import '../purchases/purchase_form_dialog.dart';
 
 class InventoryScreen extends StatefulWidget {
   final LocalStorageService storage;
@@ -42,7 +43,20 @@ class _InventoryScreenState extends State<InventoryScreen> {
             Text('Inventario y Materiales'),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined),
+            tooltip: 'Registrar Compra',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => const PurchaseFormDialog(),
+              );
+            },
+          ),
+        ],
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppTheme.emeraldSuccess,
         foregroundColor: Colors.white,
