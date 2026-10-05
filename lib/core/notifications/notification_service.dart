@@ -3,7 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
+import '../models/maintenance_visit.dart';
 import '../models/mantenimiento.dart';
+import 'notification_schedule_engine.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -73,50 +76,74 @@ class NotificationService {
     return true;
   }
 
-  int _generarNotificationId(String mantenimientoId, int diasAntes) {
-    return (mantenimientoId.hashCode ^ diasAntes.hashCode).abs() % 100000000;
-  }
-
-  Future<void> programarAlertasMantenimiento(Mantenimiento m) async {
+  /// Cancela todas las notificaciones programadas para una visita
+  Future<void> cancelarAlertasVisita(String visitId) async {
     if (kIsWeb || !_isInitialized) return;
-
-    await cancelarAlertasMantenimiento(m.id);
-
-    if (!m.activo || m.completado) return;
-
-    final targetDate = m.fechaProximo;
-    final now = DateTime.now();
-
-    const diasAlerta = [7, 3, 2, 1];
-
-    for (final diasAntes in diasAlerta) {
-      final fechaAlerta = targetDate.subtract(Duration(days: diasAntes));
-      final fechaAlertaAjustada = DateTime(
-        fechaAlerta.year,
-        fechaAlerta.month,
-        fechaAlerta.day,
-        9, // 9:00 AM
-        0,
-      );
-
-      if (fechaAlertaAjustada.isAfter(now)) {
-        final notifId = _generarNotificationId(m.id, diasAntes);
-        String mensajeTiempo = diasAntes == 7
-            ? 'en 1 semana'
-            : diasAntes == 1
-            ? '¡MAÑANA!'
-            : 'en $diasAntes días';
-
-        await _programarNotificacionZonificada(
-          id: notifId,
-          titulo: 'Mantenimiento $mensajeTiempo: ${m.clienteNombre}',
-          cuerpo:
-              '${m.titulo} programado para el ${targetDate.day}/${targetDate.month}/${targetDate.year}.',
-          fechaProgramada: fechaAlertaAjustada,
-          payload: m.id,
-        );
+    final ids = NotificationScheduleEngine.getCancellationNotificationIds(
+      visitId,
+    );
+    for (final id in ids) {
+      try {
+        await _notificationsPlugin.cancel(id: id);
+      } catch (e) {
+        debugPrint('Error cancelando alerta $id: $e');
       }
     }
+  }
+
+  /// Programa notificaciones anticipadas para una MaintenanceVisit (-7, -3, -2, -1 días)
+  Future<void> programarAlertasVisita(
+    MaintenanceVisit visit, {
+    String? planTitle,
+    String? clientName,
+    bool notificationsEnabled = true,
+    int notificationHour = 9,
+  }) async {
+    if (kIsWeb || !_isInitialized) return;
+
+    // 1. Cancelar cualquier alerta previa de esta visita
+    await cancelarAlertasVisita(visit.id);
+
+    // 2. Si no está en estado programado o están desactivadas, no programar nada
+    if (!visit.isScheduled || !notificationsEnabled) return;
+
+    // 3. Computar notificaciones válidas futuras
+    final scheduledList = NotificationScheduleEngine.computeNotifications(
+      visit: visit,
+      now: DateTime.now(),
+      planTitle: planTitle,
+      clientName: clientName,
+      notificationsEnabled: notificationsEnabled,
+      notificationHour: notificationHour,
+    );
+
+    // 4. Programar cada notificación zonificada
+    for (final item in scheduledList) {
+      await _programarNotificacionZonificada(
+        id: item.id,
+        titulo: item.title,
+        cuerpo: item.body,
+        fechaProgramada: item.scheduledAt,
+        payload: item.visitId,
+      );
+    }
+  }
+
+  /// Reprograma las alertas de una visita (cancela previas y programa nuevas)
+  Future<void> reprogramarAlertasVisita(
+    MaintenanceVisit visit, {
+    String? planTitle,
+    String? clientName,
+    bool notificationsEnabled = true,
+    int notificationHour = 9,
+  }) async {
+    await programarAlertasVisita(
+      visit,
+      planTitle: planTitle,
+      clientName: clientName,
+      notificationsEnabled: notificationsEnabled,
+      notificationHour: notificationHour,
+    );
   }
 
   Future<void> _programarNotificacionZonificada({
@@ -159,19 +186,7 @@ class NotificationService {
     }
   }
 
-  Future<void> cancelarAlertasMantenimiento(String mantenimientoId) async {
-    if (kIsWeb || !_isInitialized) return;
-    const diasAlerta = [7, 3, 2, 1];
-    for (final diasAntes in diasAlerta) {
-      final notifId = _generarNotificationId(mantenimientoId, diasAntes);
-      try {
-        await _notificationsPlugin.cancel(id: notifId);
-      } catch (e) {
-        debugPrint('Error cancelando alerta: $e');
-      }
-    }
-  }
-
+  /// Muestra una notificación inmediata
   Future<void> mostrarNotificacionInmediata({
     required String titulo,
     required String cuerpo,
@@ -195,5 +210,30 @@ class NotificationService {
       body: cuerpo,
       notificationDetails: details,
     );
+  }
+
+  // --- COMPATIBILIDAD V1 ---
+
+  Future<void> programarAlertasMantenimiento(Mantenimiento m) async {
+    if (kIsWeb || !_isInitialized) return;
+    await cancelarAlertasMantenimiento(m.id);
+    if (!m.activo || m.completado) return;
+
+    final dummyVisit = MaintenanceVisit(
+      id: m.id,
+      planId: m.id,
+      scheduledDate: m.fechaProximo,
+      status: VisitStatus.scheduled,
+    );
+
+    await programarAlertasVisita(
+      dummyVisit,
+      planTitle: m.titulo,
+      clientName: m.clienteNombre,
+    );
+  }
+
+  Future<void> cancelarAlertasMantenimiento(String mantenimientoId) async {
+    await cancelarAlertasVisita(mantenimientoId);
   }
 }

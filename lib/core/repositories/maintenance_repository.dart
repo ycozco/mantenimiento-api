@@ -296,6 +296,21 @@ class MaintenanceRepository {
     );
   }
 
+  Future<void> rescheduleVisit(
+    String visitId,
+    DateTime newScheduledDate,
+  ) async {
+    await (db.update(
+      db.maintenanceVisits,
+    )..where((t) => t.id.equals(visitId))).write(
+      MaintenanceVisitsCompanion(
+        scheduledDate: Value(newScheduledDate),
+        status: const Value('scheduled'),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   // --- COSTOS LABORALES ASOCIADOS A LA VISITA ---
 
   Stream<int> watchVisitLaborCostCents(String visitId) {
