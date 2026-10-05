@@ -8,9 +8,11 @@ import '../../core/models/worker.dart';
 import '../../core/models/work_log.dart';
 import '../../core/models/stock_movement.dart';
 import '../../core/models/tool_assignment.dart';
+import '../../core/models/collection.dart';
 import '../../core/theme/app_theme.dart';
 import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
+import '../collections/collection_form_dialog.dart';
 
 class ObraDetailScreen extends StatelessWidget {
   final Obra obra;
@@ -214,12 +216,159 @@ class ObraDetailScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
 
+                    // Tarjeta de Cobros y Facturación al Cliente (T-09)
+                    StreamBuilder<ProjectBillingSummary>(
+                      stream: storage.collectionRepository.watchProjectBillingSummary(
+                        obra.id,
+                        (obra.presupuesto * 100).round(),
+                      ),
+                      builder: (context, billingSnap) {
+                        final billing = billingSnap.data ??
+                            ProjectBillingSummary(
+                              projectId: obra.id,
+                              agreedAmountCents: (obra.presupuesto * 100).round(),
+                              collectedCents: 0,
+                            );
+
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(LucideIcons.wallet, color: AppTheme.skyAccent, size: 20),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Cobros y Facturación al Cliente',
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                    TextButton.icon(
+                                      onPressed: () async {
+                                        final col = await showDialog<Collection>(
+                                          context: context,
+                                          builder: (_) => CollectionFormDialog(obra: obra),
+                                        );
+                                        if (col != null) {
+                                          await storage.collectionRepository.recordCollection(col);
+                                        }
+                                      },
+                                      icon: const Icon(LucideIcons.plus, size: 16),
+                                      label: const Text('Registrar Cobro'),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0F172A),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _buildFinancialRow('Valor Presupuestado:', currency.format(billing.agreedAmount), Colors.white),
+                                      const SizedBox(height: 6),
+                                      _buildFinancialRow('Cobrado hasta la fecha:', currency.format(billing.collected), AppTheme.emeraldSuccess, isBold: true),
+                                      const SizedBox(height: 6),
+                                      _buildFinancialRow(
+                                        billing.isOverpaid ? 'Sobrepago a favor del cliente:' : 'Saldo pendiente por cobrar:',
+                                        currency.format(billing.isOverpaid ? billing.overpaidAmount : billing.receivable),
+                                        billing.isOverpaid ? Colors.amber : AppTheme.skyAccent,
+                                        isBold: true,
+                                      ),
+                                      if (billing.agreedAmount > 0) ...[
+                                        const SizedBox(height: 8),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(4),
+                                          child: LinearProgressIndicator(
+                                            value: (billing.percentCollected / 100.0).clamp(0.0, 1.0),
+                                            backgroundColor: const Color(0xFF334155),
+                                            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.emeraldSuccess),
+                                            minHeight: 6,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            '${billing.percentCollected.toStringAsFixed(1)}% del total cobrado',
+                                            style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                StreamBuilder<List<Collection>>(
+                                  stream: storage.collectionRepository.watchProjectCollections(obra.id),
+                                  builder: (context, colListSnap) {
+                                    final list = colListSnap.data ?? [];
+                                    if (list.isEmpty) {
+                                      return const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 8),
+                                        child: Text('No hay cobros registrados en esta obra.', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                                      );
+                                    }
+                                    return Column(
+                                      children: list.map((c) {
+                                        return ListTile(
+                                          dense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          leading: const Icon(LucideIcons.circle_check, color: AppTheme.emeraldSuccess, size: 18),
+                                          title: Text(
+                                            '${currency.format(c.amount)} • ${c.paymentMethodLabel}',
+                                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                          ),
+                                          subtitle: Text(
+                                            '${dateFormat.format(c.date)}${c.reference != null ? " • Ref: ${c.reference}" : ""}',
+                                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                          ),
+                                          trailing: IconButton(
+                                            icon: const Icon(LucideIcons.trash, size: 16, color: Colors.grey),
+                                            onPressed: () async {
+                                              final confirm = await showDialog<bool>(
+                                                context: context,
+                                                builder: (ctx) => AlertDialog(
+                                                  title: const Text('Anular Cobro'),
+                                                  content: Text('¿Desea anular este cobro de ${currency.format(c.amount)}?'),
+                                                  actions: [
+                                                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                                                    FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Anular')),
+                                                  ],
+                                                ),
+                                              );
+                                              if (confirm == true) {
+                                                await storage.collectionRepository.deleteCollection(c.id);
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      }).toList(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
                     // Botón para Consumo de Material de Almacén
+
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
