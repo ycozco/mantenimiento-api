@@ -332,8 +332,8 @@ class DashboardScreen extends StatelessWidget {
                                       children: [
                                         Icon(
                                           alert.isOutOfStock
-                                              ? LucideIcons.alert_triangle
-                                              : LucideIcons.alert_circle,
+                                              ? LucideIcons.triangle_alert
+                                              : LucideIcons.circle_alert,
                                           size: 16,
                                           color: alert.isOutOfStock
                                               ? AppTheme.coralUrgent
@@ -394,7 +394,7 @@ class DashboardScreen extends StatelessWidget {
           const Row(
             children: [
               Icon(
-                LucideIcons.alert_octagon,
+                LucideIcons.octagon_alert,
                 color: AppTheme.coralUrgent,
                 size: 20,
               ),
@@ -463,7 +463,7 @@ class DashboardScreen extends StatelessWidget {
             ),
           ],
         ),
-        if (trailing != null) trailing,
+        ?trailing,
       ],
     );
   }

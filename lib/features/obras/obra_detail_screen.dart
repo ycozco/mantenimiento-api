@@ -14,6 +14,7 @@ import '../../core/theme/app_theme.dart';
 import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
 import '../collections/collection_form_dialog.dart';
+import '../attachments/attachment_list_widget.dart';
 
 class ObraDetailScreen extends StatelessWidget {
   final Obra obra;
@@ -803,6 +804,15 @@ class ObraDetailScreen extends StatelessWidget {
                       },
                     );
                   },
+                ),
+                const SizedBox(height: 24),
+
+                // Sección Archivos, Planos y Evidencias (T-13)
+                AttachmentListWidget(
+                  storage: storage,
+                  parentType: 'project',
+                  parentId: obra.id,
+                  sectionTitle: 'Planos, Contratos y Evidencias de Obra',
                 ),
               ],
             ),

@@ -22,6 +22,7 @@ import '../repositories/tool_repository.dart';
 import '../repositories/purchase_repository.dart';
 import '../repositories/partner_repository.dart';
 import '../repositories/collection_repository.dart';
+import '../repositories/attachment_repository.dart';
 import '../services/project_financial_service.dart';
 import '../services/dashboard_service.dart';
 import '../services/calendar_service.dart';
@@ -83,6 +84,10 @@ class LocalStorageService extends ChangeNotifier {
   CollectionRepository? _collectionRepository;
   CollectionRepository get collectionRepository =>
       _collectionRepository ??= CollectionRepository(db);
+
+  AttachmentRepository? _attachmentRepository;
+  AttachmentRepository get attachmentRepository =>
+      _attachmentRepository ??= AttachmentRepository(db);
 
   ProjectFinancialService? _projectFinancialService;
   ProjectFinancialService get projectFinancialService =>

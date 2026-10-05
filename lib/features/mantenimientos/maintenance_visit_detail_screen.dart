@@ -9,6 +9,7 @@ import '../../core/models/work_log.dart';
 import '../../core/models/stock_movement.dart';
 import '../../core/models/tool_assignment.dart';
 import '../../core/theme/app_theme.dart';
+import '../attachments/attachment_list_widget.dart';
 import '../inventory/stock_movement_form_dialog.dart';
 import '../work_logs/work_log_form_dialog.dart';
 
@@ -799,6 +800,14 @@ class _MaintenanceVisitDetailScreenState
                           },
                         );
                       },
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Archivos y Evidencias Fotográficas
+                    AttachmentListWidget(
+                      parentType: 'maintenance_visit',
+                      parentId: visit.id,
+                      storage: widget.storage,
                     ),
                     const SizedBox(height: 28),
 

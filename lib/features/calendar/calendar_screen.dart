@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/calendar_event.dart';
 import '../../core/theme/app_theme.dart';
+import '../mantenimientos/maintenance_visit_detail_screen.dart';
 import '../obras/obra_detail_screen.dart';
 import '../tools/tool_detail_screen.dart';
 
@@ -332,39 +333,55 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  void _handleEventTap(BuildContext context, CalendarEvent event) {
+  Future<void> _handleEventTap(BuildContext context, CalendarEvent event) async {
     switch (event.sourceType) {
       case CalendarSourceType.project:
-        final obra = widget.storage.obras.firstWhere(
-          (o) => o.id == event.sourceId,
-          orElse: () => throw StateError('Obra no encontrada'),
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                ObraDetailScreen(obra: obra, storage: widget.storage),
-          ),
-        );
+        final matches = widget.storage.obras.where((o) => o.id == event.sourceId);
+        if (matches.isNotEmpty && context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  ObraDetailScreen(obra: matches.first, storage: widget.storage),
+            ),
+          );
+        }
         break;
       case CalendarSourceType.toolReturn:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ToolDetailScreen(
-              toolId: event.sourceId,
-              storage: widget.storage,
+        final tool = await widget.storage.toolRepository.getTool(event.sourceId);
+        if (tool != null && context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ToolDetailScreen(
+                tool: tool,
+                storage: widget.storage,
+              ),
             ),
-          ),
-        );
+          );
+        }
         break;
       case CalendarSourceType.maintenanceVisit:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${event.title} - ${event.subtitle ?? ""}'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        final visit = await widget.storage.maintenanceRepository.getVisitById(event.sourceId);
+        if (visit != null && context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MaintenanceVisitDetailScreen(
+                visitId: visit.id,
+                planId: visit.planId,
+                storage: widget.storage,
+              ),
+            ),
+          );
+        } else if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${event.title} - ${event.subtitle ?? ""}'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
         break;
     }
   }
