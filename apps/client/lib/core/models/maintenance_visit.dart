@@ -1,5 +1,7 @@
 import 'package:uuid/uuid.dart';
 
+import '../constants/app_constants.dart';
+
 enum VisitStatus { scheduled, inProgress, completed, cancelled }
 
 extension VisitStatusExt on VisitStatus {
@@ -81,7 +83,7 @@ class MaintenanceVisit {
     this.version = 1,
     this.deletedAt,
   }) : id = id ?? const Uuid().v4(),
-       workspaceId = workspaceId ?? '00000000-0000-0000-0000-000000000001',
+       workspaceId = workspaceId ?? AppConstants.defaultWorkspaceId,
        createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now();
 

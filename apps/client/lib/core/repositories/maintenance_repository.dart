@@ -85,6 +85,7 @@ class MaintenanceRepository {
           : null;
 
       final firstVisit = MaintenanceVisit(
+        workspaceId: plan.workspaceId,
         planId: plan.id,
         scheduledDate: scheduledFirstDate,
         status: VisitStatus.scheduled,
@@ -96,7 +97,7 @@ class MaintenanceRepository {
           .insert(
             MaintenanceVisitsCompanion.insert(
               id: firstVisit.id,
-              workspaceId: Value(firstVisit.workspaceId),
+              workspaceId: Value(plan.workspaceId),
               planId: firstVisit.planId,
               scheduledDate: firstVisit.scheduledDate,
               status: Value(firstVisit.status.nameCode),
@@ -283,6 +284,7 @@ class MaintenanceRepository {
           : null;
 
       final nextVisit = MaintenanceVisit(
+        workspaceId: plan.workspaceId,
         planId: plan.id,
         scheduledDate: nextDate,
         status: VisitStatus.scheduled,
@@ -294,7 +296,7 @@ class MaintenanceRepository {
           .insert(
             MaintenanceVisitsCompanion.insert(
               id: nextVisit.id,
-              workspaceId: Value(nextVisit.workspaceId),
+              workspaceId: Value(plan.workspaceId),
               planId: nextVisit.planId,
               scheduledDate: nextVisit.scheduledDate,
               status: Value(nextVisit.status.nameCode),

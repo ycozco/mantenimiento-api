@@ -50,7 +50,7 @@ class ProjectFinancialService {
     // 2. Material Cost = SUM(stock_movements.total_cost_cents)
     final materialRow = await _db
         .customSelect(
-          'SELECT COALESCE(SUM(total_cost_cents), 0) AS total FROM stock_movements WHERE project_id = ? AND movement_type = "consumption" AND deleted_at IS NULL',
+          "SELECT COALESCE(SUM(total_cost_cents), 0) AS total FROM stock_movements WHERE project_id = ? AND movement_type = 'consumption' AND deleted_at IS NULL",
           variables: [Variable.withString(projectId)],
           readsFrom: {_db.stockMovements},
         )
@@ -108,7 +108,7 @@ class ProjectFinancialService {
 
           final materialRow = await _db
               .customSelect(
-                'SELECT COALESCE(SUM(total_cost_cents), 0) AS total FROM stock_movements WHERE visit_id = ? AND movement_type = "consumption" AND deleted_at IS NULL',
+                "SELECT COALESCE(SUM(total_cost_cents), 0) AS total FROM stock_movements WHERE visit_id = ? AND movement_type = 'consumption' AND deleted_at IS NULL",
                 variables: [Variable.withString(visitId)],
                 readsFrom: {_db.stockMovements},
               )
@@ -161,7 +161,7 @@ class ProjectFinancialService {
 
             final materialRow = await _db
                 .customSelect(
-                  'SELECT COALESCE(SUM(total_cost_cents), 0) AS total FROM stock_movements WHERE visit_id = ? AND movement_type = "consumption" AND deleted_at IS NULL',
+                "SELECT COALESCE(SUM(total_cost_cents), 0) AS total FROM stock_movements WHERE visit_id = ? AND movement_type = 'consumption' AND deleted_at IS NULL",
                   variables: [Variable.withString(v.id)],
                   readsFrom: {_db.stockMovements},
                 )

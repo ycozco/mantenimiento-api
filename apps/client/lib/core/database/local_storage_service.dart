@@ -10,6 +10,7 @@ import '../models/cliente.dart';
 import '../models/mantenimiento.dart';
 import '../models/obra.dart';
 import '../models/gasto.dart';
+import '../constants/app_constants.dart';
 import '../notifications/notification_service.dart';
 import 'app_database.dart';
 import 'data_migration_service.dart';
@@ -322,12 +323,12 @@ class LocalStorageService extends ChangeNotifier {
         .insert(
           PartnersCompanion.insert(
             id: socio.id,
+            workspaceId: const Value(AppConstants.defaultWorkspaceId),
             name: socio.nombre,
             phone: Value(socio.telefono),
             avatarColor: Value(socio.colorValue),
             equityPercentage: const Value(50.0),
           ),
-          mode: InsertMode.insertOrReplace,
         );
     await _reloadAllFromDb();
     notifyListeners();
@@ -363,11 +364,11 @@ class LocalStorageService extends ChangeNotifier {
           .insert(
             ClientsCompanion.insert(
               id: cliente.id,
+              workspaceId: const Value(AppConstants.defaultWorkspaceId),
               name: cliente.nombre,
               phone: Value(cliente.telefono),
               notes: Value(cliente.notas),
             ),
-            mode: InsertMode.insertOrReplace,
           );
 
       await db
@@ -375,6 +376,7 @@ class LocalStorageService extends ChangeNotifier {
           .insert(
             ClientLocationsCompanion.insert(
               id: '${cliente.id}_loc_main',
+              workspaceId: const Value(AppConstants.defaultWorkspaceId),
               clientId: cliente.id,
               name: const Value('Principal'),
               address:
@@ -382,7 +384,6 @@ class LocalStorageService extends ChangeNotifier {
                   ? cliente.direccion!
                   : 'Dirección principal',
             ),
-            mode: InsertMode.insertOrReplace,
           );
     });
     await _reloadAllFromDb();
@@ -433,6 +434,7 @@ class LocalStorageService extends ChangeNotifier {
           .insert(
             MaintenancePlansCompanion.insert(
               id: m.id,
+              workspaceId: const Value(AppConstants.defaultWorkspaceId),
               title: m.titulo,
               clientId: m.clienteId,
               locationId: Value('${m.clienteId}_loc_main'),
@@ -445,7 +447,6 @@ class LocalStorageService extends ChangeNotifier {
               billingType: Value(m.billingType),
               agreedAmountCents: Value(m.agreedAmountCents),
             ),
-            mode: InsertMode.insertOrReplace,
           );
 
       await db
@@ -453,6 +454,7 @@ class LocalStorageService extends ChangeNotifier {
           .insert(
             MaintenanceVisitsCompanion.insert(
               id: '${m.id}_visit_active',
+              workspaceId: const Value(AppConstants.defaultWorkspaceId),
               planId: m.id,
               scheduledDate: m.fechaProximo,
               completedDate: Value(m.fechaUltimo),
@@ -461,7 +463,6 @@ class LocalStorageService extends ChangeNotifier {
                 m.billingType == 'perVisit' ? m.agreedAmountCents : null,
               ),
             ),
-            mode: InsertMode.insertOrReplace,
           );
     });
 
@@ -558,10 +559,16 @@ class LocalStorageService extends ChangeNotifier {
               .insert(
                 MaintenanceVisitsCompanion.insert(
                   id: visitId,
+                  workspaceId: const Value(AppConstants.defaultWorkspaceId),
                   planId: id,
                   scheduledDate: actual.fechaProximo,
                   completedDate: Value(DateTime.now()),
                   status: const Value('completed'),
+                  agreedPriceCents: Value(
+                    actual.billingType == 'perVisit'
+                        ? actual.agreedAmountCents
+                        : null,
+                  ),
                 ),
               );
         }
@@ -574,9 +581,15 @@ class LocalStorageService extends ChangeNotifier {
             .insert(
               MaintenanceVisitsCompanion.insert(
                 id: nextVisitId,
+                workspaceId: const Value(AppConstants.defaultWorkspaceId),
                 planId: id,
                 scheduledDate: proximaFecha,
                 status: const Value('scheduled'),
+                agreedPriceCents: Value(
+                  actual.billingType == 'perVisit'
+                      ? actual.agreedAmountCents
+                      : null,
+                ),
               ),
             );
 
@@ -614,6 +627,7 @@ class LocalStorageService extends ChangeNotifier {
         .insert(
           ProjectsCompanion.insert(
             id: obra.id,
+            workspaceId: const Value(AppConstants.defaultWorkspaceId),
             name: obra.nombre,
             clientId: Value(obra.clienteId),
             locationId: Value(
@@ -626,7 +640,6 @@ class LocalStorageService extends ChangeNotifier {
             status: Value(obra.estado.name),
             assignedPartnerIdsJson: Value(jsonEncode(obra.sociosAsignados)),
           ),
-          mode: InsertMode.insertOrReplace,
         );
     await _reloadAllFromDb();
     notifyListeners();
@@ -665,6 +678,7 @@ class LocalStorageService extends ChangeNotifier {
         .insert(
           ExpensesCompanion.insert(
             id: gasto.id,
+            workspaceId: const Value(AppConstants.defaultWorkspaceId),
             concept: gasto.concepto,
             category: Value(gasto.categoria.name),
             amountCents: Value((gasto.montoTotal * 100).round()),
@@ -675,7 +689,6 @@ class LocalStorageService extends ChangeNotifier {
             splitRatiosJson: Value(jsonEncode(gasto.participaciones)),
             notes: Value(gasto.nota),
           ),
-          mode: InsertMode.insertOrReplace,
         );
     await _reloadAllFromDb();
     notifyListeners();
