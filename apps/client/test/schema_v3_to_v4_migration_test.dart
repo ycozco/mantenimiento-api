@@ -5,8 +5,8 @@ import 'package:mantenimiento_app/core/database/app_database.dart';
 import 'package:mantenimiento_app/core/services/backup_restore_service.dart';
 
 void main() {
-  group('T-20 Drift Schema 3 -> Schema 4 Migration & Hardening', () {
-    test('Migra base de datos Schema 3 a Schema 4 con datos reales preservados', () async {
+  group('T-20/T-24 Drift Schema 3 -> Schema 5 Migration & Hardening', () {
+    test('Migra base de datos Schema 3 a Schema 5 con datos reales preservados', () async {
       // 1. Crear una base de datos SQLite en memoria en versión 3 (estado pre-T-20)
       final appDb = AppDatabase(
         NativeDatabase.memory(
@@ -239,12 +239,15 @@ void main() {
             rawDb.execute(
               "INSERT INTO collections (id, workspace_id, client_id, plan_id, amount_cents, date, created_at, updated_at) VALUES ('col-mig-2', 'default', 'c-mig-1', 'plan-mig-1', 60000, $nowSec, $nowSec, $nowSec);",
             );
+            rawDb.execute(
+              "INSERT INTO sync_queue (workspace_id, entity_table, entity_id, operation, payload_json, queued_at) VALUES ('default', 'clients', 'c-mig-1', 'UPSERT', '{}', $nowSec);",
+            );
           },
         ),
       );
 
       // 4. Validar versión final
-      expect(appDb.schemaVersion, equals(4));
+      expect(appDb.schemaVersion, equals(5));
 
       // 5. Validar que las 4 tablas baseline contienen workspace_id = 'default'
       final pRows = await appDb.select(appDb.partners).get();
@@ -252,6 +255,12 @@ void main() {
       expect(pRows.first.id, equals('p-mig-1'));
       expect(pRows.first.name, equals('Socio Andino'));
       expect(pRows.first.workspaceId, equals('default'));
+
+      final queueRows = await appDb.select(appDb.syncQueue).get();
+      expect(queueRows.length, equals(1));
+      expect(queueRows.first.operationId, isNotEmpty);
+      expect(queueRows.first.entityTable, equals('clients'));
+      expect(queueRows.first.status, equals('PENDING'));
 
       final cRows = await appDb.select(appDb.clients).get();
       expect(cRows.length, equals(1));
@@ -347,10 +356,10 @@ void main() {
       final totalCols = await appDb.select(appDb.collections).get();
       expect(totalCols.length, equals(3));
 
-      // 8. Validar Backup/Restore en Schema 4
+      // 8. Validar Backup/Restore en Schema 5
       final backupService = BackupRestoreService(appDb);
       final jsonBackup = await backupService.exportBackupJson();
-      expect(jsonBackup, contains('"schemaVersion": 4'));
+      expect(jsonBackup, contains('"schemaVersion": 5'));
       expect(jsonBackup, contains('"workspaceId": "default"'));
 
       await appDb.close();

@@ -38,7 +38,7 @@
 
 ---
 
-## 3. Regularización Multi-Workspace & Schema 4
+## 3. Regularización Multi-Workspace & Schema 5
 
 ### 3.1 Normalización de `workspace_id`
 Las 4 tablas baseline heredadas de V1 que carecían de aislamiento multi-tenant fueron regularizadas con:
@@ -66,10 +66,10 @@ workspace_id TEXT NOT NULL DEFAULT 'default'
   4. Reactivación de `PRAGMA foreign_keys = ON`.
 - **Test de Migración Real:** Se escribió una suite dedicada ([`schema_v3_to_v4_migration_test.dart`](file:///e:/mantenimiento/apps/client/test/schema_v3_to_v4_migration_test.dart)) que crea una base de datos en Schema 3 cruda, inserta socios, clientes, proyectos y cobranzas válidas, ejecuta el upgrade a Schema 4 y valida la integridad de cada registro y la activación del nuevo `CHECK` constraint.
 
-### 3.3 Compatibilidad de Respaldos (Backup Schema 4)
-- `currentSchemaVersion` actualizado a `4` en `BackupRestoreService`.
+### 3.3 Compatibilidad de Respaldos (Backup Schema 5)
+- `currentSchemaVersion` actualizado a `5` en `BackupRestoreService`.
 - Formato empresarial preservado en `backupFormatVersion: 2`.
-- Verificada compatibilidad de exportación e importación completa en limpio en Schema 4 sin tocar `sync_queue` ni `DevicePreferences`.
+- Verificada compatibilidad de exportación e importación completa en limpio en Schema 5; `sync_queue` se conserva como infraestructura local y `DevicePreferences` queda fuera del backup.
 
 ---
 

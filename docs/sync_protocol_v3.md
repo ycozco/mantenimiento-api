@@ -416,7 +416,7 @@ Para gobernar el ciclo de vida sin romper clientes antiguos en campo:
 
 ## 17. Especificación Futura para el Outbox Local (`sync_queue`) (T-21.17)
 
-En T-20 el esquema de base de datos se mantiene estable en `schemaVersion: 4`. Para la fase **T-24 (Sync Engine)**, la tabla `sync_queue` se migrará hacia la siguiente estructura canónica:
+En T-24 la base local avanza a `schemaVersion: 5`. La tabla `sync_queue` ya contiene la estructura canónica del Outbox, con migración Drift 4→5 que conserva las operaciones pendientes y genera un `operationId` para las filas históricas:
 
 ```sql
 CREATE TABLE sync_queue (

@@ -39,7 +39,7 @@ class BackupRestoreResult {
 class BackupRestoreService {
   final AppDatabase db;
   static const int currentBackupFormatVersion = 2;
-  static const int currentSchemaVersion = 4;
+  static const int currentSchemaVersion = 5;
   static const String appVersion = '1.0.0+1';
 
   BackupRestoreService(this.db);

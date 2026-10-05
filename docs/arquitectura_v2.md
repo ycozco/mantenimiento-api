@@ -4,7 +4,7 @@
 > **Estado del Ciclo de Vida del Proyecto**:
 > - **V1 (JSON Monolítico)**: Histórico (Línea base original concluida).
 > - **V2 Local (Drift SQLite / Full FSM / CMMS)**: **Cerrada y congelada con tag de seguridad `v2-local-ready`** (Commit `ba2695e1d5184923aa8840a7d7ccac0dde99b320`).
-> - **V3 Connected (Monorepo / Schema 4 / Multi-Workspace / Sync Protocol)**: **Fase actual en desarrollo activo** (Iniciada en T-20 en rama `feature/v3-foundation`).
+> - **V3 Connected (Monorepo / Schema 5 / Multi-Workspace / Sync Protocol)**: **Fase actual en desarrollo activo** (Iniciada en T-20 en rama `feature/v3-foundation`).
 
 ---
 

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'tables/tables.dart';
 
@@ -38,7 +39,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(DatabaseConnection super.connection);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
@@ -123,6 +124,48 @@ class AppDatabase extends _$AppDatabase {
           'ALTER TABLE collections_temp RENAME TO collections;',
         );
         await customStatement('PRAGMA foreign_keys = ON;');
+      }
+      if (from < 5) {
+        final legacyRows = await customSelect('''
+          SELECT id, workspace_id, entity_table, entity_id, operation,
+                 payload_json, queued_at, attempts, last_error
+          FROM sync_queue
+          ORDER BY id ASC
+        ''').get();
+
+        await customStatement(
+          'ALTER TABLE sync_queue RENAME TO sync_queue_legacy',
+        );
+        await m.createTable(syncQueue);
+
+        const uuid = Uuid();
+        for (final row in legacyRows) {
+          final queuedAt = DateTime.fromMillisecondsSinceEpoch(
+            row.read<int>('queued_at'),
+          );
+          await into(syncQueue).insert(
+            SyncQueueCompanion.insert(
+              id: Value(row.read<int>('id')),
+              workspaceId: Value(row.read<String>('workspace_id')),
+              operationId: uuid.v4(),
+              entityTable: row.read<String>('entity_table'),
+              entityId: row.read<String>('entity_id'),
+              operation: row.read<String>('operation'),
+              baseVersion: const Value(1),
+              payloadJson: row.read<String>('payload_json'),
+              queuedAt: Value(queuedAt),
+              attempts: Value(row.read<int>('attempts')),
+              nextAttemptAt: Value(queuedAt),
+              lastError: Value(row.read<String?>('last_error')),
+              status: const Value('PENDING'),
+            ),
+          );
+        }
+
+        await customStatement('DROP TABLE sync_queue_legacy');
+        await customStatement(
+          'CREATE INDEX sync_queue_status_idx ON sync_queue(status, next_attempt_at)',
+        );
       }
     },
   );

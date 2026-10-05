@@ -32,7 +32,7 @@ void main() {
       final map = jsonDecode(jsonStr) as Map<String, dynamic>;
 
       expect(map['backupFormatVersion'], equals(2));
-      expect(map['schemaVersion'], equals(4));
+      expect(map['schemaVersion'], equals(5));
       expect(map['workspaceId'], equals('default'));
       expect(map['createdAt'], isNotNull);
 
@@ -664,6 +664,7 @@ void main() {
           .into(db.syncQueue)
           .insert(
             SyncQueueCompanion.insert(
+              operationId: 'op-backup-test-1',
               entityTable: 'project',
               entityId: 'p1',
               operation: 'insert',

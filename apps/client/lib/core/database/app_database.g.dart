@@ -18738,6 +18738,18 @@ class $SyncQueueTable extends SyncQueue
     requiredDuringInsert: false,
     defaultValue: const Constant('default'),
   );
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
   static const VerificationMeta _entityTableMeta = const VerificationMeta(
     'entityTable',
   );
@@ -18770,6 +18782,18 @@ class $SyncQueueTable extends SyncQueue
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _baseVersionMeta = const VerificationMeta(
+    'baseVersion',
+  );
+  @override
+  late final GeneratedColumn<int> baseVersion = GeneratedColumn<int>(
+    'base_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
   );
   static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
     'payloadJson',
@@ -18806,6 +18830,19 @@ class $SyncQueueTable extends SyncQueue
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _nextAttemptAtMeta = const VerificationMeta(
+    'nextAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextAttemptAt =
+      GeneratedColumn<DateTime>(
+        'next_attempt_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
   static const VerificationMeta _lastErrorMeta = const VerificationMeta(
     'lastError',
   );
@@ -18817,17 +18854,31 @@ class $SyncQueueTable extends SyncQueue
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PENDING'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     workspaceId,
+    operationId,
     entityTable,
     entityId,
     operation,
+    baseVersion,
     payloadJson,
     queuedAt,
     attempts,
+    nextAttemptAt,
     lastError,
+    status,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -18852,6 +18903,17 @@ class $SyncQueueTable extends SyncQueue
           _workspaceIdMeta,
         ),
       );
+    }
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationIdMeta);
     }
     if (data.containsKey('entity_table')) {
       context.handle(
@@ -18880,6 +18942,15 @@ class $SyncQueueTable extends SyncQueue
     } else if (isInserting) {
       context.missing(_operationMeta);
     }
+    if (data.containsKey('base_version')) {
+      context.handle(
+        _baseVersionMeta,
+        baseVersion.isAcceptableOrUnknown(
+          data['base_version']!,
+          _baseVersionMeta,
+        ),
+      );
+    }
     if (data.containsKey('payload_json')) {
       context.handle(
         _payloadJsonMeta,
@@ -18903,10 +18974,25 @@ class $SyncQueueTable extends SyncQueue
         attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
       );
     }
+    if (data.containsKey('next_attempt_at')) {
+      context.handle(
+        _nextAttemptAtMeta,
+        nextAttemptAt.isAcceptableOrUnknown(
+          data['next_attempt_at']!,
+          _nextAttemptAtMeta,
+        ),
+      );
+    }
     if (data.containsKey('last_error')) {
       context.handle(
         _lastErrorMeta,
         lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
       );
     }
     return context;
@@ -18926,6 +19012,10 @@ class $SyncQueueTable extends SyncQueue
         DriftSqlType.string,
         data['${effectivePrefix}workspace_id'],
       )!,
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      )!,
       entityTable: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}entity_table'],
@@ -18937,6 +19027,10 @@ class $SyncQueueTable extends SyncQueue
       operation: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}operation'],
+      )!,
+      baseVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base_version'],
       )!,
       payloadJson: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -18950,10 +19044,18 @@ class $SyncQueueTable extends SyncQueue
         DriftSqlType.int,
         data['${effectivePrefix}attempts'],
       )!,
+      nextAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_attempt_at'],
+      )!,
       lastError: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}last_error'],
       ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
     );
   }
 
@@ -18966,38 +19068,50 @@ class $SyncQueueTable extends SyncQueue
 class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   final int id;
   final String workspaceId;
+  final String operationId;
   final String entityTable;
   final String entityId;
   final String operation;
+  final int baseVersion;
   final String payloadJson;
   final DateTime queuedAt;
   final int attempts;
+  final DateTime nextAttemptAt;
   final String? lastError;
+  final String status;
   const SyncQueueData({
     required this.id,
     required this.workspaceId,
+    required this.operationId,
     required this.entityTable,
     required this.entityId,
     required this.operation,
+    required this.baseVersion,
     required this.payloadJson,
     required this.queuedAt,
     required this.attempts,
+    required this.nextAttemptAt,
     this.lastError,
+    required this.status,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['workspace_id'] = Variable<String>(workspaceId);
+    map['operation_id'] = Variable<String>(operationId);
     map['entity_table'] = Variable<String>(entityTable);
     map['entity_id'] = Variable<String>(entityId);
     map['operation'] = Variable<String>(operation);
+    map['base_version'] = Variable<int>(baseVersion);
     map['payload_json'] = Variable<String>(payloadJson);
     map['queued_at'] = Variable<DateTime>(queuedAt);
     map['attempts'] = Variable<int>(attempts);
+    map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt);
     if (!nullToAbsent || lastError != null) {
       map['last_error'] = Variable<String>(lastError);
     }
+    map['status'] = Variable<String>(status);
     return map;
   }
 
@@ -19005,15 +19119,19 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     return SyncQueueCompanion(
       id: Value(id),
       workspaceId: Value(workspaceId),
+      operationId: Value(operationId),
       entityTable: Value(entityTable),
       entityId: Value(entityId),
       operation: Value(operation),
+      baseVersion: Value(baseVersion),
       payloadJson: Value(payloadJson),
       queuedAt: Value(queuedAt),
       attempts: Value(attempts),
+      nextAttemptAt: Value(nextAttemptAt),
       lastError: lastError == null && nullToAbsent
           ? const Value.absent()
           : Value(lastError),
+      status: Value(status),
     );
   }
 
@@ -19025,13 +19143,17 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     return SyncQueueData(
       id: serializer.fromJson<int>(json['id']),
       workspaceId: serializer.fromJson<String>(json['workspaceId']),
+      operationId: serializer.fromJson<String>(json['operationId']),
       entityTable: serializer.fromJson<String>(json['entityTable']),
       entityId: serializer.fromJson<String>(json['entityId']),
       operation: serializer.fromJson<String>(json['operation']),
+      baseVersion: serializer.fromJson<int>(json['baseVersion']),
       payloadJson: serializer.fromJson<String>(json['payloadJson']),
       queuedAt: serializer.fromJson<DateTime>(json['queuedAt']),
       attempts: serializer.fromJson<int>(json['attempts']),
+      nextAttemptAt: serializer.fromJson<DateTime>(json['nextAttemptAt']),
       lastError: serializer.fromJson<String?>(json['lastError']),
+      status: serializer.fromJson<String>(json['status']),
     );
   }
   @override
@@ -19040,36 +19162,48 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'workspaceId': serializer.toJson<String>(workspaceId),
+      'operationId': serializer.toJson<String>(operationId),
       'entityTable': serializer.toJson<String>(entityTable),
       'entityId': serializer.toJson<String>(entityId),
       'operation': serializer.toJson<String>(operation),
+      'baseVersion': serializer.toJson<int>(baseVersion),
       'payloadJson': serializer.toJson<String>(payloadJson),
       'queuedAt': serializer.toJson<DateTime>(queuedAt),
       'attempts': serializer.toJson<int>(attempts),
+      'nextAttemptAt': serializer.toJson<DateTime>(nextAttemptAt),
       'lastError': serializer.toJson<String?>(lastError),
+      'status': serializer.toJson<String>(status),
     };
   }
 
   SyncQueueData copyWith({
     int? id,
     String? workspaceId,
+    String? operationId,
     String? entityTable,
     String? entityId,
     String? operation,
+    int? baseVersion,
     String? payloadJson,
     DateTime? queuedAt,
     int? attempts,
+    DateTime? nextAttemptAt,
     Value<String?> lastError = const Value.absent(),
+    String? status,
   }) => SyncQueueData(
     id: id ?? this.id,
     workspaceId: workspaceId ?? this.workspaceId,
+    operationId: operationId ?? this.operationId,
     entityTable: entityTable ?? this.entityTable,
     entityId: entityId ?? this.entityId,
     operation: operation ?? this.operation,
+    baseVersion: baseVersion ?? this.baseVersion,
     payloadJson: payloadJson ?? this.payloadJson,
     queuedAt: queuedAt ?? this.queuedAt,
     attempts: attempts ?? this.attempts,
+    nextAttemptAt: nextAttemptAt ?? this.nextAttemptAt,
     lastError: lastError.present ? lastError.value : this.lastError,
+    status: status ?? this.status,
   );
   SyncQueueData copyWithCompanion(SyncQueueCompanion data) {
     return SyncQueueData(
@@ -19077,17 +19211,27 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       workspaceId: data.workspaceId.present
           ? data.workspaceId.value
           : this.workspaceId,
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
       entityTable: data.entityTable.present
           ? data.entityTable.value
           : this.entityTable,
       entityId: data.entityId.present ? data.entityId.value : this.entityId,
       operation: data.operation.present ? data.operation.value : this.operation,
+      baseVersion: data.baseVersion.present
+          ? data.baseVersion.value
+          : this.baseVersion,
       payloadJson: data.payloadJson.present
           ? data.payloadJson.value
           : this.payloadJson,
       queuedAt: data.queuedAt.present ? data.queuedAt.value : this.queuedAt,
       attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      nextAttemptAt: data.nextAttemptAt.present
+          ? data.nextAttemptAt.value
+          : this.nextAttemptAt,
       lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      status: data.status.present ? data.status.value : this.status,
     );
   }
 
@@ -19096,13 +19240,17 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
     return (StringBuffer('SyncQueueData(')
           ..write('id: $id, ')
           ..write('workspaceId: $workspaceId, ')
+          ..write('operationId: $operationId, ')
           ..write('entityTable: $entityTable, ')
           ..write('entityId: $entityId, ')
           ..write('operation: $operation, ')
+          ..write('baseVersion: $baseVersion, ')
           ..write('payloadJson: $payloadJson, ')
           ..write('queuedAt: $queuedAt, ')
           ..write('attempts: $attempts, ')
-          ..write('lastError: $lastError')
+          ..write('nextAttemptAt: $nextAttemptAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
@@ -19111,13 +19259,17 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
   int get hashCode => Object.hash(
     id,
     workspaceId,
+    operationId,
     entityTable,
     entityId,
     operation,
+    baseVersion,
     payloadJson,
     queuedAt,
     attempts,
+    nextAttemptAt,
     lastError,
+    status,
   );
   @override
   bool operator ==(Object other) =>
@@ -19125,95 +19277,128 @@ class SyncQueueData extends DataClass implements Insertable<SyncQueueData> {
       (other is SyncQueueData &&
           other.id == this.id &&
           other.workspaceId == this.workspaceId &&
+          other.operationId == this.operationId &&
           other.entityTable == this.entityTable &&
           other.entityId == this.entityId &&
           other.operation == this.operation &&
+          other.baseVersion == this.baseVersion &&
           other.payloadJson == this.payloadJson &&
           other.queuedAt == this.queuedAt &&
           other.attempts == this.attempts &&
-          other.lastError == this.lastError);
+          other.nextAttemptAt == this.nextAttemptAt &&
+          other.lastError == this.lastError &&
+          other.status == this.status);
 }
 
 class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   final Value<int> id;
   final Value<String> workspaceId;
+  final Value<String> operationId;
   final Value<String> entityTable;
   final Value<String> entityId;
   final Value<String> operation;
+  final Value<int> baseVersion;
   final Value<String> payloadJson;
   final Value<DateTime> queuedAt;
   final Value<int> attempts;
+  final Value<DateTime> nextAttemptAt;
   final Value<String?> lastError;
+  final Value<String> status;
   const SyncQueueCompanion({
     this.id = const Value.absent(),
     this.workspaceId = const Value.absent(),
+    this.operationId = const Value.absent(),
     this.entityTable = const Value.absent(),
     this.entityId = const Value.absent(),
     this.operation = const Value.absent(),
+    this.baseVersion = const Value.absent(),
     this.payloadJson = const Value.absent(),
     this.queuedAt = const Value.absent(),
     this.attempts = const Value.absent(),
+    this.nextAttemptAt = const Value.absent(),
     this.lastError = const Value.absent(),
+    this.status = const Value.absent(),
   });
   SyncQueueCompanion.insert({
     this.id = const Value.absent(),
     this.workspaceId = const Value.absent(),
+    required String operationId,
     required String entityTable,
     required String entityId,
     required String operation,
+    this.baseVersion = const Value.absent(),
     required String payloadJson,
     this.queuedAt = const Value.absent(),
     this.attempts = const Value.absent(),
+    this.nextAttemptAt = const Value.absent(),
     this.lastError = const Value.absent(),
-  }) : entityTable = Value(entityTable),
+    this.status = const Value.absent(),
+  }) : operationId = Value(operationId),
+       entityTable = Value(entityTable),
        entityId = Value(entityId),
        operation = Value(operation),
        payloadJson = Value(payloadJson);
   static Insertable<SyncQueueData> custom({
     Expression<int>? id,
     Expression<String>? workspaceId,
+    Expression<String>? operationId,
     Expression<String>? entityTable,
     Expression<String>? entityId,
     Expression<String>? operation,
+    Expression<int>? baseVersion,
     Expression<String>? payloadJson,
     Expression<DateTime>? queuedAt,
     Expression<int>? attempts,
+    Expression<DateTime>? nextAttemptAt,
     Expression<String>? lastError,
+    Expression<String>? status,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (workspaceId != null) 'workspace_id': workspaceId,
+      if (operationId != null) 'operation_id': operationId,
       if (entityTable != null) 'entity_table': entityTable,
       if (entityId != null) 'entity_id': entityId,
       if (operation != null) 'operation': operation,
+      if (baseVersion != null) 'base_version': baseVersion,
       if (payloadJson != null) 'payload_json': payloadJson,
       if (queuedAt != null) 'queued_at': queuedAt,
       if (attempts != null) 'attempts': attempts,
+      if (nextAttemptAt != null) 'next_attempt_at': nextAttemptAt,
       if (lastError != null) 'last_error': lastError,
+      if (status != null) 'status': status,
     });
   }
 
   SyncQueueCompanion copyWith({
     Value<int>? id,
     Value<String>? workspaceId,
+    Value<String>? operationId,
     Value<String>? entityTable,
     Value<String>? entityId,
     Value<String>? operation,
+    Value<int>? baseVersion,
     Value<String>? payloadJson,
     Value<DateTime>? queuedAt,
     Value<int>? attempts,
+    Value<DateTime>? nextAttemptAt,
     Value<String?>? lastError,
+    Value<String>? status,
   }) {
     return SyncQueueCompanion(
       id: id ?? this.id,
       workspaceId: workspaceId ?? this.workspaceId,
+      operationId: operationId ?? this.operationId,
       entityTable: entityTable ?? this.entityTable,
       entityId: entityId ?? this.entityId,
       operation: operation ?? this.operation,
+      baseVersion: baseVersion ?? this.baseVersion,
       payloadJson: payloadJson ?? this.payloadJson,
       queuedAt: queuedAt ?? this.queuedAt,
       attempts: attempts ?? this.attempts,
+      nextAttemptAt: nextAttemptAt ?? this.nextAttemptAt,
       lastError: lastError ?? this.lastError,
+      status: status ?? this.status,
     );
   }
 
@@ -19226,6 +19411,9 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     if (workspaceId.present) {
       map['workspace_id'] = Variable<String>(workspaceId.value);
     }
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
     if (entityTable.present) {
       map['entity_table'] = Variable<String>(entityTable.value);
     }
@@ -19234,6 +19422,9 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     }
     if (operation.present) {
       map['operation'] = Variable<String>(operation.value);
+    }
+    if (baseVersion.present) {
+      map['base_version'] = Variable<int>(baseVersion.value);
     }
     if (payloadJson.present) {
       map['payload_json'] = Variable<String>(payloadJson.value);
@@ -19244,8 +19435,14 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     if (attempts.present) {
       map['attempts'] = Variable<int>(attempts.value);
     }
+    if (nextAttemptAt.present) {
+      map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt.value);
+    }
     if (lastError.present) {
       map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
     }
     return map;
   }
@@ -19255,13 +19452,17 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
     return (StringBuffer('SyncQueueCompanion(')
           ..write('id: $id, ')
           ..write('workspaceId: $workspaceId, ')
+          ..write('operationId: $operationId, ')
           ..write('entityTable: $entityTable, ')
           ..write('entityId: $entityId, ')
           ..write('operation: $operation, ')
+          ..write('baseVersion: $baseVersion, ')
           ..write('payloadJson: $payloadJson, ')
           ..write('queuedAt: $queuedAt, ')
           ..write('attempts: $attempts, ')
-          ..write('lastError: $lastError')
+          ..write('nextAttemptAt: $nextAttemptAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('status: $status')
           ..write(')'))
         .toString();
   }
@@ -19852,7 +20053,7 @@ final class $$UsersTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.partners,
-    aliasName: $_aliasNameGenerator(db.users.id, db.partners.userId),
+    aliasName: 'users__id__partners__user_id',
   );
 
   $$PartnersTableProcessedTableManager get partnersRefs {
@@ -20180,8 +20381,10 @@ class $$UsersTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$UsersTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$UsersTable, User>(table),
+                  $$UsersTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback: ({partnersRefs = false}) {
@@ -20261,9 +20464,8 @@ final class $$PartnersTableReferences
     extends BaseReferences<_$AppDatabase, $PartnersTable, Partner> {
   $$PartnersTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $UsersTable _userIdTable(_$AppDatabase db) => db.users.createAlias(
-    $_aliasNameGenerator(db.partners.userId, db.users.id),
-  );
+  static $UsersTable _userIdTable(_$AppDatabase db) =>
+      db.users.createAlias('partners__user_id__users__id');
 
   $$UsersTableProcessedTableManager? get userId {
     final $_column = $_itemColumn<String>('user_id');
@@ -20282,10 +20484,7 @@ final class $$PartnersTableReferences
   static MultiTypedResultKey<$PurchasesTable, List<Purchase>>
   _purchasesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.purchases,
-    aliasName: $_aliasNameGenerator(
-      db.partners.id,
-      db.purchases.paidByPartnerId,
-    ),
+    aliasName: 'partners__id__purchases__paid_by_partner_id',
   );
 
   $$PurchasesTableProcessedTableManager get purchasesRefs {
@@ -20302,10 +20501,7 @@ final class $$PartnersTableReferences
   static MultiTypedResultKey<$LaborPaymentsTable, List<LaborPayment>>
   _laborPaymentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.laborPayments,
-    aliasName: $_aliasNameGenerator(
-      db.partners.id,
-      db.laborPayments.paidByPartnerId,
-    ),
+    aliasName: 'partners__id__labor_payments__paid_by_partner_id',
   );
 
   $$LaborPaymentsTableProcessedTableManager get laborPaymentsRefs {
@@ -20324,10 +20520,7 @@ final class $$PartnersTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.expenses,
-    aliasName: $_aliasNameGenerator(
-      db.partners.id,
-      db.expenses.paidByPartnerId,
-    ),
+    aliasName: 'partners__id__expenses__paid_by_partner_id',
   );
 
   $$ExpensesTableProcessedTableManager get expensesRefs {
@@ -20344,10 +20537,7 @@ final class $$PartnersTableReferences
   static MultiTypedResultKey<$CapitalMovementsTable, List<CapitalMovement>>
   _capitalMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.capitalMovements,
-    aliasName: $_aliasNameGenerator(
-      db.partners.id,
-      db.capitalMovements.partnerId,
-    ),
+    aliasName: 'partners__id__capital_movements__partner_id',
   );
 
   $$CapitalMovementsTableProcessedTableManager get capitalMovementsRefs {
@@ -20367,10 +20557,7 @@ final class $$PartnersTableReferences
   static MultiTypedResultKey<$CollectionsTable, List<Collection>>
   _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.collections,
-    aliasName: $_aliasNameGenerator(
-      db.partners.id,
-      db.collections.receivedByPartnerId,
-    ),
+    aliasName: 'partners__id__collections__received_by_partner_id',
   );
 
   $$CollectionsTableProcessedTableManager get collectionsRefs {
@@ -20981,7 +21168,7 @@ class $$PartnersTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$PartnersTable, Partner>(table),
                   $$PartnersTableReferences(db, table, e),
                 ),
               )
@@ -21218,7 +21405,7 @@ final class $$WorkersTableReferences
   static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
   _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.toolAssignments,
-    aliasName: $_aliasNameGenerator(db.workers.id, db.toolAssignments.workerId),
+    aliasName: 'workers__id__tool_assignments__worker_id',
   );
 
   $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
@@ -21239,7 +21426,7 @@ final class $$WorkersTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.workLogs,
-    aliasName: $_aliasNameGenerator(db.workers.id, db.workLogs.workerId),
+    aliasName: 'workers__id__work_logs__worker_id',
   );
 
   $$WorkLogsTableProcessedTableManager get workLogsRefs {
@@ -21257,7 +21444,7 @@ final class $$WorkersTableReferences
   static MultiTypedResultKey<$LaborPaymentsTable, List<LaborPayment>>
   _laborPaymentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.laborPayments,
-    aliasName: $_aliasNameGenerator(db.workers.id, db.laborPayments.workerId),
+    aliasName: 'workers__id__labor_payments__worker_id',
   );
 
   $$LaborPaymentsTableProcessedTableManager get laborPaymentsRefs {
@@ -21759,7 +21946,7 @@ class $$WorkersTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$WorkersTable, Worker>(table),
                   $$WorkersTableReferences(db, table, e),
                 ),
               )
@@ -21909,7 +22096,7 @@ final class $$ClientsTableReferences
   static MultiTypedResultKey<$ClientLocationsTable, List<ClientLocation>>
   _clientLocationsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.clientLocations,
-    aliasName: $_aliasNameGenerator(db.clients.id, db.clientLocations.clientId),
+    aliasName: 'clients__id__client_locations__client_id',
   );
 
   $$ClientLocationsTableProcessedTableManager get clientLocationsRefs {
@@ -21930,7 +22117,7 @@ final class $$ClientsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.projects,
-    aliasName: $_aliasNameGenerator(db.clients.id, db.projects.clientId),
+    aliasName: 'clients__id__projects__client_id',
   );
 
   $$ProjectsTableProcessedTableManager get projectsRefs {
@@ -21948,10 +22135,7 @@ final class $$ClientsTableReferences
   static MultiTypedResultKey<$MaintenancePlansTable, List<MaintenancePlan>>
   _maintenancePlansRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.maintenancePlans,
-    aliasName: $_aliasNameGenerator(
-      db.clients.id,
-      db.maintenancePlans.clientId,
-    ),
+    aliasName: 'clients__id__maintenance_plans__client_id',
   );
 
   $$MaintenancePlansTableProcessedTableManager get maintenancePlansRefs {
@@ -21971,7 +22155,7 @@ final class $$ClientsTableReferences
   static MultiTypedResultKey<$CollectionsTable, List<Collection>>
   _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.collections,
-    aliasName: $_aliasNameGenerator(db.clients.id, db.collections.clientId),
+    aliasName: 'clients__id__collections__client_id',
   );
 
   $$CollectionsTableProcessedTableManager get collectionsRefs {
@@ -22471,7 +22655,7 @@ class $$ClientsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ClientsTable, Client>(table),
                   $$ClientsTableReferences(db, table, e),
                 ),
               )
@@ -22650,9 +22834,7 @@ final class $$ClientLocationsTableReferences
   );
 
   static $ClientsTable _clientIdTable(_$AppDatabase db) =>
-      db.clients.createAlias(
-        $_aliasNameGenerator(db.clientLocations.clientId, db.clients.id),
-      );
+      db.clients.createAlias('client_locations__client_id__clients__id');
 
   $$ClientsTableProcessedTableManager get clientId {
     final $_column = $_itemColumn<String>('client_id')!;
@@ -22672,10 +22854,7 @@ final class $$ClientLocationsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.projects,
-    aliasName: $_aliasNameGenerator(
-      db.clientLocations.id,
-      db.projects.locationId,
-    ),
+    aliasName: 'client_locations__id__projects__location_id',
   );
 
   $$ProjectsTableProcessedTableManager get projectsRefs {
@@ -22693,10 +22872,7 @@ final class $$ClientLocationsTableReferences
   static MultiTypedResultKey<$MaintenancePlansTable, List<MaintenancePlan>>
   _maintenancePlansRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.maintenancePlans,
-    aliasName: $_aliasNameGenerator(
-      db.clientLocations.id,
-      db.maintenancePlans.locationId,
-    ),
+    aliasName: 'client_locations__id__maintenance_plans__location_id',
   );
 
   $$MaintenancePlansTableProcessedTableManager get maintenancePlansRefs {
@@ -23170,7 +23346,7 @@ class $$ClientLocationsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ClientLocationsTable, ClientLocation>(table),
                   $$ClientLocationsTableReferences(db, table, e),
                 ),
               )
@@ -23338,8 +23514,8 @@ final class $$ProjectsTableReferences
     extends BaseReferences<_$AppDatabase, $ProjectsTable, Project> {
   $$ProjectsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ClientsTable _clientIdTable(_$AppDatabase db) => db.clients
-      .createAlias($_aliasNameGenerator(db.projects.clientId, db.clients.id));
+  static $ClientsTable _clientIdTable(_$AppDatabase db) =>
+      db.clients.createAlias('projects__client_id__clients__id');
 
   $$ClientsTableProcessedTableManager? get clientId {
     final $_column = $_itemColumn<String>('client_id');
@@ -23355,10 +23531,9 @@ final class $$ProjectsTableReferences
     );
   }
 
-  static $ClientLocationsTable _locationIdTable(_$AppDatabase db) =>
-      db.clientLocations.createAlias(
-        $_aliasNameGenerator(db.projects.locationId, db.clientLocations.id),
-      );
+  static $ClientLocationsTable _locationIdTable(_$AppDatabase db) => db
+      .clientLocations
+      .createAlias('projects__location_id__client_locations__id');
 
   $$ClientLocationsTableProcessedTableManager? get locationId {
     final $_column = $_itemColumn<String>('location_id');
@@ -23377,10 +23552,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
   _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.stockMovements,
-    aliasName: $_aliasNameGenerator(
-      db.projects.id,
-      db.stockMovements.projectId,
-    ),
+    aliasName: 'projects__id__stock_movements__project_id',
   );
 
   $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
@@ -23398,10 +23570,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
   _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.toolAssignments,
-    aliasName: $_aliasNameGenerator(
-      db.projects.id,
-      db.toolAssignments.projectId,
-    ),
+    aliasName: 'projects__id__tool_assignments__project_id',
   );
 
   $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
@@ -23422,7 +23591,7 @@ final class $$ProjectsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.workLogs,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.workLogs.projectId),
+    aliasName: 'projects__id__work_logs__project_id',
   );
 
   $$WorkLogsTableProcessedTableManager get workLogsRefs {
@@ -23440,7 +23609,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$LaborPaymentsTable, List<LaborPayment>>
   _laborPaymentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.laborPayments,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.laborPayments.projectId),
+    aliasName: 'projects__id__labor_payments__project_id',
   );
 
   $$LaborPaymentsTableProcessedTableManager get laborPaymentsRefs {
@@ -23459,7 +23628,7 @@ final class $$ProjectsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.expenses,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.expenses.projectId),
+    aliasName: 'projects__id__expenses__project_id',
   );
 
   $$ExpensesTableProcessedTableManager get expensesRefs {
@@ -23477,10 +23646,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$CapitalMovementsTable, List<CapitalMovement>>
   _capitalMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.capitalMovements,
-    aliasName: $_aliasNameGenerator(
-      db.projects.id,
-      db.capitalMovements.projectId,
-    ),
+    aliasName: 'projects__id__capital_movements__project_id',
   );
 
   $$CapitalMovementsTableProcessedTableManager get capitalMovementsRefs {
@@ -23500,7 +23666,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$CollectionsTable, List<Collection>>
   _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.collections,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.collections.projectId),
+    aliasName: 'projects__id__collections__project_id',
   );
 
   $$CollectionsTableProcessedTableManager get collectionsRefs {
@@ -24360,7 +24526,7 @@ class $$ProjectsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ProjectsTable, Project>(table),
                   $$ProjectsTableReferences(db, table, e),
                 ),
               )
@@ -24673,9 +24839,7 @@ final class $$MaintenancePlansTableReferences
   );
 
   static $ClientsTable _clientIdTable(_$AppDatabase db) =>
-      db.clients.createAlias(
-        $_aliasNameGenerator(db.maintenancePlans.clientId, db.clients.id),
-      );
+      db.clients.createAlias('maintenance_plans__client_id__clients__id');
 
   $$ClientsTableProcessedTableManager get clientId {
     final $_column = $_itemColumn<String>('client_id')!;
@@ -24691,13 +24855,9 @@ final class $$MaintenancePlansTableReferences
     );
   }
 
-  static $ClientLocationsTable _locationIdTable(_$AppDatabase db) =>
-      db.clientLocations.createAlias(
-        $_aliasNameGenerator(
-          db.maintenancePlans.locationId,
-          db.clientLocations.id,
-        ),
-      );
+  static $ClientLocationsTable _locationIdTable(_$AppDatabase db) => db
+      .clientLocations
+      .createAlias('maintenance_plans__location_id__client_locations__id');
 
   $$ClientLocationsTableProcessedTableManager? get locationId {
     final $_column = $_itemColumn<String>('location_id');
@@ -24717,10 +24877,7 @@ final class $$MaintenancePlansTableReferences
   _maintenanceVisitsRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.maintenanceVisits,
-        aliasName: $_aliasNameGenerator(
-          db.maintenancePlans.id,
-          db.maintenanceVisits.planId,
-        ),
+        aliasName: 'maintenance_plans__id__maintenance_visits__plan_id',
       );
 
   $$MaintenanceVisitsTableProcessedTableManager get maintenanceVisitsRefs {
@@ -24740,10 +24897,7 @@ final class $$MaintenancePlansTableReferences
   static MultiTypedResultKey<$CollectionsTable, List<Collection>>
   _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.collections,
-    aliasName: $_aliasNameGenerator(
-      db.maintenancePlans.id,
-      db.collections.planId,
-    ),
+    aliasName: 'maintenance_plans__id__collections__plan_id',
   );
 
   $$CollectionsTableProcessedTableManager get collectionsRefs {
@@ -25406,7 +25560,7 @@ class $$MaintenancePlansTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$MaintenancePlansTable, MaintenancePlan>(table),
                   $$MaintenancePlansTableReferences(db, table, e),
                 ),
               )
@@ -25594,13 +25748,9 @@ final class $$MaintenanceVisitsTableReferences
     super.$_typedResult,
   );
 
-  static $MaintenancePlansTable _planIdTable(_$AppDatabase db) =>
-      db.maintenancePlans.createAlias(
-        $_aliasNameGenerator(
-          db.maintenanceVisits.planId,
-          db.maintenancePlans.id,
-        ),
-      );
+  static $MaintenancePlansTable _planIdTable(_$AppDatabase db) => db
+      .maintenancePlans
+      .createAlias('maintenance_visits__plan_id__maintenance_plans__id');
 
   $$MaintenancePlansTableProcessedTableManager get planId {
     final $_column = $_itemColumn<String>('plan_id')!;
@@ -25619,10 +25769,7 @@ final class $$MaintenanceVisitsTableReferences
   static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
   _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.stockMovements,
-    aliasName: $_aliasNameGenerator(
-      db.maintenanceVisits.id,
-      db.stockMovements.visitId,
-    ),
+    aliasName: 'maintenance_visits__id__stock_movements__visit_id',
   );
 
   $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
@@ -25640,10 +25787,7 @@ final class $$MaintenanceVisitsTableReferences
   static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
   _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.toolAssignments,
-    aliasName: $_aliasNameGenerator(
-      db.maintenanceVisits.id,
-      db.toolAssignments.maintenanceVisitId,
-    ),
+    aliasName: 'maintenance_visits__id__tool_assignments__maintenance_visit_id',
   );
 
   $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
@@ -25664,10 +25808,7 @@ final class $$MaintenanceVisitsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.workLogs,
-    aliasName: $_aliasNameGenerator(
-      db.maintenanceVisits.id,
-      db.workLogs.maintenanceVisitId,
-    ),
+    aliasName: 'maintenance_visits__id__work_logs__maintenance_visit_id',
   );
 
   $$WorkLogsTableProcessedTableManager get workLogsRefs {
@@ -25685,10 +25826,7 @@ final class $$MaintenanceVisitsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.expenses,
-    aliasName: $_aliasNameGenerator(
-      db.maintenanceVisits.id,
-      db.expenses.visitId,
-    ),
+    aliasName: 'maintenance_visits__id__expenses__visit_id',
   );
 
   $$ExpensesTableProcessedTableManager get expensesRefs {
@@ -25706,10 +25844,7 @@ final class $$MaintenanceVisitsTableReferences
   static MultiTypedResultKey<$CollectionsTable, List<Collection>>
   _collectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.collections,
-    aliasName: $_aliasNameGenerator(
-      db.maintenanceVisits.id,
-      db.collections.visitId,
-    ),
+    aliasName: 'maintenance_visits__id__collections__visit_id',
   );
 
   $$CollectionsTableProcessedTableManager get collectionsRefs {
@@ -26362,7 +26497,7 @@ class $$MaintenanceVisitsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$MaintenanceVisitsTable, MaintenanceVisit>(table),
                   $$MaintenanceVisitsTableReferences(db, table, e),
                 ),
               )
@@ -26607,10 +26742,7 @@ final class $$InventoryItemsTableReferences
   static MultiTypedResultKey<$PurchaseItemsTable, List<PurchaseItem>>
   _purchaseItemsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.purchaseItems,
-    aliasName: $_aliasNameGenerator(
-      db.inventoryItems.id,
-      db.purchaseItems.itemId,
-    ),
+    aliasName: 'inventory_items__id__purchase_items__item_id',
   );
 
   $$PurchaseItemsTableProcessedTableManager get purchaseItemsRefs {
@@ -26628,10 +26760,7 @@ final class $$InventoryItemsTableReferences
   static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
   _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.stockMovements,
-    aliasName: $_aliasNameGenerator(
-      db.inventoryItems.id,
-      db.stockMovements.itemId,
-    ),
+    aliasName: 'inventory_items__id__stock_movements__item_id',
   );
 
   $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
@@ -27101,7 +27230,7 @@ class $$InventoryItemsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$InventoryItemsTable, InventoryItem>(table),
                   $$InventoryItemsTableReferences(db, table, e),
                 ),
               )
@@ -27229,7 +27358,7 @@ final class $$SuppliersTableReferences
   static MultiTypedResultKey<$PurchasesTable, List<Purchase>>
   _purchasesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.purchases,
-    aliasName: $_aliasNameGenerator(db.suppliers.id, db.purchases.supplierId),
+    aliasName: 'suppliers__id__purchases__supplier_id',
   );
 
   $$PurchasesTableProcessedTableManager get purchasesRefs {
@@ -27642,7 +27771,7 @@ class $$SuppliersTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$SuppliersTable, Supplier>(table),
                   $$SuppliersTableReferences(db, table, e),
                 ),
               )
@@ -27739,9 +27868,7 @@ final class $$PurchasesTableReferences
   $$PurchasesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $SuppliersTable _supplierIdTable(_$AppDatabase db) =>
-      db.suppliers.createAlias(
-        $_aliasNameGenerator(db.purchases.supplierId, db.suppliers.id),
-      );
+      db.suppliers.createAlias('purchases__supplier_id__suppliers__id');
 
   $$SuppliersTableProcessedTableManager? get supplierId {
     final $_column = $_itemColumn<String>('supplier_id');
@@ -27758,9 +27885,7 @@ final class $$PurchasesTableReferences
   }
 
   static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
-      db.partners.createAlias(
-        $_aliasNameGenerator(db.purchases.paidByPartnerId, db.partners.id),
-      );
+      db.partners.createAlias('purchases__paid_by_partner_id__partners__id');
 
   $$PartnersTableProcessedTableManager? get paidByPartnerId {
     final $_column = $_itemColumn<String>('paid_by_partner_id');
@@ -27779,10 +27904,7 @@ final class $$PurchasesTableReferences
   static MultiTypedResultKey<$PurchaseItemsTable, List<PurchaseItem>>
   _purchaseItemsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.purchaseItems,
-    aliasName: $_aliasNameGenerator(
-      db.purchases.id,
-      db.purchaseItems.purchaseId,
-    ),
+    aliasName: 'purchases__id__purchase_items__purchase_id',
   );
 
   $$PurchaseItemsTableProcessedTableManager get purchaseItemsRefs {
@@ -27800,10 +27922,7 @@ final class $$PurchasesTableReferences
   static MultiTypedResultKey<$StockMovementsTable, List<StockMovement>>
   _stockMovementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.stockMovements,
-    aliasName: $_aliasNameGenerator(
-      db.purchases.id,
-      db.stockMovements.purchaseId,
-    ),
+    aliasName: 'purchases__id__stock_movements__purchase_id',
   );
 
   $$StockMovementsTableProcessedTableManager get stockMovementsRefs {
@@ -28370,7 +28489,7 @@ class $$PurchasesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$PurchasesTable, Purchase>(table),
                   $$PurchasesTableReferences(db, table, e),
                 ),
               )
@@ -28548,9 +28667,7 @@ final class $$PurchaseItemsTableReferences
   );
 
   static $PurchasesTable _purchaseIdTable(_$AppDatabase db) =>
-      db.purchases.createAlias(
-        $_aliasNameGenerator(db.purchaseItems.purchaseId, db.purchases.id),
-      );
+      db.purchases.createAlias('purchase_items__purchase_id__purchases__id');
 
   $$PurchasesTableProcessedTableManager get purchaseId {
     final $_column = $_itemColumn<String>('purchase_id')!;
@@ -28566,10 +28683,9 @@ final class $$PurchaseItemsTableReferences
     );
   }
 
-  static $InventoryItemsTable _itemIdTable(_$AppDatabase db) =>
-      db.inventoryItems.createAlias(
-        $_aliasNameGenerator(db.purchaseItems.itemId, db.inventoryItems.id),
-      );
+  static $InventoryItemsTable _itemIdTable(_$AppDatabase db) => db
+      .inventoryItems
+      .createAlias('purchase_items__item_id__inventory_items__id');
 
   $$InventoryItemsTableProcessedTableManager get itemId {
     final $_column = $_itemColumn<String>('item_id')!;
@@ -28996,7 +29112,7 @@ class $$PurchaseItemsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$PurchaseItemsTable, PurchaseItem>(table),
                   $$PurchaseItemsTableReferences(db, table, e),
                 ),
               )
@@ -29126,10 +29242,9 @@ final class $$StockMovementsTableReferences
     super.$_typedResult,
   );
 
-  static $InventoryItemsTable _itemIdTable(_$AppDatabase db) =>
-      db.inventoryItems.createAlias(
-        $_aliasNameGenerator(db.stockMovements.itemId, db.inventoryItems.id),
-      );
+  static $InventoryItemsTable _itemIdTable(_$AppDatabase db) => db
+      .inventoryItems
+      .createAlias('stock_movements__item_id__inventory_items__id');
 
   $$InventoryItemsTableProcessedTableManager get itemId {
     final $_column = $_itemColumn<String>('item_id')!;
@@ -29146,9 +29261,7 @@ final class $$StockMovementsTableReferences
   }
 
   static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias(
-        $_aliasNameGenerator(db.stockMovements.projectId, db.projects.id),
-      );
+      db.projects.createAlias('stock_movements__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -29164,13 +29277,9 @@ final class $$StockMovementsTableReferences
     );
   }
 
-  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
-      db.maintenanceVisits.createAlias(
-        $_aliasNameGenerator(
-          db.stockMovements.visitId,
-          db.maintenanceVisits.id,
-        ),
-      );
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) => db
+      .maintenanceVisits
+      .createAlias('stock_movements__visit_id__maintenance_visits__id');
 
   $$MaintenanceVisitsTableProcessedTableManager? get visitId {
     final $_column = $_itemColumn<String>('visit_id');
@@ -29187,9 +29296,7 @@ final class $$StockMovementsTableReferences
   }
 
   static $PurchasesTable _purchaseIdTable(_$AppDatabase db) =>
-      db.purchases.createAlias(
-        $_aliasNameGenerator(db.stockMovements.purchaseId, db.purchases.id),
-      );
+      db.purchases.createAlias('stock_movements__purchase_id__purchases__id');
 
   $$PurchasesTableProcessedTableManager? get purchaseId {
     final $_column = $_itemColumn<String>('purchase_id');
@@ -29823,7 +29930,7 @@ class $$StockMovementsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$StockMovementsTable, StockMovement>(table),
                   $$StockMovementsTableReferences(db, table, e),
                 ),
               )
@@ -29997,7 +30104,7 @@ final class $$ToolsTableReferences
   static MultiTypedResultKey<$ToolAssignmentsTable, List<ToolAssignment>>
   _toolAssignmentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.toolAssignments,
-    aliasName: $_aliasNameGenerator(db.tools.id, db.toolAssignments.toolId),
+    aliasName: 'tools__id__tool_assignments__tool_id',
   );
 
   $$ToolAssignmentsTableProcessedTableManager get toolAssignmentsRefs {
@@ -30452,8 +30559,10 @@ class $$ToolsTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$ToolsTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$ToolsTable, Tool>(table),
+                  $$ToolsTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback: ({toolAssignmentsRefs = false}) {
@@ -30559,9 +30668,8 @@ final class $$ToolAssignmentsTableReferences
     super.$_typedResult,
   );
 
-  static $ToolsTable _toolIdTable(_$AppDatabase db) => db.tools.createAlias(
-    $_aliasNameGenerator(db.toolAssignments.toolId, db.tools.id),
-  );
+  static $ToolsTable _toolIdTable(_$AppDatabase db) =>
+      db.tools.createAlias('tool_assignments__tool_id__tools__id');
 
   $$ToolsTableProcessedTableManager get toolId {
     final $_column = $_itemColumn<String>('tool_id')!;
@@ -30578,9 +30686,7 @@ final class $$ToolAssignmentsTableReferences
   }
 
   static $WorkersTable _workerIdTable(_$AppDatabase db) =>
-      db.workers.createAlias(
-        $_aliasNameGenerator(db.toolAssignments.workerId, db.workers.id),
-      );
+      db.workers.createAlias('tool_assignments__worker_id__workers__id');
 
   $$WorkersTableProcessedTableManager? get workerId {
     final $_column = $_itemColumn<String>('worker_id');
@@ -30597,9 +30703,7 @@ final class $$ToolAssignmentsTableReferences
   }
 
   static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias(
-        $_aliasNameGenerator(db.toolAssignments.projectId, db.projects.id),
-      );
+      db.projects.createAlias('tool_assignments__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -30617,10 +30721,7 @@ final class $$ToolAssignmentsTableReferences
 
   static $MaintenanceVisitsTable _maintenanceVisitIdTable(_$AppDatabase db) =>
       db.maintenanceVisits.createAlias(
-        $_aliasNameGenerator(
-          db.toolAssignments.maintenanceVisitId,
-          db.maintenanceVisits.id,
-        ),
+        'tool_assignments__maintenance_visit_id__maintenance_visits__id',
       );
 
   $$MaintenanceVisitsTableProcessedTableManager? get maintenanceVisitId {
@@ -31259,7 +31360,7 @@ class $$ToolAssignmentsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ToolAssignmentsTable, ToolAssignment>(table),
                   $$ToolAssignmentsTableReferences(db, table, e),
                 ),
               )
@@ -31428,8 +31529,8 @@ final class $$WorkLogsTableReferences
     extends BaseReferences<_$AppDatabase, $WorkLogsTable, WorkLog> {
   $$WorkLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $WorkersTable _workerIdTable(_$AppDatabase db) => db.workers
-      .createAlias($_aliasNameGenerator(db.workLogs.workerId, db.workers.id));
+  static $WorkersTable _workerIdTable(_$AppDatabase db) =>
+      db.workers.createAlias('work_logs__worker_id__workers__id');
 
   $$WorkersTableProcessedTableManager get workerId {
     final $_column = $_itemColumn<String>('worker_id')!;
@@ -31445,8 +31546,8 @@ final class $$WorkLogsTableReferences
     );
   }
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) => db.projects
-      .createAlias($_aliasNameGenerator(db.workLogs.projectId, db.projects.id));
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias('work_logs__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -31464,10 +31565,7 @@ final class $$WorkLogsTableReferences
 
   static $MaintenanceVisitsTable _maintenanceVisitIdTable(_$AppDatabase db) =>
       db.maintenanceVisits.createAlias(
-        $_aliasNameGenerator(
-          db.workLogs.maintenanceVisitId,
-          db.maintenanceVisits.id,
-        ),
+        'work_logs__maintenance_visit_id__maintenance_visits__id',
       );
 
   $$MaintenanceVisitsTableProcessedTableManager? get maintenanceVisitId {
@@ -32024,7 +32122,7 @@ class $$WorkLogsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$WorkLogsTable, WorkLog>(table),
                   $$WorkLogsTableReferences(db, table, e),
                 ),
               )
@@ -32171,9 +32269,7 @@ final class $$LaborPaymentsTableReferences
   );
 
   static $WorkersTable _workerIdTable(_$AppDatabase db) =>
-      db.workers.createAlias(
-        $_aliasNameGenerator(db.laborPayments.workerId, db.workers.id),
-      );
+      db.workers.createAlias('labor_payments__worker_id__workers__id');
 
   $$WorkersTableProcessedTableManager get workerId {
     final $_column = $_itemColumn<String>('worker_id')!;
@@ -32190,9 +32286,7 @@ final class $$LaborPaymentsTableReferences
   }
 
   static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias(
-        $_aliasNameGenerator(db.laborPayments.projectId, db.projects.id),
-      );
+      db.projects.createAlias('labor_payments__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -32208,10 +32302,8 @@ final class $$LaborPaymentsTableReferences
     );
   }
 
-  static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
-      db.partners.createAlias(
-        $_aliasNameGenerator(db.laborPayments.paidByPartnerId, db.partners.id),
-      );
+  static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) => db.partners
+      .createAlias('labor_payments__paid_by_partner_id__partners__id');
 
   $$PartnersTableProcessedTableManager? get paidByPartnerId {
     final $_column = $_itemColumn<String>('paid_by_partner_id');
@@ -32734,7 +32826,7 @@ class $$LaborPaymentsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$LaborPaymentsTable, LaborPayment>(table),
                   $$LaborPaymentsTableReferences(db, table, e),
                 ),
               )
@@ -32885,9 +32977,7 @@ final class $$ExpensesTableReferences
   $$ExpensesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $PartnersTable _paidByPartnerIdTable(_$AppDatabase db) =>
-      db.partners.createAlias(
-        $_aliasNameGenerator(db.expenses.paidByPartnerId, db.partners.id),
-      );
+      db.partners.createAlias('expenses__paid_by_partner_id__partners__id');
 
   $$PartnersTableProcessedTableManager get paidByPartnerId {
     final $_column = $_itemColumn<String>('paid_by_partner_id')!;
@@ -32903,8 +32993,8 @@ final class $$ExpensesTableReferences
     );
   }
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) => db.projects
-      .createAlias($_aliasNameGenerator(db.expenses.projectId, db.projects.id));
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias('expenses__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -32920,10 +33010,9 @@ final class $$ExpensesTableReferences
     );
   }
 
-  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
-      db.maintenanceVisits.createAlias(
-        $_aliasNameGenerator(db.expenses.visitId, db.maintenanceVisits.id),
-      );
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) => db
+      .maintenanceVisits
+      .createAlias('expenses__visit_id__maintenance_visits__id');
 
   $$MaintenanceVisitsTableProcessedTableManager? get visitId {
     final $_column = $_itemColumn<String>('visit_id');
@@ -33496,7 +33585,7 @@ class $$ExpensesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ExpensesTable, Expense>(table),
                   $$ExpensesTableReferences(db, table, e),
                 ),
               )
@@ -33638,9 +33727,7 @@ final class $$CapitalMovementsTableReferences
   );
 
   static $PartnersTable _partnerIdTable(_$AppDatabase db) =>
-      db.partners.createAlias(
-        $_aliasNameGenerator(db.capitalMovements.partnerId, db.partners.id),
-      );
+      db.partners.createAlias('capital_movements__partner_id__partners__id');
 
   $$PartnersTableProcessedTableManager get partnerId {
     final $_column = $_itemColumn<String>('partner_id')!;
@@ -33657,9 +33744,7 @@ final class $$CapitalMovementsTableReferences
   }
 
   static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias(
-        $_aliasNameGenerator(db.capitalMovements.projectId, db.projects.id),
-      );
+      db.projects.createAlias('capital_movements__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -34103,7 +34188,7 @@ class $$CapitalMovementsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$CapitalMovementsTable, CapitalMovement>(table),
                   $$CapitalMovementsTableReferences(db, table, e),
                 ),
               )
@@ -34234,9 +34319,7 @@ final class $$CollectionsTableReferences
   $$CollectionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $ClientsTable _clientIdTable(_$AppDatabase db) =>
-      db.clients.createAlias(
-        $_aliasNameGenerator(db.collections.clientId, db.clients.id),
-      );
+      db.clients.createAlias('collections__client_id__clients__id');
 
   $$ClientsTableProcessedTableManager get clientId {
     final $_column = $_itemColumn<String>('client_id')!;
@@ -34253,9 +34336,7 @@ final class $$CollectionsTableReferences
   }
 
   static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias(
-        $_aliasNameGenerator(db.collections.projectId, db.projects.id),
-      );
+      db.projects.createAlias('collections__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -34271,10 +34352,9 @@ final class $$CollectionsTableReferences
     );
   }
 
-  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) =>
-      db.maintenanceVisits.createAlias(
-        $_aliasNameGenerator(db.collections.visitId, db.maintenanceVisits.id),
-      );
+  static $MaintenanceVisitsTable _visitIdTable(_$AppDatabase db) => db
+      .maintenanceVisits
+      .createAlias('collections__visit_id__maintenance_visits__id');
 
   $$MaintenanceVisitsTableProcessedTableManager? get visitId {
     final $_column = $_itemColumn<String>('visit_id');
@@ -34290,10 +34370,9 @@ final class $$CollectionsTableReferences
     );
   }
 
-  static $MaintenancePlansTable _planIdTable(_$AppDatabase db) =>
-      db.maintenancePlans.createAlias(
-        $_aliasNameGenerator(db.collections.planId, db.maintenancePlans.id),
-      );
+  static $MaintenancePlansTable _planIdTable(_$AppDatabase db) => db
+      .maintenancePlans
+      .createAlias('collections__plan_id__maintenance_plans__id');
 
   $$MaintenancePlansTableProcessedTableManager? get planId {
     final $_column = $_itemColumn<String>('plan_id');
@@ -34309,13 +34388,9 @@ final class $$CollectionsTableReferences
     );
   }
 
-  static $PartnersTable _receivedByPartnerIdTable(_$AppDatabase db) =>
-      db.partners.createAlias(
-        $_aliasNameGenerator(
-          db.collections.receivedByPartnerId,
-          db.partners.id,
-        ),
-      );
+  static $PartnersTable _receivedByPartnerIdTable(_$AppDatabase db) => db
+      .partners
+      .createAlias('collections__received_by_partner_id__partners__id');
 
   $$PartnersTableProcessedTableManager? get receivedByPartnerId {
     final $_column = $_itemColumn<String>('received_by_partner_id');
@@ -35002,7 +35077,7 @@ class $$CollectionsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$CollectionsTable, Collection>(table),
                   $$CollectionsTableReferences(db, table, e),
                 ),
               )
@@ -35574,7 +35649,16 @@ class $$AttachmentsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$AttachmentsTable, Attachment>(table),
+                  BaseReferences<_$AppDatabase, $AttachmentsTable, Attachment>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -35602,25 +35686,33 @@ typedef $$SyncQueueTableCreateCompanionBuilder =
     SyncQueueCompanion Function({
       Value<int> id,
       Value<String> workspaceId,
+      required String operationId,
       required String entityTable,
       required String entityId,
       required String operation,
+      Value<int> baseVersion,
       required String payloadJson,
       Value<DateTime> queuedAt,
       Value<int> attempts,
+      Value<DateTime> nextAttemptAt,
       Value<String?> lastError,
+      Value<String> status,
     });
 typedef $$SyncQueueTableUpdateCompanionBuilder =
     SyncQueueCompanion Function({
       Value<int> id,
       Value<String> workspaceId,
+      Value<String> operationId,
       Value<String> entityTable,
       Value<String> entityId,
       Value<String> operation,
+      Value<int> baseVersion,
       Value<String> payloadJson,
       Value<DateTime> queuedAt,
       Value<int> attempts,
+      Value<DateTime> nextAttemptAt,
       Value<String?> lastError,
+      Value<String> status,
     });
 
 class $$SyncQueueTableFilterComposer
@@ -35642,6 +35734,11 @@ class $$SyncQueueTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get entityTable => $composableBuilder(
     column: $table.entityTable,
     builder: (column) => ColumnFilters(column),
@@ -35654,6 +35751,11 @@ class $$SyncQueueTableFilterComposer
 
   ColumnFilters<String> get operation => $composableBuilder(
     column: $table.operation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -35672,8 +35774,18 @@ class $$SyncQueueTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get lastError => $composableBuilder(
     column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -35697,6 +35809,11 @@ class $$SyncQueueTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get entityTable => $composableBuilder(
     column: $table.entityTable,
     builder: (column) => ColumnOrderings(column),
@@ -35709,6 +35826,11 @@ class $$SyncQueueTableOrderingComposer
 
   ColumnOrderings<String> get operation => $composableBuilder(
     column: $table.operation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -35727,8 +35849,18 @@ class $$SyncQueueTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get lastError => $composableBuilder(
     column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -35750,6 +35882,11 @@ class $$SyncQueueTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get entityTable => $composableBuilder(
     column: $table.entityTable,
     builder: (column) => column,
@@ -35760,6 +35897,11 @@ class $$SyncQueueTableAnnotationComposer
 
   GeneratedColumn<String> get operation =>
       $composableBuilder(column: $table.operation, builder: (column) => column);
+
+  GeneratedColumn<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get payloadJson => $composableBuilder(
     column: $table.payloadJson,
@@ -35772,8 +35914,16 @@ class $$SyncQueueTableAnnotationComposer
   GeneratedColumn<int> get attempts =>
       $composableBuilder(column: $table.attempts, builder: (column) => column);
 
+  GeneratedColumn<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get lastError =>
       $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 }
 
 class $$SyncQueueTableTableManager
@@ -35809,48 +35959,73 @@ class $$SyncQueueTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> workspaceId = const Value.absent(),
+                Value<String> operationId = const Value.absent(),
                 Value<String> entityTable = const Value.absent(),
                 Value<String> entityId = const Value.absent(),
                 Value<String> operation = const Value.absent(),
+                Value<int> baseVersion = const Value.absent(),
                 Value<String> payloadJson = const Value.absent(),
                 Value<DateTime> queuedAt = const Value.absent(),
                 Value<int> attempts = const Value.absent(),
+                Value<DateTime> nextAttemptAt = const Value.absent(),
                 Value<String?> lastError = const Value.absent(),
+                Value<String> status = const Value.absent(),
               }) => SyncQueueCompanion(
                 id: id,
                 workspaceId: workspaceId,
+                operationId: operationId,
                 entityTable: entityTable,
                 entityId: entityId,
                 operation: operation,
+                baseVersion: baseVersion,
                 payloadJson: payloadJson,
                 queuedAt: queuedAt,
                 attempts: attempts,
+                nextAttemptAt: nextAttemptAt,
                 lastError: lastError,
+                status: status,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> workspaceId = const Value.absent(),
+                required String operationId,
                 required String entityTable,
                 required String entityId,
                 required String operation,
+                Value<int> baseVersion = const Value.absent(),
                 required String payloadJson,
                 Value<DateTime> queuedAt = const Value.absent(),
                 Value<int> attempts = const Value.absent(),
+                Value<DateTime> nextAttemptAt = const Value.absent(),
                 Value<String?> lastError = const Value.absent(),
+                Value<String> status = const Value.absent(),
               }) => SyncQueueCompanion.insert(
                 id: id,
                 workspaceId: workspaceId,
+                operationId: operationId,
                 entityTable: entityTable,
                 entityId: entityId,
                 operation: operation,
+                baseVersion: baseVersion,
                 payloadJson: payloadJson,
                 queuedAt: queuedAt,
                 attempts: attempts,
+                nextAttemptAt: nextAttemptAt,
                 lastError: lastError,
+                status: status,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$SyncQueueTable, SyncQueueData>(table),
+                  BaseReferences<_$AppDatabase, $SyncQueueTable, SyncQueueData>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -36012,7 +36187,16 @@ class $$AppMetadataTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$AppMetadataTable, AppMetadataData>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AppMetadataTable,
+                    AppMetadataData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),

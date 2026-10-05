@@ -579,13 +579,19 @@ class Attachments extends Table {
 class SyncQueue extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get workspaceId => text().withDefault(const Constant('default'))();
+  TextColumn get operationId => text().unique()();
   TextColumn get entityTable => text()();
   TextColumn get entityId => text()();
   TextColumn get operation => text()(); // 'UPSERT', 'DELETE'
+  IntColumn get baseVersion => integer().withDefault(const Constant(1))();
   TextColumn get payloadJson => text()();
   DateTimeColumn get queuedAt => dateTime().withDefault(currentDateAndTime)();
   IntColumn get attempts => integer().withDefault(const Constant(0))();
+  DateTimeColumn get nextAttemptAt =>
+      dateTime().withDefault(currentDateAndTime)();
   TextColumn get lastError => text().nullable()();
+  TextColumn get status =>
+      text().withDefault(const Constant('PENDING'))();
 }
 
 // --- APP METADATA (METADATOS Y CONTROL DE MIGRACIONES) ---
