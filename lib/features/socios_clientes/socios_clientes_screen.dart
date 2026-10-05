@@ -13,8 +13,13 @@ import 'partner_detail_screen.dart';
 
 class SociosClientesScreen extends StatefulWidget {
   final LocalStorageService storage;
+  final int initialTab;
 
-  const SociosClientesScreen({super.key, required this.storage});
+  const SociosClientesScreen({
+    super.key,
+    required this.storage,
+    this.initialTab = 0,
+  });
 
   @override
   State<SociosClientesScreen> createState() => _SociosClientesScreenState();
@@ -38,7 +43,11 @@ class _SociosClientesScreenState extends State<SociosClientesScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTab.clamp(0, 2),
+    );
   }
 
   @override

@@ -57,6 +57,14 @@ class LaborPaymentRepository {
         .map((rows) => rows.map(_fromDrift).toList());
   }
 
+  Stream<List<LaborPayment>> watchAllPayments() {
+    return (db.select(db.laborPayments)
+          ..where((t) => t.deletedAt.isNull())
+          ..orderBy([(t) => OrderingTerm.desc(t.paymentDate)]))
+        .watch()
+        .map((rows) => rows.map(_fromDrift).toList());
+  }
+
   Future<int> getWorkerTotalPaidCents(String workerId) async {
     final sumColumn = db.laborPayments.amountCents.sum();
     final query = db.selectOnly(db.laborPayments)

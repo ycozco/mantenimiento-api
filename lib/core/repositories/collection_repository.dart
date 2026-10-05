@@ -64,6 +64,52 @@ class CollectionRepository {
     });
   }
 
+  Stream<List<model.Collection>> watchAllCollections() {
+    final query = (_db.select(_db.collections)
+      ..where((tbl) => tbl.deletedAt.isNull())
+      ..orderBy([(tbl) => OrderingTerm.desc(tbl.date)]));
+
+    return query.watch().asyncMap((rows) async {
+      final collections = <model.Collection>[];
+      for (final r in rows) {
+        String? clientName;
+        if (r.clientId != null) {
+          final client = await (_db.select(
+            _db.clients,
+          )..where((tbl) => tbl.id.equals(r.clientId!))).getSingleOrNull();
+          clientName = client?.name;
+        }
+
+        String? projectName;
+        if (r.projectId != null) {
+          final project = await (_db.select(
+            _db.projects,
+          )..where((tbl) => tbl.id.equals(r.projectId!))).getSingleOrNull();
+          projectName = project?.name;
+        }
+
+        String? partnerName;
+        if (r.receivedByPartnerId != null) {
+          final partner =
+              await (_db.select(_db.partners)
+                    ..where((tbl) => tbl.id.equals(r.receivedByPartnerId!)))
+                  .getSingleOrNull();
+          partnerName = partner?.name;
+        }
+
+        collections.add(
+          _mapRowToModel(
+            r,
+            clientName: clientName,
+            projectName: projectName,
+            partnerName: partnerName,
+          ),
+        );
+      }
+      return collections;
+    });
+  }
+
   Future<void> recordCollection(model.Collection collection) async {
     if (collection.amountCents <= 0) {
       throw ArgumentError('El monto del cobro debe ser mayor a cero.');
