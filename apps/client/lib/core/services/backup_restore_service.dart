@@ -49,27 +49,69 @@ class BackupRestoreService {
     String workspaceId = AppConstants.defaultWorkspaceId,
   }) async {
     // 1. Consultar todas las entidades (incluyendo soft-deletes para trazabilidad)
-    final users = await db.select(db.users).get();
-    final partners = await db.select(db.partners).get();
-    final workers = await db.select(db.workers).get();
-    final clients = await db.select(db.clients).get();
-    final clientLocations = await db.select(db.clientLocations).get();
-    final projects = await db.select(db.projects).get();
-    final maintenancePlans = await db.select(db.maintenancePlans).get();
-    final maintenanceVisits = await db.select(db.maintenanceVisits).get();
-    final suppliers = await db.select(db.suppliers).get();
-    final inventoryItems = await db.select(db.inventoryItems).get();
-    final purchases = await db.select(db.purchases).get();
-    final purchaseItems = await db.select(db.purchaseItems).get();
-    final stockMovements = await db.select(db.stockMovements).get();
-    final tools = await db.select(db.tools).get();
-    final toolAssignments = await db.select(db.toolAssignments).get();
-    final workLogs = await db.select(db.workLogs).get();
-    final laborPayments = await db.select(db.laborPayments).get();
-    final expenses = await db.select(db.expenses).get();
-    final capitalMovements = await db.select(db.capitalMovements).get();
-    final collections = await db.select(db.collections).get();
-    final attachments = await db.select(db.attachments).get();
+    final users = await (db.select(db.users)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final partners = await (db.select(db.partners)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final workers = await (db.select(db.workers)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final clients = await (db.select(db.clients)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final clientLocations = await (db.select(db.clientLocations)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final projects = await (db.select(db.projects)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final maintenancePlans = await (db.select(db.maintenancePlans)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final maintenanceVisits = await (db.select(db.maintenanceVisits)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final suppliers = await (db.select(db.suppliers)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final inventoryItems = await (db.select(db.inventoryItems)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final purchases = await (db.select(db.purchases)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final purchaseItems = await (db.select(db.purchaseItems)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final stockMovements = await (db.select(db.stockMovements)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final tools = await (db.select(db.tools)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final toolAssignments = await (db.select(db.toolAssignments)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final workLogs = await (db.select(db.workLogs)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final laborPayments = await (db.select(db.laborPayments)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final expenses = await (db.select(db.expenses)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final capitalMovements = await (db.select(db.capitalMovements)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final collections = await (db.select(db.collections)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
+    final attachments = await (db.select(db.attachments)
+          ..where((t) => t.workspaceId.equals(workspaceId)))
+        .get();
     final appMetadata = await db.select(db.appMetadata).get();
 
     // 2. Estructurar el diccionario de datos
@@ -165,6 +207,51 @@ class BackupRestoreService {
       return BackupRestoreResult.failure(
         'Estructura corrupta: falta el nodo "data".',
       );
+    }
+
+    final backupWorkspaceId = root['workspaceId'];
+    if (backupWorkspaceId is! String || backupWorkspaceId.trim().isEmpty) {
+      return BackupRestoreResult.failure(
+        'Falta metadata requerida: workspaceId.',
+        version: backupVersion,
+      );
+    }
+
+    const workspaceTables = [
+      'users',
+      'partners',
+      'workers',
+      'clients',
+      'clientLocations',
+      'projects',
+      'maintenancePlans',
+      'maintenanceVisits',
+      'suppliers',
+      'inventoryItems',
+      'purchases',
+      'purchaseItems',
+      'stockMovements',
+      'tools',
+      'toolAssignments',
+      'workLogs',
+      'laborPayments',
+      'expenses',
+      'capitalMovements',
+      'collections',
+      'attachments',
+    ];
+    for (final tableName in workspaceTables) {
+      final rows = rawData[tableName];
+      if (rows is! List) continue;
+      for (final row in rows) {
+        if (row is! Map<String, dynamic> ||
+            row['workspaceId'] != backupWorkspaceId) {
+          return BackupRestoreResult.failure(
+            'El respaldo contiene datos de workspace mezclados o incompletos en $tableName.',
+            version: backupVersion,
+          );
+        }
+      }
     }
 
     // 3. Restauración Transaccional respetando orden de dependencias FK
