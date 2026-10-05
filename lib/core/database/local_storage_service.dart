@@ -23,6 +23,7 @@ import '../repositories/purchase_repository.dart';
 import '../repositories/partner_repository.dart';
 import '../repositories/collection_repository.dart';
 import '../services/project_financial_service.dart';
+import '../services/dashboard_service.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -85,6 +86,10 @@ class LocalStorageService extends ChangeNotifier {
   ProjectFinancialService? _projectFinancialService;
   ProjectFinancialService get projectFinancialService =>
       _projectFinancialService ??= ProjectFinancialService(db);
+
+  DashboardService? _dashboardService;
+  DashboardService get dashboardService =>
+      _dashboardService ??= DashboardService(db, projectFinancialService);
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];

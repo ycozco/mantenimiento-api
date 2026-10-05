@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 
 import '../../core/database/local_storage_service.dart';
 import '../../core/theme/app_theme.dart';
+import '../dashboard/dashboard_screen.dart';
 import '../mantenimientos/mantenimientos_screen.dart';
 import '../obras/obras_screen.dart';
 import '../gastos/gastos_screen.dart';
@@ -27,6 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
       listenable: widget.storage,
       builder: (context, _) {
         final screens = [
+          DashboardScreen(
+            storage: widget.storage,
+            onNavigateTab: (index) => setState(() => _currentIndex = index),
+          ),
           MantenimientosScreen(storage: widget.storage),
           ObrasScreen(storage: widget.storage),
           GastosScreen(storage: widget.storage),
@@ -51,6 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() => _currentIndex = index);
               },
               destinations: const [
+                NavigationDestination(
+                  icon: Icon(LucideIcons.layout_dashboard, color: Colors.grey),
+                  selectedIcon: Icon(
+                    LucideIcons.layout_dashboard,
+                    color: AppTheme.amberSafety,
+                  ),
+                  label: 'Inicio',
+                ),
                 NavigationDestination(
                   icon: Icon(LucideIcons.calendar_clock, color: Colors.grey),
                   selectedIcon: Icon(
