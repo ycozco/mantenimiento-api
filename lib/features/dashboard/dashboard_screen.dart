@@ -7,6 +7,7 @@ import '../../core/models/dashboard_summary.dart';
 import '../../core/theme/app_theme.dart';
 import '../inventory/inventory_screen.dart';
 import '../tools/tools_screen.dart';
+import '../calendar/calendar_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final LocalStorageService storage;
@@ -66,6 +67,21 @@ class DashboardScreen extends StatelessWidget {
                   title: 'HOY Y AGENDA INMEDIATA',
                   icon: LucideIcons.calendar,
                   color: AppTheme.amberSafety,
+                  trailing: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CalendarScreen(storage: storage),
+                        ),
+                      );
+                    },
+                    icon: const Icon(LucideIcons.calendar_days, size: 14),
+                    label: const Text(
+                      'Ver Calendario',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -427,20 +443,27 @@ class DashboardScreen extends StatelessWidget {
     required String title,
     required IconData icon,
     required Color color,
+    Widget? trailing,
   }) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(icon, size: 16, color: color),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: color,
-            letterSpacing: 0.5,
-          ),
+        Row(
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: color,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
         ),
+        if (trailing != null) trailing,
       ],
     );
   }
