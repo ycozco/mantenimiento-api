@@ -28,6 +28,7 @@ import '../services/project_financial_service.dart';
 import '../services/dashboard_service.dart';
 import '../services/calendar_service.dart';
 import '../services/device_preferences_service.dart';
+import '../services/backup_restore_service.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static final LocalStorageService _instance = LocalStorageService._internal();
@@ -110,6 +111,10 @@ class LocalStorageService extends ChangeNotifier {
   DevicePreferencesService? _devicePreferencesService;
   DevicePreferencesService get devicePreferencesService =>
       _devicePreferencesService ??= DevicePreferencesService();
+
+  BackupRestoreService? _backupRestoreService;
+  BackupRestoreService get backupRestoreService =>
+      _backupRestoreService ??= BackupRestoreService(db);
 
   List<Socio> _socios = [];
   List<Cliente> _clientes = [];
@@ -701,25 +706,24 @@ class LocalStorageService extends ChangeNotifier {
   }
 
   Future<void> exportarRespaldo() async {
-    final jsonContent = serializeToJson();
+    final jsonContent = await backupRestoreService.exportBackupJson();
     if (kIsWeb) {
-      debugPrint('Exportar en web');
+      debugPrint('Exportar en web: ${jsonContent.length} bytes');
       return;
     }
 
     try {
       final tempDir = await getTemporaryDirectory();
       final backupFile = File(
-        '${tempDir.path}/mantenimiento_respaldo_${DateTime.now().millisecondsSinceEpoch}.json',
+        '${tempDir.path}/decolumax_respaldo_${DateTime.now().millisecondsSinceEpoch}.json',
       );
       await backupFile.writeAsString(jsonContent);
 
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(backupFile.path)],
-          subject: 'Copia de Respaldo Mantenimientos y Gastos',
-          text:
-              'Copia local de seguridad generada desde la app de Mantenimiento.',
+          subject: 'Copia de Respaldo Completa Decolumax (V2)',
+          text: 'Copia local de seguridad generada desde la app de Decolumax.',
         ),
       );
     } catch (e) {
@@ -729,24 +733,13 @@ class LocalStorageService extends ChangeNotifier {
 
   Future<bool> importarRespaldoJson(String jsonStr) async {
     try {
-      final migrationService = DataMigrationService(db);
-      // Limpiar tablas para reemplazar con los datos importados
-      await db.transaction(() async {
-        await db.delete(db.expenses).go();
-        await db.delete(db.maintenanceVisits).go();
-        await db.delete(db.maintenancePlans).go();
-        await db.delete(db.projects).go();
-        await db.delete(db.clientLocations).go();
-        await db.delete(db.clients).go();
-        await db.delete(db.partners).go();
-
-        await migrationService.executeMigrationFromJson(jsonStr);
-      });
+      final result = await backupRestoreService.restoreBackupJson(jsonStr);
+      if (!result.success) {
+        debugPrint('Fallo al restaurar backup: ${result.errorMessage}');
+        return false;
+      }
 
       await _reloadAllFromDb();
-      for (final m in _mantenimientos) {
-        await NotificationService().programarAlertasMantenimiento(m);
-      }
       notifyListeners();
       return true;
     } catch (e) {
