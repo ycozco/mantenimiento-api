@@ -1,15 +1,24 @@
 import 'package:drift/drift.dart';
 import '../database/app_database.dart' hide Worker;
+import '../constants/app_constants.dart';
 import '../models/worker.dart';
 
 class WorkerRepository {
   final AppDatabase db;
+  final String workspaceId;
 
-  WorkerRepository(this.db);
+  WorkerRepository(
+    this.db, {
+    this.workspaceId = AppConstants.defaultWorkspaceId,
+  }) {
+    if (workspaceId.trim().isEmpty) {
+      throw ArgumentError.value(workspaceId, 'workspaceId', 'No puede estar vacío');
+    }
+  }
 
   Stream<List<Worker>> watchAllWorkers() {
     return (db.select(db.workers)
-          ..where((t) => t.deletedAt.isNull())
+          ..where((t) => t.workspaceId.equals(workspaceId) & t.deletedAt.isNull())
           ..orderBy([(t) => OrderingTerm.asc(t.name)]))
         .watch()
         .map((rows) => rows.map(_fromDrift).toList());
@@ -17,7 +26,12 @@ class WorkerRepository {
 
   Stream<List<Worker>> watchActiveWorkers() {
     return (db.select(db.workers)
-          ..where((t) => t.deletedAt.isNull() & t.isActive.equals(true))
+          ..where(
+            (t) =>
+                t.workspaceId.equals(workspaceId) &
+                t.deletedAt.isNull() &
+                t.isActive.equals(true),
+          )
           ..orderBy([(t) => OrderingTerm.asc(t.name)]))
         .watch()
         .map((rows) => rows.map(_fromDrift).toList());
@@ -26,7 +40,12 @@ class WorkerRepository {
   Future<List<Worker>> getActiveWorkers() async {
     final rows =
         await (db.select(db.workers)
-              ..where((t) => t.deletedAt.isNull() & t.isActive.equals(true))
+              ..where(
+                (t) =>
+                    t.workspaceId.equals(workspaceId) &
+                    t.deletedAt.isNull() &
+                    t.isActive.equals(true),
+              )
               ..orderBy([(t) => OrderingTerm.asc(t.name)]))
             .get();
     return rows.map(_fromDrift).toList();
@@ -35,17 +54,20 @@ class WorkerRepository {
   Future<Worker?> getWorkerById(String id) async {
     final row = await (db.select(
       db.workers,
-    )..where((t) => t.id.equals(id))).getSingleOrNull();
+    )..where((t) => t.id.equals(id) & t.workspaceId.equals(workspaceId)))
+        .getSingleOrNull();
     return row == null ? null : _fromDrift(row);
   }
 
   Stream<Worker?> watchWorker(String id) {
-    return (db.select(db.workers)..where((t) => t.id.equals(id)))
+    return (db.select(db.workers)
+          ..where((t) => t.id.equals(id) & t.workspaceId.equals(workspaceId)))
         .watchSingleOrNull()
         .map((row) => row == null ? null : _fromDrift(row));
   }
 
   Future<void> createWorker(Worker worker) async {
+    _requireWorkspace(worker.workspaceId);
     if (worker.name.trim().isEmpty) {
       throw ArgumentError('El nombre del trabajador no puede estar vacío');
     }
@@ -77,6 +99,7 @@ class WorkerRepository {
   }
 
   Future<void> updateWorker(Worker worker) async {
+    _requireWorkspace(worker.workspaceId);
     if (worker.name.trim().isEmpty) {
       throw ArgumentError('El nombre del trabajador no puede estar vacío');
     }
@@ -84,7 +107,12 @@ class WorkerRepository {
       throw ArgumentError('La tarifa predeterminada no puede ser negativa');
     }
 
-    await (db.update(db.workers)..where((t) => t.id.equals(worker.id))).write(
+    await (db.update(db.workers)
+          ..where(
+            (t) =>
+                t.id.equals(worker.id) & t.workspaceId.equals(workspaceId),
+          ))
+        .write(
       WorkersCompanion(
         name: Value(worker.name.trim()),
         phone: Value(worker.phone),
@@ -101,7 +129,9 @@ class WorkerRepository {
   }
 
   Future<void> deactivateWorker(String id) async {
-    await (db.update(db.workers)..where((t) => t.id.equals(id))).write(
+    await (db.update(db.workers)
+          ..where((t) => t.id.equals(id) & t.workspaceId.equals(workspaceId)))
+        .write(
       WorkersCompanion(
         isActive: const Value(false),
         updatedAt: Value(DateTime.now()),
@@ -110,7 +140,9 @@ class WorkerRepository {
   }
 
   Future<void> activateWorker(String id) async {
-    await (db.update(db.workers)..where((t) => t.id.equals(id))).write(
+    await (db.update(db.workers)
+          ..where((t) => t.id.equals(id) & t.workspaceId.equals(workspaceId)))
+        .write(
       WorkersCompanion(
         isActive: const Value(true),
         updatedAt: Value(DateTime.now()),
@@ -120,7 +152,9 @@ class WorkerRepository {
 
   Future<void> deleteWorker(String id) async {
     // Soft delete para preservar el historial de jornadas de acuerdo al modelo
-    await (db.update(db.workers)..where((t) => t.id.equals(id))).write(
+    await (db.update(db.workers)
+          ..where((t) => t.id.equals(id) & t.workspaceId.equals(workspaceId)))
+        .write(
       WorkersCompanion(
         isActive: const Value(false),
         deletedAt: Value(DateTime.now()),
@@ -147,5 +181,13 @@ class WorkerRepository {
       version: row.version as int,
       deletedAt: row.deletedAt as DateTime?,
     );
+  }
+
+  void _requireWorkspace(String entityWorkspaceId) {
+    if (entityWorkspaceId != workspaceId) {
+      throw StateError(
+        'El trabajador pertenece a otra organización y no puede modificarse desde este repositorio.',
+      );
+    }
   }
 }
