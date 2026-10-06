@@ -10,6 +10,8 @@ import '../models/cliente.dart';
 import '../models/mantenimiento.dart';
 import '../models/obra.dart';
 import '../models/gasto.dart';
+import '../models/maintenance_plan.dart' as maintenance_model;
+import '../models/maintenance_visit.dart' as maintenance_model;
 import '../constants/app_constants.dart';
 import '../notifications/notification_service.dart';
 import 'app_database.dart';
@@ -428,43 +430,7 @@ class LocalStorageService extends ChangeNotifier {
 
   // --- CRUD MANTENIMIENTOS ---
   Future<void> agregarMantenimiento(Mantenimiento m) async {
-    await db.transaction(() async {
-      await db
-          .into(db.maintenancePlans)
-          .insert(
-            MaintenancePlansCompanion.insert(
-              id: m.id,
-              workspaceId: const Value(AppConstants.defaultWorkspaceId),
-              title: m.titulo,
-              clientId: m.clienteId,
-              locationId: Value('${m.clienteId}_loc_main'),
-              description: Value(m.descripcion),
-              frequencyType: Value(m.tipoFrecuencia.name),
-              intervalDays: Value(m.diasIntervalo),
-              nextDate: Value(m.fechaProximo),
-              assignedPartnerIdsJson: Value(jsonEncode(m.responsablesIds)),
-              isActive: Value(m.activo),
-              billingType: Value(m.billingType),
-              agreedAmountCents: Value(m.agreedAmountCents),
-            ),
-          );
-
-      await db
-          .into(db.maintenanceVisits)
-          .insert(
-            MaintenanceVisitsCompanion.insert(
-              id: '${m.id}_visit_active',
-              workspaceId: const Value(AppConstants.defaultWorkspaceId),
-              planId: m.id,
-              scheduledDate: m.fechaProximo,
-              completedDate: Value(m.fechaUltimo),
-              status: Value(m.completado ? 'completed' : 'scheduled'),
-              agreedPriceCents: Value(
-                m.billingType == 'perVisit' ? m.agreedAmountCents : null,
-              ),
-            ),
-          );
-    });
+    await maintenanceRepository.createPlan(await _maintenancePlanFromLegacy(m));
 
     await _reloadAllFromDb();
     await NotificationService().programarAlertasMantenimiento(m);
@@ -472,48 +438,9 @@ class LocalStorageService extends ChangeNotifier {
   }
 
   Future<void> editarMantenimiento(Mantenimiento m) async {
-    await db.transaction(() async {
-      await (db.update(
-        db.maintenancePlans,
-      )..where((t) => t.id.equals(m.id))).write(
-        MaintenancePlansCompanion(
-          title: Value(m.titulo),
-          clientId: Value(m.clienteId),
-          description: Value(m.descripcion),
-          frequencyType: Value(m.tipoFrecuencia.name),
-          intervalDays: Value(m.diasIntervalo),
-          nextDate: Value(m.fechaProximo),
-          assignedPartnerIdsJson: Value(jsonEncode(m.responsablesIds)),
-          isActive: Value(m.activo),
-          billingType: Value(m.billingType),
-          agreedAmountCents: Value(m.agreedAmountCents),
-          updatedAt: Value(DateTime.now()),
-        ),
-      );
-
-      final activeVisit =
-          await (db.select(db.maintenanceVisits)
-                ..where(
-                  (t) =>
-                      t.planId.equals(m.id) &
-                      t.status.equals('scheduled') &
-                      t.deletedAt.isNull(),
-                )
-                ..orderBy([(t) => OrderingTerm.desc(t.scheduledDate)])
-                ..limit(1))
-              .getSingleOrNull();
-
-      if (activeVisit != null) {
-        await (db.update(
-          db.maintenanceVisits,
-        )..where((t) => t.id.equals(activeVisit.id))).write(
-          MaintenanceVisitsCompanion(
-            scheduledDate: Value(m.fechaProximo),
-            updatedAt: Value(DateTime.now()),
-          ),
-        );
-      }
-    });
+    await maintenanceRepository.updatePlan(
+      await _maintenancePlanFromLegacy(m, existing: true),
+    );
 
     await _reloadAllFromDb();
     await NotificationService().programarAlertasMantenimiento(m);
@@ -524,85 +451,27 @@ class LocalStorageService extends ChangeNotifier {
     final idx = _mantenimientos.indexWhere((item) => item.id == id);
     if (idx != -1) {
       final actual = _mantenimientos[idx];
-      final proximaFecha = actual.calcularProximoCiclo(DateTime.now());
-
-      await db.transaction(() async {
-        // 1. Marcar visita activa como completada
-        final activeVisit =
-            await (db.select(db.maintenanceVisits)
-                  ..where(
-                    (t) =>
-                        t.planId.equals(id) &
-                        t.deletedAt.isNull() &
-                        (t.status.equals('scheduled') |
-                            t.status.equals('inProgress')),
-                  )
-                  ..orderBy([(t) => OrderingTerm.asc(t.scheduledDate)])
-                  ..limit(1))
-                .getSingleOrNull();
-
-        if (activeVisit != null) {
-          await (db.update(
-            db.maintenanceVisits,
-          )..where((t) => t.id.equals(activeVisit.id))).write(
-            MaintenanceVisitsCompanion(
-              completedDate: Value(DateTime.now()),
-              status: const Value('completed'),
-              updatedAt: Value(DateTime.now()),
-            ),
-          );
-        } else {
-          final visitId =
-              '${id}_visit_${DateTime.now().millisecondsSinceEpoch}';
-          await db
-              .into(db.maintenanceVisits)
-              .insert(
-                MaintenanceVisitsCompanion.insert(
-                  id: visitId,
-                  workspaceId: const Value(AppConstants.defaultWorkspaceId),
-                  planId: id,
-                  scheduledDate: actual.fechaProximo,
-                  completedDate: Value(DateTime.now()),
-                  status: const Value('completed'),
-                  agreedPriceCents: Value(
-                    actual.billingType == 'perVisit'
-                        ? actual.agreedAmountCents
-                        : null,
-                  ),
-                ),
-              );
-        }
-
-        // 2. Programar siguiente visita (invariable histórico)
-        final nextVisitId =
-            '${id}_visit_${DateTime.now().millisecondsSinceEpoch + 1}';
-        await db
-            .into(db.maintenanceVisits)
-            .insert(
-              MaintenanceVisitsCompanion.insert(
-                id: nextVisitId,
-                workspaceId: const Value(AppConstants.defaultWorkspaceId),
-                planId: id,
-                scheduledDate: proximaFecha,
-                status: const Value('scheduled'),
-                agreedPriceCents: Value(
-                  actual.billingType == 'perVisit'
-                      ? actual.agreedAmountCents
-                      : null,
-                ),
-              ),
-            );
-
-        // 3. Actualizar el plan con la nueva próxima fecha
-        await (db.update(
-          db.maintenancePlans,
-        )..where((t) => t.id.equals(id))).write(
-          MaintenancePlansCompanion(
-            nextDate: Value(proximaFecha),
-            updatedAt: Value(DateTime.now()),
-          ),
+      var activeVisit = (await maintenanceRepository.getVisitsForPlan(id))
+          .where(
+            (visit) =>
+                visit.status == maintenance_model.VisitStatus.scheduled ||
+                visit.status == maintenance_model.VisitStatus.inProgress,
+          )
+          .firstOrNull;
+      if (activeVisit == null) {
+        final plan = await _maintenancePlanFromLegacy(actual, existing: true);
+        final visit = maintenance_model.MaintenanceVisit(
+          workspaceId: plan.workspaceId,
+          planId: id,
+          scheduledDate: actual.fechaProximo,
+          agreedPriceCents: plan.billingType == 'perVisit'
+              ? plan.agreedAmountCents
+              : null,
         );
-      });
+        await maintenanceRepository.createVisit(visit);
+        activeVisit = visit;
+      }
+      await maintenanceRepository.completeVisit(activeVisit.id);
 
       await _reloadAllFromDb();
       final actualizado = _mantenimientos.firstWhere((m) => m.id == id);
@@ -613,11 +482,37 @@ class LocalStorageService extends ChangeNotifier {
 
   Future<void> eliminarMantenimiento(String id) async {
     await NotificationService().cancelarAlertasMantenimiento(id);
-    await (db.update(db.maintenancePlans)..where((t) => t.id.equals(id))).write(
-      MaintenancePlansCompanion(deletedAt: Value(DateTime.now())),
-    );
+    await maintenanceRepository.deletePlan(id);
     await _reloadAllFromDb();
     notifyListeners();
+  }
+
+  Future<maintenance_model.MaintenancePlan> _maintenancePlanFromLegacy(
+    Mantenimiento m, {
+    bool existing = false,
+  }) async {
+    final current = existing
+        ? await maintenanceRepository.getPlanById(m.id)
+        : null;
+    final now = DateTime.now();
+    return maintenance_model.MaintenancePlan(
+      id: m.id,
+      workspaceId: current?.workspaceId ?? AppConstants.defaultWorkspaceId,
+      title: m.titulo,
+      clientId: m.clienteId,
+      locationId: current?.locationId ?? '${m.clienteId}_loc_main',
+      description: m.descripcion,
+      frequencyType: m.tipoFrecuencia.name,
+      intervalDays: m.diasIntervalo,
+      nextDate: m.fechaProximo,
+      billingType: m.billingType,
+      agreedAmountCents: m.agreedAmountCents,
+      assignedPartnerIds: m.responsablesIds,
+      isActive: m.activo,
+      createdAt: current?.createdAt ?? now,
+      updatedAt: now,
+      version: current?.version ?? 1,
+    );
   }
 
   // --- CRUD OBRAS ---

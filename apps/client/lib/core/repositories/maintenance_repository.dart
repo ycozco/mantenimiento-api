@@ -135,47 +135,145 @@ class MaintenanceRepository {
       throw ArgumentError('El título del plan no puede estar vacío');
     }
 
-    await (db.update(
-      db.maintenancePlans,
-    )..where((t) => t.id.equals(plan.id))).write(
-      MaintenancePlansCompanion(
-        title: Value(plan.title.trim()),
-        locationId: Value(plan.locationId),
-        description: Value(plan.description),
-        frequencyType: Value(plan.frequencyType),
-        intervalDays: Value(plan.intervalDays),
-        nextDate: Value(plan.nextDate),
-        estimatedCostCents: Value(plan.estimatedCostCents),
-        billingType: Value(plan.billingType),
-        agreedAmountCents: Value(plan.agreedAmountCents),
-        assignedPartnerIdsJson: Value(jsonEncode(plan.assignedPartnerIds)),
-        isActive: Value(plan.isActive),
-        updatedAt: Value(DateTime.now()),
-        updatedBy: Value(plan.updatedBy),
-        version: Value(plan.version + 1),
-      ),
-    );
+    await db.transaction(() async {
+      final updatedAt = DateTime.now();
+      await (db.update(
+        db.maintenancePlans,
+      )..where((t) => t.id.equals(plan.id))).write(
+        MaintenancePlansCompanion(
+          title: Value(plan.title.trim()),
+          locationId: Value(plan.locationId),
+          description: Value(plan.description),
+          frequencyType: Value(plan.frequencyType),
+          intervalDays: Value(plan.intervalDays),
+          nextDate: Value(plan.nextDate),
+          estimatedCostCents: Value(plan.estimatedCostCents),
+          billingType: Value(plan.billingType),
+          agreedAmountCents: Value(plan.agreedAmountCents),
+          assignedPartnerIdsJson: Value(jsonEncode(plan.assignedPartnerIds)),
+          isActive: Value(plan.isActive),
+          updatedAt: Value(updatedAt),
+          updatedBy: Value(plan.updatedBy),
+          version: Value(plan.version + 1),
+        ),
+      );
+
+      await outbox.enqueue(
+        workspaceId: plan.workspaceId,
+        entityTable: 'maintenance_plans',
+        entityId: plan.id,
+        operation: 'UPSERT',
+        baseVersion: plan.version,
+        payload: plan
+            .copyWith(
+              title: plan.title.trim(),
+              updatedAt: updatedAt,
+              version: plan.version + 1,
+            )
+            .toJson(),
+      );
+
+      final activeVisit =
+          await (db.select(db.maintenanceVisits)
+                ..where(
+                  (t) =>
+                      t.planId.equals(plan.id) &
+                      t.status.equals('scheduled') &
+                      t.deletedAt.isNull(),
+                )
+                ..orderBy([(t) => OrderingTerm.asc(t.scheduledDate)])
+                ..limit(1))
+              .getSingleOrNull();
+
+      if (activeVisit != null) {
+        final currentVisit = _visitFromDrift(activeVisit);
+        await (db.update(
+          db.maintenanceVisits,
+        )..where((t) => t.id.equals(activeVisit.id))).write(
+          MaintenanceVisitsCompanion(
+            scheduledDate: Value(plan.nextDate),
+            updatedAt: Value(updatedAt),
+            version: Value(currentVisit.version + 1),
+          ),
+        );
+        await outbox.enqueue(
+          workspaceId: currentVisit.workspaceId,
+          entityTable: 'maintenance_visits',
+          entityId: currentVisit.id,
+          operation: 'UPSERT',
+          baseVersion: currentVisit.version,
+          payload: currentVisit
+              .copyWith(
+                scheduledDate: plan.nextDate,
+                updatedAt: updatedAt,
+                version: currentVisit.version + 1,
+              )
+              .toJson(),
+        );
+      }
+    });
   }
 
   Future<void> deletePlan(String planId) async {
     await db.transaction(() async {
       final now = DateTime.now();
+      final planRow = await (db.select(
+        db.maintenancePlans,
+      )..where((t) => t.id.equals(planId))).getSingle();
+      final plan = _planFromDrift(planRow);
       await (db.update(
         db.maintenancePlans,
       )..where((t) => t.id.equals(planId))).write(
-        MaintenancePlansCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+        MaintenancePlansCompanion(
+          deletedAt: Value(now),
+          updatedAt: Value(now),
+          version: Value(plan.version + 1),
+        ),
+      );
+
+      await outbox.enqueue(
+        workspaceId: plan.workspaceId,
+        entityTable: 'maintenance_plans',
+        entityId: plan.id,
+        operation: 'UPSERT',
+        baseVersion: plan.version,
+        payload: plan
+            .copyWith(deletedAt: now, updatedAt: now, version: plan.version + 1)
+            .toJson(),
       );
 
       // Cancelar visitas que estuvieran programadas
-      await (db.update(db.maintenanceVisits)..where(
-            (t) => t.planId.equals(planId) & t.status.equals('scheduled'),
-          ))
-          .write(
-            MaintenanceVisitsCompanion(
-              status: const Value('cancelled'),
-              updatedAt: Value(now),
-            ),
-          );
+      final scheduledVisits =
+          await (db.select(db.maintenanceVisits)..where(
+                (t) => t.planId.equals(planId) & t.status.equals('scheduled'),
+              ))
+              .get();
+      for (final row in scheduledVisits) {
+        final visit = _visitFromDrift(row);
+        await (db.update(
+          db.maintenanceVisits,
+        )..where((t) => t.id.equals(visit.id))).write(
+          MaintenanceVisitsCompanion(
+            status: const Value('cancelled'),
+            updatedAt: Value(now),
+            version: Value(visit.version + 1),
+          ),
+        );
+        await outbox.enqueue(
+          workspaceId: visit.workspaceId,
+          entityTable: 'maintenance_visits',
+          entityId: visit.id,
+          operation: 'UPSERT',
+          baseVersion: visit.version,
+          payload: visit
+              .copyWith(
+                status: VisitStatus.cancelled,
+                updatedAt: now,
+                version: visit.version + 1,
+              )
+              .toJson(),
+        );
+      }
     });
   }
 
@@ -216,24 +314,34 @@ class MaintenanceRepository {
       }
     }
 
-    await db
-        .into(db.maintenanceVisits)
-        .insert(
-          MaintenanceVisitsCompanion.insert(
-            id: visit.id,
-            workspaceId: Value(visit.workspaceId),
-            planId: visit.planId,
-            scheduledDate: visit.scheduledDate,
-            completedDate: Value(visit.completedDate),
-            status: Value(visit.status.nameCode),
-            technicianNotes: Value(visit.technicianNotes),
-            agreedPriceCents: Value(price),
-            createdAt: Value(visit.createdAt),
-            updatedAt: Value(visit.updatedAt),
-            version: Value(visit.version),
-            deletedAt: Value(visit.deletedAt),
-          ),
-        );
+    await db.transaction(() async {
+      await db
+          .into(db.maintenanceVisits)
+          .insert(
+            MaintenanceVisitsCompanion.insert(
+              id: visit.id,
+              workspaceId: Value(visit.workspaceId),
+              planId: visit.planId,
+              scheduledDate: visit.scheduledDate,
+              completedDate: Value(visit.completedDate),
+              status: Value(visit.status.nameCode),
+              technicianNotes: Value(visit.technicianNotes),
+              agreedPriceCents: Value(price),
+              createdAt: Value(visit.createdAt),
+              updatedAt: Value(visit.updatedAt),
+              version: Value(visit.version),
+              deletedAt: Value(visit.deletedAt),
+            ),
+          );
+      await outbox.enqueue(
+        workspaceId: visit.workspaceId,
+        entityTable: 'maintenance_visits',
+        entityId: visit.id,
+        operation: 'UPSERT',
+        baseVersion: 0,
+        payload: visit.copyWith(agreedPriceCents: price).toJson(),
+      );
+    });
   }
 
   Future<void> startVisit(String visitId) async {
