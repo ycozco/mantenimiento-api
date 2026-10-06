@@ -8,4 +8,6 @@ El cliente permanece en `apps/client`. El contrato compartido permanece en `pack
 
 La API expone `GET /api/v1/health` y `GET /api/v1/health/ready`. Desarrollo local: `npm install`, `npm run build` y `npm run start:dev` desde esta carpeta. Compose local: `docker compose -f deploy/compose.local.yml up --build`; con `RUN_MIGRATIONS=true` ejecuta las migraciones SQL incluidas.
 
+El primer workspace y su administrador se crean fuera de HTTP con `npm run bootstrap:admin`, usando `DATABASE_URL`, `WORKSPACE_SLUG`, `WORKSPACE_NAME`, `ADMIN_EMAIL`, `ADMIN_NAME` y `ADMIN_PASSWORD` en el entorno.
+
 Plan de trabajo, correcciones previas y criterios de cierre: [PLAN.md](PLAN.md).
