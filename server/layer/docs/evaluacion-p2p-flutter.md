@@ -1,6 +1,6 @@
 # Opciones de transporte y optimización del sync cifrado
 
-Consulta: 2026-10-05, America/Lima. Esta evaluación incluye la prueba sintética local comparativa ([reporte-prueba-local-buzones.md](reporte-prueba-local-buzones.md)) y el reensayo dedicado de NATS ([reporte-prueba-nats-ampliada.md](reporte-prueba-nats-ampliada.md)), que sí recuperó una cola tras SIGKILL del broker. No se usaron Flutter ni Drift; las mediciones son de laboratorio, no un benchmark de producción. Los objetivos de recursos de este documento tampoco son mediciones.
+Consulta: 2026-10-05, America/Lima. Esta evaluación incluye la prueba sintética local comparativa ([reporte-prueba-local-buzones.md](reporte-prueba-local-buzones.md)), el reensayo de recuperación NATS ([reporte-prueba-nats-ampliada.md](reporte-prueba-nats-ampliada.md)) y la matriz 3–10 socios con picos de recursos ([reporte-matriz-nats-3-a-10-socios.md](reporte-matriz-nats-3-a-10-socios.md)). No se usaron Flutter ni Drift; las mediciones son de laboratorio, no un benchmark de producción. Los objetivos de recursos de este documento tampoco son mediciones.
 
 Plan funcional y orden de migración: [migracion-sync-cifrado.md](migracion-sync-cifrado.md).
 

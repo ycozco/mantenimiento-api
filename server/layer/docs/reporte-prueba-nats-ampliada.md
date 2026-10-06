@@ -2,6 +2,8 @@
 
 Fecha: 2026-10-05, America/Lima. Este reensayo amplía y corrige la evidencia del [ensayo comparativo anterior](reporte-prueba-local-buzones.md), concentrándose solo en NATS JetStream. Los datos son sintéticos; no se conectó la aplicación Flutter ni una base Drift de producción.
 
+La matriz posterior con hasta diez socios y picos de CPU/RAM está en [reporte-matriz-nats-3-a-10-socios.md](reporte-matriz-nats-3-a-10-socios.md).
+
 ## Escenario
 
 - `nats:2.15.0-scratch`, JetStream con almacenamiento `file`, volumen Docker persistente y límites del contenedor de 0,50 CPU y 256 MiB.
