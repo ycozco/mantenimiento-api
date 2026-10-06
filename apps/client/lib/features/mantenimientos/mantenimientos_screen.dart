@@ -6,6 +6,7 @@ import '../../core/database/local_storage_service.dart';
 import '../../core/models/mantenimiento.dart';
 import '../../core/models/socio.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/app_page_title.dart';
 import 'mantenimiento_form_dialog.dart';
 import 'maintenance_plan_detail_screen.dart';
 
@@ -33,16 +34,10 @@ class _MantenimientosScreenState extends State<MantenimientosScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(
-              LucideIcons.calendar_clock,
-              color: AppTheme.amberSafety,
-              size: 24,
-            ),
-            SizedBox(width: 10),
-            Text('Mantenimientos Programados'),
-          ],
+        title: const AppPageTitle(
+          title: 'Mantenimientos Programados',
+          icon: LucideIcons.calendar_clock,
+          color: AppTheme.amberSafety,
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

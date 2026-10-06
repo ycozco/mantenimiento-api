@@ -272,7 +272,7 @@ void main() {
         // 5 destinations
         expect(find.text('Inicio'), findsOneWidget);
         expect(find.text('Obras'), findsOneWidget);
-        expect(find.text('Mantenimiento'), findsOneWidget);
+        expect(find.text('Mantto.'), findsOneWidget);
         expect(find.text('Finanzas'), findsOneWidget);
         expect(find.text('Más'), findsOneWidget);
       },

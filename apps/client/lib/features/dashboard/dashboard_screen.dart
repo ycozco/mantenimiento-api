@@ -4,8 +4,12 @@ import 'package:intl/intl.dart';
 
 import '../../core/database/local_storage_service.dart';
 import '../../core/models/dashboard_summary.dart';
+import '../../core/navigation/app_destination.dart';
 import '../../core/theme/app_responsive.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/app_brand_mark.dart';
+import '../../core/widgets/app_page_title.dart';
+import '../../core/widgets/app_section_header.dart';
 import '../inventory/inventory_screen.dart';
 import '../tools/tools_screen.dart';
 import '../calendar/calendar_screen.dart';
@@ -13,9 +17,7 @@ import '../socios_clientes/socios_clientes_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final LocalStorageService storage;
-  final Function(int)? onNavigateTab;
-
-  const DashboardScreen({super.key, required this.storage, this.onNavigateTab});
+  const DashboardScreen({super.key, required this.storage});
 
   @override
   Widget build(BuildContext context) {
@@ -23,29 +25,9 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppTheme.amberSafety.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                LucideIcons.layout_dashboard,
-                color: AppTheme.amberSafety,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Expanded(
-              child: Text(
-                'Panel Operacional',
-                style: TextStyle(fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+        title: const AppPageTitle(
+          title: 'Panel Operacional',
+          leading: AppBrandMark(),
         ),
       ),
       body: StreamBuilder<DashboardSummary>(
@@ -101,7 +83,10 @@ class DashboardScreen extends StatelessWidget {
                               : '${summary.visitsTodayCount} visitas programadas',
                           icon: LucideIcons.calendar_check,
                           color: AppTheme.emeraldSuccess,
-                          onTap: () => onNavigateTab?.call(2), // Mantenimientos
+                          onTap: () => Actions.maybeInvoke(
+                            context,
+                            const NavigateToIntent(AppDestination.maintenance),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -112,7 +97,10 @@ class DashboardScreen extends StatelessWidget {
                           subtitle: 'Visitas en agenda',
                           icon: LucideIcons.calendar_clock,
                           color: AppTheme.skyAccent,
-                          onTap: () => onNavigateTab?.call(2), // Mantenimientos
+                          onTap: () => Actions.maybeInvoke(
+                            context,
+                            const NavigateToIntent(AppDestination.maintenance),
+                          ),
                         ),
                       ),
                     ],
@@ -146,8 +134,12 @@ class DashboardScreen extends StatelessWidget {
                                 ),
                               ),
                               TextButton.icon(
-                                onPressed: () =>
-                                    onNavigateTab?.call(1), // Obras
+                                onPressed: () => Actions.maybeInvoke(
+                                  context,
+                                  const NavigateToIntent(
+                                    AppDestination.projects,
+                                  ),
+                                ),
                                 icon: const Icon(
                                   LucideIcons.arrow_right,
                                   size: 16,
@@ -478,35 +470,12 @@ class DashboardScreen extends StatelessWidget {
     required IconData icon,
     required Color color,
     Widget? trailing,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              Icon(icon, size: 16, color: color),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                    letterSpacing: 0.5,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-        ?trailing,
-      ],
-    );
-  }
-
+  }) => AppSectionHeader(
+    title: title,
+    icon: icon,
+    color: color,
+    trailing: trailing,
+  );
   Widget _buildMetricTile({
     required String title,
     required String value,

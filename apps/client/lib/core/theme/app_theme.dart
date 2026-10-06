@@ -27,6 +27,8 @@ class AppTheme {
         onPrimary: Color(0xFF0F172A),
         surface: slateSurface,
         onSurface: Colors.white,
+        onSurfaceVariant: Color(0xFFCBD5E1),
+        outlineVariant: Color(0xFF334155),
         error: coralUrgent,
       ),
       cardTheme: CardThemeData(
@@ -46,6 +48,31 @@ class AppTheme {
           fontWeight: FontWeight.bold,
           color: Colors.white,
           letterSpacing: -0.5,
+        ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => TextStyle(
+            fontSize: 11,
+            overflow: TextOverflow.ellipsis,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w700
+                : FontWeight.w500,
+            color: states.contains(WidgetState.selected)
+                ? Colors.white
+                : const Color(0xFFCBD5E1),
+          ),
+        ),
+      ),
+      navigationRailTheme: const NavigationRailThemeData(
+        selectedLabelTextStyle: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          fontSize: 12,
+          color: Color(0xFFCBD5E1),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

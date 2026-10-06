@@ -9,6 +9,7 @@ import '../../core/models/purchase.dart';
 import '../../core/theme/app_responsive.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/state_views.dart';
+import '../../core/widgets/app_page_title.dart';
 import '../collections/collection_form_dialog.dart';
 import '../gastos/gastos_screen.dart';
 import '../purchases/purchase_form_dialog.dart';
@@ -52,12 +53,10 @@ class _FinanzasHubScreenState extends State<FinanzasHubScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(LucideIcons.coins, color: AppTheme.emeraldSuccess, size: 24),
-            SizedBox(width: 10),
-            Text('Centro Financiero'),
-          ],
+        title: const AppPageTitle(
+          title: 'Centro Financiero',
+          icon: LucideIcons.coins,
+          color: AppTheme.emeraldSuccess,
         ),
         bottom: TabBar(
           controller: _tabController,

@@ -6,6 +6,7 @@ import '../../core/database/local_storage_service.dart';
 import '../../core/models/obra.dart';
 import '../../core/models/socio.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/app_page_title.dart';
 import 'obra_form_dialog.dart';
 import 'obra_detail_screen.dart';
 import '../gastos/gasto_form_dialog.dart';
@@ -28,12 +29,10 @@ class _ObrasScreenState extends State<ObrasScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(LucideIcons.hard_hat, color: AppTheme.skyAccent, size: 24),
-            SizedBox(width: 10),
-            Text('Obras y Proyectos'),
-          ],
+        title: const AppPageTitle(
+          title: 'Obras y Proyectos',
+          icon: LucideIcons.hard_hat,
+          color: AppTheme.skyAccent,
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

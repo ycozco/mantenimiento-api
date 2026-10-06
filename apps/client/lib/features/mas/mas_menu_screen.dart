@@ -4,6 +4,9 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import '../../core/database/local_storage_service.dart';
 import '../../core/theme/app_responsive.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/app_navigation_tile.dart';
+import '../../core/widgets/app_page_title.dart';
+import '../../core/widgets/app_section_header.dart';
 import '../ajustes/ajustes_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../inventory/inventory_screen.dart';
@@ -20,12 +23,10 @@ class MasMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(LucideIcons.menu, color: AppTheme.amberSafety, size: 24),
-            SizedBox(width: 10),
-            Text('Más Módulos'),
-          ],
+        title: const AppPageTitle(
+          title: 'Más Módulos',
+          icon: LucideIcons.menu,
+          color: AppTheme.amberSafety,
         ),
       ),
       body: ConstrainedContent(
@@ -166,26 +167,7 @@ class MasMenuScreen extends StatelessWidget {
     BuildContext context, {
     required String title,
     required IconData icon,
-  }) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: AppTheme.amberSafety),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.1,
-              color: Colors.white70,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
+  }) => AppSectionHeader(title: title, icon: icon, color: AppTheme.amberSafety);
   Widget _buildResponsiveGrid(BuildContext context, List<_MenuOption> items) {
     final isCompact = AppResponsive.isCompact(context);
     if (isCompact) {
@@ -226,66 +208,13 @@ class MasMenuScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildItemCard(_MenuOption item) {
-    return Card(
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: Color(0xFF334155), width: 1),
-      ),
-      child: InkWell(
-        onTap: item.onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: item.iconColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(item.icon, color: item.iconColor, size: 22),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      item.subtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white60,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                LucideIcons.chevron_right,
-                size: 18,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _buildItemCard(_MenuOption item) => AppNavigationTile(
+    title: item.title,
+    subtitle: item.subtitle,
+    icon: item.icon,
+    iconColor: item.iconColor,
+    onTap: item.onTap,
+  );
 }
 
 class _MenuOption {
