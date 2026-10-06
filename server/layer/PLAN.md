@@ -2,6 +2,15 @@
 
 Fecha: 2026-10-05. Estado: plan pendiente de ejecución.
 
+## Progreso registrado
+
+- `edba4cb` — documentación inicial de corrección y despliegue.
+- `2d062e7` — workspace explícito, integridad de visitas y altas sin REPLACE destructivo; corrección de SQL financiero.
+- `73b5c8a` — respaldos filtrados y validados por workspace.
+- `192047b` — Drift schema 5 y migración del Outbox histórico.
+
+El siguiente cambio integra el Outbox en creación y finalización de mantenimientos. Quedan por conectar las demás mutaciones de repositories y el envío HTTP.
+
 ## Objetivo y alcance
 
 Dos socios trabajan desde instalaciones independientes, incluso sin conexión, y sus datos convergen mediante una API central. Flutter/Drift conserva la respuesta local inmediata. PostgreSQL valida y conserva el estado compartido. `server/layer` será la raíz del servicio y de su despliegue.

@@ -95,6 +95,23 @@ class MaintenanceVisit {
   bool get isScheduled => status == VisitStatus.scheduled;
   bool get isDeleted => deletedAt != null;
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'workspaceId': workspaceId,
+    'planId': planId,
+    'scheduledDate': scheduledDate.toIso8601String(),
+    'completedDate': completedDate?.toIso8601String(),
+    'status': status.nameCode,
+    'technicianNotes': technicianNotes,
+    'agreedPriceCents': agreedPriceCents,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'createdBy': createdBy,
+    'updatedBy': updatedBy,
+    'version': version,
+    'deletedAt': deletedAt?.toIso8601String(),
+  };
+
   MaintenanceVisit copyWith({
     String? id,
     String? workspaceId,

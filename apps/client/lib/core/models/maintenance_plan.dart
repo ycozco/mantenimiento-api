@@ -54,6 +54,29 @@ class MaintenancePlan {
   double get agreedAmount => agreedAmountCents / 100.0;
   bool get isDeleted => deletedAt != null;
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'workspaceId': workspaceId,
+    'title': title,
+    'clientId': clientId,
+    'locationId': locationId,
+    'description': description,
+    'frequencyType': frequencyType,
+    'intervalDays': intervalDays,
+    'nextDate': nextDate.toIso8601String(),
+    'estimatedCostCents': estimatedCostCents,
+    'billingType': billingType,
+    'agreedAmountCents': agreedAmountCents,
+    'assignedPartnerIds': assignedPartnerIds,
+    'isActive': isActive,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    'createdBy': createdBy,
+    'updatedBy': updatedBy,
+    'version': version,
+    'deletedAt': deletedAt?.toIso8601String(),
+  };
+
   DateTime calculateNextCycle([DateTime? fromDate]) {
     final base = fromDate ?? DateTime.now();
     return base.add(Duration(days: intervalDays > 0 ? intervalDays : 30));

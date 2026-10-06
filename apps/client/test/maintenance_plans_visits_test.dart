@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mantenimiento_app/core/database/app_database.dart';
@@ -76,6 +78,20 @@ void main() {
       expect(firstVisit.scheduledDate, DateTime(2026, 3, 1));
       expect(firstVisit.status, model.VisitStatus.scheduled);
       expect(firstVisit.completedDate, isNull);
+
+      final queued = await db.select(db.syncQueue).get();
+      expect(queued.length, 2);
+      expect(queued.map((item) => item.operationId).toSet().length, 2);
+      expect(queued.every((item) => item.status == 'PENDING'), isTrue);
+      expect(
+        queued.every((item) => item.workspaceId == plan.workspaceId),
+        isTrue,
+      );
+      final planPayload = jsonDecode(
+        queued.firstWhere((item) => item.entityTable == 'maintenance_plans').payloadJson,
+      ) as Map<String, dynamic>;
+      expect(planPayload['id'], 'plan-1');
+      expect(planPayload['version'], 1);
     });
 
     test(

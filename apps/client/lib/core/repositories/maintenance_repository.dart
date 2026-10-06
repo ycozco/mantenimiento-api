@@ -5,11 +5,14 @@ import '../database/app_database.dart'
 import '../models/maintenance_plan.dart';
 import '../models/maintenance_visit.dart';
 import '../models/work_log.dart';
+import 'sync_queue_repository.dart';
 
 class MaintenanceRepository {
   final AppDatabase db;
+  final SyncQueueRepository outbox;
 
-  MaintenanceRepository(this.db);
+  MaintenanceRepository(this.db, {SyncQueueRepository? outbox})
+    : outbox = outbox ?? SyncQueueRepository(db);
 
   Stream<List<MaintenancePlan>> watchActivePlans() {
     return (db.select(db.maintenancePlans)
@@ -107,6 +110,23 @@ class MaintenanceRepository {
               version: Value(firstVisit.version),
             ),
           );
+
+      await outbox.enqueue(
+        workspaceId: plan.workspaceId,
+        entityTable: 'maintenance_plans',
+        entityId: plan.id,
+        operation: 'UPSERT',
+        baseVersion: 0,
+        payload: plan.toJson(),
+      );
+      await outbox.enqueue(
+        workspaceId: plan.workspaceId,
+        entityTable: 'maintenance_visits',
+        entityId: firstVisit.id,
+        operation: 'UPSERT',
+        baseVersion: 0,
+        payload: firstVisit.toJson(),
+      );
     });
   }
 
@@ -235,6 +255,7 @@ class MaintenanceRepository {
   }) async {
     return await db.transaction(() async {
       final now = executedDate ?? DateTime.now();
+      final updatedAt = DateTime.now();
 
       // 1. Obtener visita actual
       final visitRow = await (db.select(
@@ -252,7 +273,7 @@ class MaintenanceRepository {
           technicianNotes: notes != null
               ? Value(notes)
               : Value(currentVisit.technicianNotes),
-          updatedAt: Value(DateTime.now()),
+          updatedAt: Value(updatedAt),
           version: Value(currentVisit.version + 1),
         ),
       );
@@ -272,7 +293,7 @@ class MaintenanceRepository {
       )..where((t) => t.id.equals(plan.id))).write(
         MaintenancePlansCompanion(
           nextDate: Value(nextDate),
-          updatedAt: Value(DateTime.now()),
+          updatedAt: Value(updatedAt),
           version: Value(plan.version + 1),
         ),
       );
@@ -306,6 +327,45 @@ class MaintenanceRepository {
               version: Value(nextVisit.version),
             ),
           );
+
+      await outbox.enqueue(
+        workspaceId: currentVisit.workspaceId,
+        entityTable: 'maintenance_visits',
+        entityId: currentVisit.id,
+        operation: 'UPSERT',
+        baseVersion: currentVisit.version,
+        payload: currentVisit
+            .copyWith(
+              status: VisitStatus.completed,
+              completedDate: now,
+              technicianNotes: notes ?? currentVisit.technicianNotes,
+              updatedAt: updatedAt,
+              version: currentVisit.version + 1,
+            )
+            .toJson(),
+      );
+      await outbox.enqueue(
+        workspaceId: plan.workspaceId,
+        entityTable: 'maintenance_plans',
+        entityId: plan.id,
+        operation: 'UPSERT',
+        baseVersion: plan.version,
+        payload: plan
+            .copyWith(
+              nextDate: nextDate,
+              updatedAt: updatedAt,
+              version: plan.version + 1,
+            )
+            .toJson(),
+      );
+      await outbox.enqueue(
+        workspaceId: plan.workspaceId,
+        entityTable: 'maintenance_visits',
+        entityId: nextVisit.id,
+        operation: 'UPSERT',
+        baseVersion: 0,
+        payload: nextVisit.toJson(),
+      );
 
       return currentVisit.copyWith(
         status: VisitStatus.completed,
