@@ -2,6 +2,8 @@
 
 Fecha de ejecución: 2026-10-05, hora local America/Lima. La prueba corrió NATS JetStream y Eclipse Mosquitto al mismo tiempo en Docker Desktop, con diez clientes sintéticos por protocolo. El objetivo fue medir una carga modesta de sincronización y observar qué sucede con mensajes destinados a un dispositivo desconectado.
 
+**Actualización:** el resultado inicial de recuperación NATS 48/100 que aparece más abajo es histórico. Fue seguido por un ensayo dedicado más completo con 10.000 operaciones online, caída SIGKILL y recuperación 100/100, documentado en [reporte-prueba-nats-ampliada.md](reporte-prueba-nats-ampliada.md). El reensayo no permite determinar retrospectivamente la causa exacta del conteo inicial.
+
 ## Resultado medido
 
 | Métrica | NATS JetStream | Mosquitto MQTT |
