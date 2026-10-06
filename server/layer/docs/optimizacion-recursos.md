@@ -36,7 +36,7 @@ Conservar la VPS de 4 GB durante el primer staging. Después de una prueba con d
 
 ```text
 API:        0,50 vCPU / 384 MB
-PostgreSQL: 0,75 vCPU / 768 MB
+PostgreSQL: 0,75 vCPU / 512 MB (+ hasta 256 MB de swap)
 Pool API:   4 conexiones
 VPS:        2 GB como mínimo para piloto
 ```
@@ -57,7 +57,7 @@ Se construyeron las tres variantes con el mismo código y dependencias de produc
 | `node:22-alpine` | 310 MB | OK | OK | OK; migraciones 001 y 002 aplicadas |
 | `gcr.io/distroless/nodejs22-debian13:nonroot` | 280 MB | OK directo | OK | No se adoptó por el health check sin shell |
 
-Con Alpine, API y PostgreSQL continuaron saludables con límites temporales de 384 MB y 512 MB respectivamente. En reposo midieron aproximadamente 46 MiB y 34 MiB; son mediciones de un entorno local, no un compromiso de carga de producción.
+Con Alpine, API y PostgreSQL continuaron saludables con límites temporales de 384 MB y 512 MB respectivamente. En reposo midieron aproximadamente 33,7 MiB y 28,2 MiB (62 MiB combinados); son mediciones de un entorno local, no un compromiso de carga de producción.
 
 ```bash
 docker stats --no-stream
