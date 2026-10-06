@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: decolumax
+      POSTGRES_USER: decolumax
+      POSTGRES_PASSWORD: change-me-local
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - decolumax_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U decolumax -d decolumax"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ../../..
+      dockerfile: server/layer/deploy/Dockerfile
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      API_PREFIX: api/v1
+      DATABASE_URL: postgresql://decolumax:change-me-local@postgres:5432/decolumax
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  decolumax_pgdata:
