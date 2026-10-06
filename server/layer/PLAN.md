@@ -8,8 +8,10 @@ Fecha: 2026-10-05. Estado: plan pendiente de ejecución.
 - `2d062e7` — workspace explícito, integridad de visitas y altas sin REPLACE destructivo; corrección de SQL financiero.
 - `73b5c8a` — respaldos filtrados y validados por workspace.
 - `192047b` — Drift schema 5 y migración del Outbox histórico.
+- `3f382fd` — Outbox integrado en creación y finalización de mantenimientos.
+- `e6c8cae` — `LocalStorageService` delega el ciclo de mantenimiento en un único repository.
 
-El siguiente cambio integra el Outbox en creación y finalización de mantenimientos. Quedan por conectar las demás mutaciones de repositories y el envío HTTP.
+Quedan por conectar las mutaciones restantes de repositories, el envío HTTP y la API en `server/layer`.
 
 ## Objetivo y alcance
 
