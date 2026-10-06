@@ -12,7 +12,8 @@ Arquitectura local-first con sincronización incremental hacia servidor central 
 mantenimiento/
 ├── apps/
 │   ├── client/                  # Aplicación Flutter (Android, Web, Desktop)
-│   └── (api/)                   # Servidor central y API de sincronización (fase T-22+)
+├── server/
+│   └── layer/                   # API central, migraciones y despliegue (fase T-22+)
 ├── packages/
 │   └── sync-contract/           # Definiciones y contratos del protocolo de sincronización V3
 ├── infrastructure/
@@ -65,3 +66,5 @@ flutter build apk --debug
 - **Arquitectura V2 Local**: [`docs/arquitectura_v2.md`](docs/arquitectura_v2.md)
 - **Transición T-20**: [`docs/t20_resultado.md`](docs/t20_resultado.md)
 - **Protocolo de Sincronización V3**: [`docs/sync_protocol_v3.md`](docs/sync_protocol_v3.md)
+- **Plan de corrección y servidor**: [`server/layer/PLAN.md`](server/layer/PLAN.md)
+- **API y despliegue**: [`server/layer/README.md`](server/layer/README.md)
