@@ -10,8 +10,11 @@ Fecha: 2026-10-05. Estado: plan pendiente de ejecución.
 - `192047b` — Drift schema 5 y migración del Outbox histórico.
 - `3f382fd` — Outbox integrado en creación y finalización de mantenimientos.
 - `e6c8cae` — `LocalStorageService` delega el ciclo de mantenimiento en un único repository.
+- `893a79d` — base NestJS ejecutable, health check, configuración, Dockerfile y Compose local.
 
 Quedan por conectar las mutaciones restantes de repositories, el envío HTTP y la API en `server/layer`.
+
+La base del servidor compila y `GET /api/v1/health` responde. `npm audit --omit=dev` no reporta vulnerabilidades; el conjunto de desarrollo todavía requiere revisar sus alertas transitivas antes de un release.
 
 ## Objetivo y alcance
 
