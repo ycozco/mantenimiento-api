@@ -24,6 +24,7 @@ services:
       PORT: 3000
       API_PREFIX: api/v1
       DATABASE_URL: postgresql://decolumax:change-me-local@postgres:5432/decolumax
+      RUN_MIGRATIONS: "true"
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
