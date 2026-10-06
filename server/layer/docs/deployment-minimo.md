@@ -37,3 +37,15 @@ docker compose --env-file server/layer/deploy/.env.production \
 ```
 
 El comando de producción debe ejecutarse desde la raíz del repositorio. `RUN_MIGRATIONS=true` es adecuado mientras exista una sola réplica de la API; antes de escalar se debe separar la ejecución de migraciones del arranque.
+
+## Perfil económico opcional
+
+Después de probar sincronizaciones reales, se puede usar el perfil reducido:
+
+```bash
+docker compose --env-file server/layer/deploy/.env.production \
+  -f server/layer/deploy/compose.production.yml \
+  -f server/layer/deploy/compose.production.economy.yml up -d --build
+```
+
+Este perfil limita la API a 384 MB y PostgreSQL a 512 MB, con 128 MB de swap adicional permitido por contenedor. La VPS debe tener al menos 2 GB de RAM; 384 MB para ambos servicios juntos no es suficiente para el sistema operativo, Docker y Nginx.

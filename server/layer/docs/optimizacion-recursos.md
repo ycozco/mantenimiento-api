@@ -21,7 +21,7 @@
 | Alternativa | Ahorro | Riesgo o límite | Decisión |
 | --- | --- | --- | --- |
 | Mantener una VPS de 4 GB con API y PostgreSQL juntos | Bajo costo y operación simple | Requiere vigilar el volumen y backups | Recomendada para el primer despliegue |
-| Bajar a VPS de 2 GB, API 384 MB y PostgreSQL 768 MB | Menor costo mensual | Puede terminar en OOM durante migraciones o cargas de sync; medir antes | Piloto después de una prueba de carga |
+| Perfil económico, API 384 MB y PostgreSQL 512 MB | Menor presión de RAM | Puede terminar en OOM durante migraciones o cargas de sync; medir antes | Piloto después de una prueba de carga |
 | API gratuita + PostgreSQL gratuito administrado | Puede costar USD 0 | Pausas, límites de tamaño, sin backups o expiración según proveedor | Solo staging/demostración |
 | Separar API y base en dos servicios | Aislamiento | Normalmente aumenta el costo y añade red/latencia | Posponer |
 | Fastify en lugar de Express | Más solicitudes por CPU en benchmarks de Nest | Cambio de adaptador y compatibilidad de middleware | Medir después de cerrar el contrato |
