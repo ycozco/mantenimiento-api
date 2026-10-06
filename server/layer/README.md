@@ -10,4 +10,6 @@ La API expone `GET /api/v1/health` y `GET /api/v1/health/ready`. Desarrollo loca
 
 El primer workspace y su administrador se crean fuera de HTTP con `npm run bootstrap:admin`, usando `DATABASE_URL`, `WORKSPACE_SLUG`, `WORKSPACE_NAME`, `ADMIN_EMAIL`, `ADMIN_NAME` y `ADMIN_PASSWORD` en el entorno.
 
+La imagen de producción de la API usa `node:22-alpine`; la compatibilidad de `argon2`, migraciones y readiness fue verificada en Docker. La alternativa distroless queda documentada, pero no es la imagen operativa inicial.
+
 Plan de trabajo, correcciones previas y criterios de cierre: [PLAN.md](PLAN.md).

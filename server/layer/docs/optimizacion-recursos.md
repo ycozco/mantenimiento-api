@@ -4,6 +4,7 @@
 
 - El contexto de build estaba incluyendo aproximadamente 2,4 GB de `apps` Flutter, aunque la imagen solo copia `server/layer`. `.dockerignore` corrige ese desperdicio.
 - El árbol local de dependencias de desarrollo de la API ocupa aproximadamente 124 MB. La imagen final usa solo dependencias de producción.
+- La variante Alpine fue construida y ejecutada con `argon2`, las migraciones y readiness correctos. La variante distroless también arrancó, pero requiere un health check sin shell y ofrece menos herramientas de diagnóstico.
 - `DatabaseService` tenía un pool máximo de 10 conexiones. Para una sola API y dos usuarios iniciales se fija en 4, con timeout de conexión y de inactividad.
 - La clave primaria `(workspace_id, server_seq)` ya cubre las consultas por workspace y secuencia. La migración 002 elimina el índice duplicado `sync_changes_pull_idx`.
 
@@ -25,7 +26,8 @@
 | Separar API y base en dos servicios | Aislamiento | Normalmente aumenta el costo y añade red/latencia | Posponer |
 | Fastify en lugar de Express | Más solicitudes por CPU en benchmarks de Nest | Cambio de adaptador y compatibilidad de middleware | Medir después de cerrar el contrato |
 | PgBouncer o Redis | Útil al escalar instancias o colas | Otro proceso, memoria y operación | No justificado con una API única |
-| `node:alpine` o imagen distroless | Reduce disco de imagen | `argon2` es un módulo nativo; exige probar binarios y compatibilidad musl | Mantener `node:22-bookworm-slim` por ahora |
+| `node:alpine` | Reduce disco de imagen | `argon2` es un módulo nativo; exige probar binarios y compatibilidad musl | Adoptar `node:22-alpine`, ya probado |
+| Imagen distroless | Reduce aún más disco y superficie de ataque | No trae shell; exige health check y diagnóstico específicos | Mantener como alternativa |
 | Particionar `sync_changes` desde el inicio | Puede ayudar a tablas muy grandes | Más complejidad y memoria de planificación | Posponer hasta que el tamaño lo justifique |
 
 ## Recomendación de recursos
@@ -44,6 +46,18 @@ No bajar a 2 GB solo porque el consumo en reposo sea bajo: PostgreSQL puede usar
 Node puede recibir un límite de heap explícito cuando se pruebe el perfil económico, por ejemplo `--max-old-space-size=256`, dejando margen para memoria nativa, módulos y el runtime. El límite de Docker debe quedar por encima del heap para evitar un OOM prematuro.
 
 ## Medición antes de reducir la VPS
+
+## Prueba de imágenes (Docker Desktop, 2026-10-06)
+
+Se construyeron las tres variantes con el mismo código y dependencias de producción. Los tamaños son los que muestra `docker system df -v` para las capas desplegadas localmente; el tamaño comprimido de descarga puede ser menor:
+
+| Variante | Tamaño de imagen desplegada | Health | `argon2` | Readiness con PostgreSQL |
+| --- | ---: | --- | --- | --- |
+| `node:22-bookworm-slim` | 398 MB | OK | OK | No ejecutada en Compose |
+| `node:22-alpine` | 310 MB | OK | OK | OK; migraciones 001 y 002 aplicadas |
+| `gcr.io/distroless/nodejs22-debian13:nonroot` | 280 MB | OK directo | OK | No se adoptó por el health check sin shell |
+
+Con Alpine, API y PostgreSQL continuaron saludables con límites temporales de 384 MB y 512 MB respectivamente. En reposo midieron aproximadamente 46 MiB y 34 MiB; son mediciones de un entorno local, no un compromiso de carga de producción.
 
 ```bash
 docker stats --no-stream

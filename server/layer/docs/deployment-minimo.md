@@ -6,7 +6,7 @@ La primera versión de la API de sincronización de Decolumax se despliega como 
 
 | Servicio | Imagen | Función |
 | --- | --- | --- |
-| `api` | `decolumax-sync-api:0.1.0`, construido desde `server/layer/deploy/Dockerfile` y basado en `node:22-bookworm-slim` | Auth, endpoints de sync, validación y reglas de negocio |
+| `api` | `decolumax-sync-api:0.1.0`, construido desde `server/layer/deploy/Dockerfile` y basado en `node:22-alpine` | Auth, endpoints de sync, validación y reglas de negocio |
 | `postgres` | `postgres:17-alpine` | Workspaces, usuarios, sesiones, cambios e idempotencia |
 
 La base de datos solo está en la red interna de Compose. La API publica el puerto `3000` únicamente en `127.0.0.1`; Nginx instalado en el sistema termina HTTPS y reenvía a ese puerto. Let's Encrypt no añade una cuota mensual.
