@@ -1,6 +1,6 @@
 # Opciones de transporte y optimización del sync cifrado
 
-Consulta: 2026-10-05, America/Lima. Investigación documental y revisión del repositorio; no se han compilado ni medido estos candidatos en Decolumax. Los objetivos de recursos de este documento no son benchmarks.
+Consulta: 2026-10-05, America/Lima. Esta evaluación incluye la prueba sintética local de carga descrita en [reporte-prueba-local-buzones.md](reporte-prueba-local-buzones.md). La prueba no usó Flutter ni Drift y la recuperación offline no fue concluyente; sus métricas no son un benchmark de producción. Los objetivos de recursos de este documento tampoco son mediciones.
 
 Plan funcional y orden de migración: [migracion-sync-cifrado.md](migracion-sync-cifrado.md).
 
