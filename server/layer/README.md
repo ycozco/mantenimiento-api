@@ -13,3 +13,5 @@ El primer workspace y su administrador se crean fuera de HTTP con `npm run boots
 La imagen de producción de la API usa `node:22-alpine`; la compatibilidad de `argon2`, migraciones y readiness fue verificada en Docker. La alternativa distroless queda documentada, pero no es la imagen operativa inicial.
 
 Plan de trabajo, correcciones previas y criterios de cierre: [PLAN.md](PLAN.md).
+
+Alternativa en diseño: [sync cifrado entre socios y buzón persistente sin PostgreSQL para los mensajes](docs/migracion-sync-cifrado.md). Incluye P2P directo opcional y [comparación de servicios, proyectos Flutter y recursos](docs/evaluacion-p2p-flutter.md). El despliegue actual sigue siendo el de la API central; el nuevo transporte aún no está implementado.

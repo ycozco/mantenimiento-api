@@ -2,6 +2,8 @@
 
 Fecha: 2026-10-05. Estado: ejecución incremental en curso.
 
+Nueva alternativa solicitada: [plan de sync entre socios con cifrado y buzón sin DB externa](docs/migracion-sync-cifrado.md), con [evaluación de GitHub y optimizaciones](docs/evaluacion-p2p-flutter.md). Es un diseño pendiente de piloto; los apartados siguientes conservan la planificación del modelo central y no certifican que la migración esté implementada.
+
 ## Progreso registrado
 
 - `edba4cb` — documentación inicial de corrección y despliegue.
