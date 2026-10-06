@@ -1,0 +1,24 @@
+.git
+.git/**
+.idea
+
+# The server image only needs server/layer.
+apps
+docs
+infrastructure
+packages
+
+# Never send generated or local dependency trees to the Docker daemon.
+**/node_modules
+**/dist
+**/.dart_tool
+**/build
+**/.gradle
+**/Pods
+**/DerivedData
+**/*.log
+
+# Local secrets and environment files must not enter the build context.
+**/.env
+**/.env.*
+!.env.example

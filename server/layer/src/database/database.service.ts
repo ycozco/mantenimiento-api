@@ -13,7 +13,12 @@ export class DatabaseService implements OnModuleDestroy {
     this.pool = new Pool({
       ...(connectionString ? { connectionString } : {}),
       max: Number(config.get<string>('DATABASE_POOL_MAX', '10')),
-      idleTimeoutMillis: 30_000,
+      idleTimeoutMillis: Number(
+        config.get<string>('DATABASE_POOL_IDLE_TIMEOUT_MS', '30_000'),
+      ),
+      connectionTimeoutMillis: Number(
+        config.get<string>('DATABASE_POOL_CONNECTION_TIMEOUT_MS', '2_000'),
+      ),
     });
   }
 

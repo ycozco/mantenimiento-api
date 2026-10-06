@@ -7,6 +7,18 @@ services:
     cpus: "1.0"
     mem_limit: 1g
     pids_limit: 256
+    command:
+      - postgres
+      - -c
+      - max_connections=32
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - max_parallel_workers=0
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -38,6 +50,9 @@ services:
       JWT_ACCESS_TTL_SECONDS: ${JWT_ACCESS_TTL_SECONDS:-900}
       REFRESH_TOKEN_DAYS: ${REFRESH_TOKEN_DAYS:-30}
       RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      DATABASE_POOL_MAX: ${DATABASE_POOL_MAX:-4}
+      DATABASE_POOL_IDLE_TIMEOUT_MS: ${DATABASE_POOL_IDLE_TIMEOUT_MS:-10000}
+      DATABASE_POOL_CONNECTION_TIMEOUT_MS: ${DATABASE_POOL_CONNECTION_TIMEOUT_MS:-2000}
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
