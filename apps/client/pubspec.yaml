@@ -47,6 +47,8 @@ dependencies:
   drift_flutter: ^0.2.4
   sqlite3_flutter_libs: ^0.5.28
   path: ^1.9.1
+  # Pilot transport dependency; JetStream APIs remain experimental.
+  dart_nats: 1.4.0
 
 dev_dependencies:
   flutter_test:

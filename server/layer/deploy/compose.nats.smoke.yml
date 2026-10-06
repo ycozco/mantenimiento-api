@@ -1,0 +1,23 @@
+name: decolumax-nats-smoke
+
+services:
+  nats:
+    image: nats:2.15.0-scratch
+    restart: unless-stopped
+    cpus: "0.50"
+    mem_limit: 256m
+    pids_limit: 64
+    command: ["-c", "/etc/nats/nats.conf"]
+    environment:
+      NATS_SMOKE_USER: ${NATS_SMOKE_USER:-sync_smoke}
+      NATS_SMOKE_PASSWORD: ${NATS_SMOKE_PASSWORD:-local_smoke_only_change-me}
+    volumes:
+      - ./nats/nats.conf:/etc/nats/nats.conf:ro
+      - ${NATS_SMOKE_CERT_DIR:?Set NATS_SMOKE_CERT_DIR to a local certificate folder}:/etc/nats/certs:ro
+      - nats_smoke_data:/data/jetstream
+    ports:
+      - "127.0.0.1:4222:4222"
+      - "127.0.0.1:8222:8222"
+
+volumes:
+  nats_smoke_data:
