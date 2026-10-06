@@ -12,11 +12,13 @@ Fecha: 2026-10-05. Estado: plan pendiente de ejecución.
 - `e6c8cae` — `LocalStorageService` delega el ciclo de mantenimiento en un único repository.
 - `893a79d` — base NestJS ejecutable, health check, configuración, Dockerfile y Compose local.
 - `052a24e` — pool PostgreSQL, migraciones SQL, readiness y tablas fundacionales de identidad/sync.
+- `524b877` — login por workspace, Argon2id, sesiones revocables, refresh rotatorio y `/auth/me`.
 
 Quedan por conectar las mutaciones restantes de repositories, el envío HTTP y la API en `server/layer`.
 
 La base del servidor compila y `GET /api/v1/health` responde. `npm audit --omit=dev` no reporta vulnerabilidades; el conjunto de desarrollo todavía requiere revisar sus alertas transitivas antes de un release.
 La migración SQL y Compose están validados por compilación/configuración; falta ejecutar una instancia PostgreSQL real porque Docker Engine no está disponible en este entorno.
+La autenticación está compilada y validada con pruebas HTTP de DTO y guard; el flujo contra PostgreSQL queda pendiente de una instancia real y del bootstrap administrativo inicial.
 
 ## Objetivo y alcance
 
