@@ -4,6 +4,9 @@ services:
   postgres:
     image: postgres:17-alpine
     restart: unless-stopped
+    cpus: "1.0"
+    mem_limit: 1g
+    pids_limit: 256
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -23,6 +26,9 @@ services:
       context: ../../..
       dockerfile: server/layer/deploy/Dockerfile
     restart: unless-stopped
+    cpus: "0.75"
+    mem_limit: 512m
+    pids_limit: 128
     environment:
       NODE_ENV: production
       PORT: 3000

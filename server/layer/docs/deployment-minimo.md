@@ -21,6 +21,8 @@ No se despliegan Redis, un worker de sincronización, MinIO/S3, balanceador, Kub
 
 Para producción inicial: 2 vCPU, 4 GB de RAM y 40 GB NVMe. 2 GB puede servir para una prueba, pero deja poco margen para PostgreSQL, migraciones, logs y el proceso Node.
 
+El Compose fija un presupuesto inicial de `0,75` vCPU y `512 MB` para la API, y `1` vCPU y `1 GB` para PostgreSQL. La suma deja CPU y memoria para el sistema operativo, Docker, Nginx y los respaldos. El volumen de PostgreSQL no tiene una cuota propia: su crecimiento está limitado por el disco de la VPS, por lo que se debe vigilar el tamaño y rotar logs/backups.
+
 Como referencia de bajo costo, el plan Hetzner CX23 publica 2 vCPU, 4 GB y 40 GB por EUR 5,49/mes antes de IVA e IPv4; sus precios pueden variar por región y fecha. DigitalOcean publica el plan básico de 4 GB y 2 vCPU por USD 24/mes. Por eso la estimación objetivo es aproximadamente EUR 6–12/mes más dominio y almacenamiento externo de backups; el precio final depende de impuestos, IP y proveedor elegido.
 
 ## Primer arranque
