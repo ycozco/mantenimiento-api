@@ -1,6 +1,6 @@
 # Corrección local y planificación de Decolumax Connected
 
-Fecha: 2026-10-05. Estado: plan pendiente de ejecución.
+Fecha: 2026-10-05. Estado: ejecución incremental en curso.
 
 ## Progreso registrado
 
@@ -19,8 +19,8 @@ Quedan por conectar las mutaciones restantes de repositories, el envío HTTP y l
 
 La base del servidor compila y `GET /api/v1/health` responde. `npm audit --omit=dev` no reporta vulnerabilidades; el conjunto de desarrollo todavía requiere revisar sus alertas transitivas antes de un release.
 La migración SQL y Compose están validados por compilación/configuración; falta ejecutar una instancia PostgreSQL real porque Docker Engine no está disponible en este entorno.
-La autenticación está compilada y validada con pruebas HTTP de DTO y guard; el flujo contra PostgreSQL queda pendiente de una instancia real y del bootstrap administrativo inicial.
-El comando `bootstrap:admin` ya cubre ese flujo en código, pendiente de ejecutarse contra la base staging.
+La autenticación está compilada y validada con pruebas HTTP de DTO y guard; el flujo completo contra PostgreSQL queda pendiente de una instancia real de staging.
+El comando `bootstrap:admin` ya cubre el bootstrap inicial en código, pendiente de ejecutarse contra esa base.
 
 ## Objetivo y alcance
 
