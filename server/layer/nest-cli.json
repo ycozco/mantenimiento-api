@@ -6,6 +6,7 @@
     "assets": [
       {
         "include": "database/migrations/**/*.sql",
+        "outDir": "dist/src",
         "watchAssets": true
       }
     ]
