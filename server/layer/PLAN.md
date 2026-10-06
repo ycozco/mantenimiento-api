@@ -11,10 +11,12 @@ Fecha: 2026-10-05. Estado: plan pendiente de ejecución.
 - `3f382fd` — Outbox integrado en creación y finalización de mantenimientos.
 - `e6c8cae` — `LocalStorageService` delega el ciclo de mantenimiento en un único repository.
 - `893a79d` — base NestJS ejecutable, health check, configuración, Dockerfile y Compose local.
+- `052a24e` — pool PostgreSQL, migraciones SQL, readiness y tablas fundacionales de identidad/sync.
 
 Quedan por conectar las mutaciones restantes de repositories, el envío HTTP y la API en `server/layer`.
 
 La base del servidor compila y `GET /api/v1/health` responde. `npm audit --omit=dev` no reporta vulnerabilidades; el conjunto de desarrollo todavía requiere revisar sus alertas transitivas antes de un release.
+La migración SQL y Compose están validados por compilación/configuración; falta ejecutar una instancia PostgreSQL real porque Docker Engine no está disponible en este entorno.
 
 ## Objetivo y alcance
 
