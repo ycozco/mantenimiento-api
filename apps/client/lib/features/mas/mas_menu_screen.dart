@@ -8,10 +8,12 @@ import '../../core/widgets/app_navigation_tile.dart';
 import '../../core/widgets/app_page_title.dart';
 import '../../core/widgets/app_section_header.dart';
 import '../ajustes/ajustes_screen.dart';
+import '../about/app_version_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../inventory/inventory_screen.dart';
 import '../socios_clientes/socios_clientes_screen.dart';
 import '../suppliers/suppliers_screen.dart';
+import '../sync/sync_center_screen.dart';
 import '../tools/tools_screen.dart';
 
 class MasMenuScreen extends StatelessWidget {
@@ -40,6 +42,18 @@ class MasMenuScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _buildResponsiveGrid(context, [
+              _MenuOption(
+                title: 'Sincronización y organización',
+                subtitle: 'Estado local, canal TLS, espacio y dispositivos',
+                icon: LucideIcons.refresh_cw,
+                iconColor: AppTheme.skyAccent,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SyncCenterScreen(storage: storage),
+                  ),
+                ),
+              ),
               _MenuOption(
                 title: 'Inventario (Kardex)',
                 subtitle: 'Control de insumos, stock y movimientos',
@@ -153,6 +167,17 @@ class MasMenuScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => AjustesScreen(storage: storage),
                   ),
+                ),
+              ),
+              _MenuOption(
+                title: 'Versión e instalación',
+                subtitle:
+                    'Versión, fecha de compilación, paquete y referencias',
+                icon: LucideIcons.badge_info,
+                iconColor: AppTheme.amberSafety,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AppVersionScreen()),
                 ),
               ),
             ]),

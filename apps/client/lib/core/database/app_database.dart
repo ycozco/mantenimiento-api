@@ -30,6 +30,7 @@ part 'app_database.g.dart';
     Collections,
     Attachments,
     SyncQueue,
+    SyncInbox,
     AppMetadata,
   ],
 )
@@ -39,7 +40,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(DatabaseConnection super.connection);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
@@ -166,6 +167,9 @@ class AppDatabase extends _$AppDatabase {
         await customStatement(
           'CREATE INDEX sync_queue_status_idx ON sync_queue(status, next_attempt_at)',
         );
+      }
+      if (from < 6) {
+        await m.createTable(syncInbox);
       }
     },
   );

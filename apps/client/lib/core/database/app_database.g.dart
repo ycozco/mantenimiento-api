@@ -19468,6 +19468,637 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   }
 }
 
+class $SyncInboxTable extends SyncInbox
+    with TableInfo<$SyncInboxTable, SyncInboxData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncInboxTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _workspaceIdMeta = const VerificationMeta(
+    'workspaceId',
+  );
+  @override
+  late final GeneratedColumn<String> workspaceId = GeneratedColumn<String>(
+    'workspace_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityTypeMeta = const VerificationMeta(
+    'entityType',
+  );
+  @override
+  late final GeneratedColumn<String> entityType = GeneratedColumn<String>(
+    'entity_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entityIdMeta = const VerificationMeta(
+    'entityId',
+  );
+  @override
+  late final GeneratedColumn<String> entityId = GeneratedColumn<String>(
+    'entity_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _schemaVersionMeta = const VerificationMeta(
+    'schemaVersion',
+  );
+  @override
+  late final GeneratedColumn<int> schemaVersion = GeneratedColumn<int>(
+    'schema_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nonceMeta = const VerificationMeta('nonce');
+  @override
+  late final GeneratedColumn<String> nonce = GeneratedColumn<String>(
+    'nonce',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ciphertextMeta = const VerificationMeta(
+    'ciphertext',
+  );
+  @override
+  late final GeneratedColumn<String> ciphertext = GeneratedColumn<String>(
+    'ciphertext',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _serverSequenceMeta = const VerificationMeta(
+    'serverSequence',
+  );
+  @override
+  late final GeneratedColumn<int> serverSequence = GeneratedColumn<int>(
+    'server_sequence',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _receivedAtMeta = const VerificationMeta(
+    'receivedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> receivedAt = GeneratedColumn<DateTime>(
+    'received_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('RECEIVED'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    operationId,
+    workspaceId,
+    entityType,
+    entityId,
+    schemaVersion,
+    nonce,
+    ciphertext,
+    serverSequence,
+    receivedAt,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_inbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncInboxData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationIdMeta);
+    }
+    if (data.containsKey('workspace_id')) {
+      context.handle(
+        _workspaceIdMeta,
+        workspaceId.isAcceptableOrUnknown(
+          data['workspace_id']!,
+          _workspaceIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_workspaceIdMeta);
+    }
+    if (data.containsKey('entity_type')) {
+      context.handle(
+        _entityTypeMeta,
+        entityType.isAcceptableOrUnknown(data['entity_type']!, _entityTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityTypeMeta);
+    }
+    if (data.containsKey('entity_id')) {
+      context.handle(
+        _entityIdMeta,
+        entityId.isAcceptableOrUnknown(data['entity_id']!, _entityIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entityIdMeta);
+    }
+    if (data.containsKey('schema_version')) {
+      context.handle(
+        _schemaVersionMeta,
+        schemaVersion.isAcceptableOrUnknown(
+          data['schema_version']!,
+          _schemaVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_schemaVersionMeta);
+    }
+    if (data.containsKey('nonce')) {
+      context.handle(
+        _nonceMeta,
+        nonce.isAcceptableOrUnknown(data['nonce']!, _nonceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nonceMeta);
+    }
+    if (data.containsKey('ciphertext')) {
+      context.handle(
+        _ciphertextMeta,
+        ciphertext.isAcceptableOrUnknown(data['ciphertext']!, _ciphertextMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ciphertextMeta);
+    }
+    if (data.containsKey('server_sequence')) {
+      context.handle(
+        _serverSequenceMeta,
+        serverSequence.isAcceptableOrUnknown(
+          data['server_sequence']!,
+          _serverSequenceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serverSequenceMeta);
+    }
+    if (data.containsKey('received_at')) {
+      context.handle(
+        _receivedAtMeta,
+        receivedAt.isAcceptableOrUnknown(data['received_at']!, _receivedAtMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {workspaceId, operationId};
+  @override
+  SyncInboxData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncInboxData(
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      )!,
+      workspaceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}workspace_id'],
+      )!,
+      entityType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_type'],
+      )!,
+      entityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entity_id'],
+      )!,
+      schemaVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}schema_version'],
+      )!,
+      nonce: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nonce'],
+      )!,
+      ciphertext: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ciphertext'],
+      )!,
+      serverSequence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}server_sequence'],
+      )!,
+      receivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}received_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncInboxTable createAlias(String alias) {
+    return $SyncInboxTable(attachedDatabase, alias);
+  }
+}
+
+class SyncInboxData extends DataClass implements Insertable<SyncInboxData> {
+  final String operationId;
+  final String workspaceId;
+  final String entityType;
+  final String entityId;
+  final int schemaVersion;
+  final String nonce;
+  final String ciphertext;
+  final int serverSequence;
+  final DateTime receivedAt;
+  final String status;
+  const SyncInboxData({
+    required this.operationId,
+    required this.workspaceId,
+    required this.entityType,
+    required this.entityId,
+    required this.schemaVersion,
+    required this.nonce,
+    required this.ciphertext,
+    required this.serverSequence,
+    required this.receivedAt,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['operation_id'] = Variable<String>(operationId);
+    map['workspace_id'] = Variable<String>(workspaceId);
+    map['entity_type'] = Variable<String>(entityType);
+    map['entity_id'] = Variable<String>(entityId);
+    map['schema_version'] = Variable<int>(schemaVersion);
+    map['nonce'] = Variable<String>(nonce);
+    map['ciphertext'] = Variable<String>(ciphertext);
+    map['server_sequence'] = Variable<int>(serverSequence);
+    map['received_at'] = Variable<DateTime>(receivedAt);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  SyncInboxCompanion toCompanion(bool nullToAbsent) {
+    return SyncInboxCompanion(
+      operationId: Value(operationId),
+      workspaceId: Value(workspaceId),
+      entityType: Value(entityType),
+      entityId: Value(entityId),
+      schemaVersion: Value(schemaVersion),
+      nonce: Value(nonce),
+      ciphertext: Value(ciphertext),
+      serverSequence: Value(serverSequence),
+      receivedAt: Value(receivedAt),
+      status: Value(status),
+    );
+  }
+
+  factory SyncInboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncInboxData(
+      operationId: serializer.fromJson<String>(json['operationId']),
+      workspaceId: serializer.fromJson<String>(json['workspaceId']),
+      entityType: serializer.fromJson<String>(json['entityType']),
+      entityId: serializer.fromJson<String>(json['entityId']),
+      schemaVersion: serializer.fromJson<int>(json['schemaVersion']),
+      nonce: serializer.fromJson<String>(json['nonce']),
+      ciphertext: serializer.fromJson<String>(json['ciphertext']),
+      serverSequence: serializer.fromJson<int>(json['serverSequence']),
+      receivedAt: serializer.fromJson<DateTime>(json['receivedAt']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'operationId': serializer.toJson<String>(operationId),
+      'workspaceId': serializer.toJson<String>(workspaceId),
+      'entityType': serializer.toJson<String>(entityType),
+      'entityId': serializer.toJson<String>(entityId),
+      'schemaVersion': serializer.toJson<int>(schemaVersion),
+      'nonce': serializer.toJson<String>(nonce),
+      'ciphertext': serializer.toJson<String>(ciphertext),
+      'serverSequence': serializer.toJson<int>(serverSequence),
+      'receivedAt': serializer.toJson<DateTime>(receivedAt),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  SyncInboxData copyWith({
+    String? operationId,
+    String? workspaceId,
+    String? entityType,
+    String? entityId,
+    int? schemaVersion,
+    String? nonce,
+    String? ciphertext,
+    int? serverSequence,
+    DateTime? receivedAt,
+    String? status,
+  }) => SyncInboxData(
+    operationId: operationId ?? this.operationId,
+    workspaceId: workspaceId ?? this.workspaceId,
+    entityType: entityType ?? this.entityType,
+    entityId: entityId ?? this.entityId,
+    schemaVersion: schemaVersion ?? this.schemaVersion,
+    nonce: nonce ?? this.nonce,
+    ciphertext: ciphertext ?? this.ciphertext,
+    serverSequence: serverSequence ?? this.serverSequence,
+    receivedAt: receivedAt ?? this.receivedAt,
+    status: status ?? this.status,
+  );
+  SyncInboxData copyWithCompanion(SyncInboxCompanion data) {
+    return SyncInboxData(
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
+      workspaceId: data.workspaceId.present
+          ? data.workspaceId.value
+          : this.workspaceId,
+      entityType: data.entityType.present
+          ? data.entityType.value
+          : this.entityType,
+      entityId: data.entityId.present ? data.entityId.value : this.entityId,
+      schemaVersion: data.schemaVersion.present
+          ? data.schemaVersion.value
+          : this.schemaVersion,
+      nonce: data.nonce.present ? data.nonce.value : this.nonce,
+      ciphertext: data.ciphertext.present
+          ? data.ciphertext.value
+          : this.ciphertext,
+      serverSequence: data.serverSequence.present
+          ? data.serverSequence.value
+          : this.serverSequence,
+      receivedAt: data.receivedAt.present
+          ? data.receivedAt.value
+          : this.receivedAt,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncInboxData(')
+          ..write('operationId: $operationId, ')
+          ..write('workspaceId: $workspaceId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('nonce: $nonce, ')
+          ..write('ciphertext: $ciphertext, ')
+          ..write('serverSequence: $serverSequence, ')
+          ..write('receivedAt: $receivedAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    operationId,
+    workspaceId,
+    entityType,
+    entityId,
+    schemaVersion,
+    nonce,
+    ciphertext,
+    serverSequence,
+    receivedAt,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncInboxData &&
+          other.operationId == this.operationId &&
+          other.workspaceId == this.workspaceId &&
+          other.entityType == this.entityType &&
+          other.entityId == this.entityId &&
+          other.schemaVersion == this.schemaVersion &&
+          other.nonce == this.nonce &&
+          other.ciphertext == this.ciphertext &&
+          other.serverSequence == this.serverSequence &&
+          other.receivedAt == this.receivedAt &&
+          other.status == this.status);
+}
+
+class SyncInboxCompanion extends UpdateCompanion<SyncInboxData> {
+  final Value<String> operationId;
+  final Value<String> workspaceId;
+  final Value<String> entityType;
+  final Value<String> entityId;
+  final Value<int> schemaVersion;
+  final Value<String> nonce;
+  final Value<String> ciphertext;
+  final Value<int> serverSequence;
+  final Value<DateTime> receivedAt;
+  final Value<String> status;
+  final Value<int> rowid;
+  const SyncInboxCompanion({
+    this.operationId = const Value.absent(),
+    this.workspaceId = const Value.absent(),
+    this.entityType = const Value.absent(),
+    this.entityId = const Value.absent(),
+    this.schemaVersion = const Value.absent(),
+    this.nonce = const Value.absent(),
+    this.ciphertext = const Value.absent(),
+    this.serverSequence = const Value.absent(),
+    this.receivedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncInboxCompanion.insert({
+    required String operationId,
+    required String workspaceId,
+    required String entityType,
+    required String entityId,
+    required int schemaVersion,
+    required String nonce,
+    required String ciphertext,
+    required int serverSequence,
+    this.receivedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : operationId = Value(operationId),
+       workspaceId = Value(workspaceId),
+       entityType = Value(entityType),
+       entityId = Value(entityId),
+       schemaVersion = Value(schemaVersion),
+       nonce = Value(nonce),
+       ciphertext = Value(ciphertext),
+       serverSequence = Value(serverSequence);
+  static Insertable<SyncInboxData> custom({
+    Expression<String>? operationId,
+    Expression<String>? workspaceId,
+    Expression<String>? entityType,
+    Expression<String>? entityId,
+    Expression<int>? schemaVersion,
+    Expression<String>? nonce,
+    Expression<String>? ciphertext,
+    Expression<int>? serverSequence,
+    Expression<DateTime>? receivedAt,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (operationId != null) 'operation_id': operationId,
+      if (workspaceId != null) 'workspace_id': workspaceId,
+      if (entityType != null) 'entity_type': entityType,
+      if (entityId != null) 'entity_id': entityId,
+      if (schemaVersion != null) 'schema_version': schemaVersion,
+      if (nonce != null) 'nonce': nonce,
+      if (ciphertext != null) 'ciphertext': ciphertext,
+      if (serverSequence != null) 'server_sequence': serverSequence,
+      if (receivedAt != null) 'received_at': receivedAt,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncInboxCompanion copyWith({
+    Value<String>? operationId,
+    Value<String>? workspaceId,
+    Value<String>? entityType,
+    Value<String>? entityId,
+    Value<int>? schemaVersion,
+    Value<String>? nonce,
+    Value<String>? ciphertext,
+    Value<int>? serverSequence,
+    Value<DateTime>? receivedAt,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return SyncInboxCompanion(
+      operationId: operationId ?? this.operationId,
+      workspaceId: workspaceId ?? this.workspaceId,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
+      schemaVersion: schemaVersion ?? this.schemaVersion,
+      nonce: nonce ?? this.nonce,
+      ciphertext: ciphertext ?? this.ciphertext,
+      serverSequence: serverSequence ?? this.serverSequence,
+      receivedAt: receivedAt ?? this.receivedAt,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
+    if (workspaceId.present) {
+      map['workspace_id'] = Variable<String>(workspaceId.value);
+    }
+    if (entityType.present) {
+      map['entity_type'] = Variable<String>(entityType.value);
+    }
+    if (entityId.present) {
+      map['entity_id'] = Variable<String>(entityId.value);
+    }
+    if (schemaVersion.present) {
+      map['schema_version'] = Variable<int>(schemaVersion.value);
+    }
+    if (nonce.present) {
+      map['nonce'] = Variable<String>(nonce.value);
+    }
+    if (ciphertext.present) {
+      map['ciphertext'] = Variable<String>(ciphertext.value);
+    }
+    if (serverSequence.present) {
+      map['server_sequence'] = Variable<int>(serverSequence.value);
+    }
+    if (receivedAt.present) {
+      map['received_at'] = Variable<DateTime>(receivedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncInboxCompanion(')
+          ..write('operationId: $operationId, ')
+          ..write('workspaceId: $workspaceId, ')
+          ..write('entityType: $entityType, ')
+          ..write('entityId: $entityId, ')
+          ..write('schemaVersion: $schemaVersion, ')
+          ..write('nonce: $nonce, ')
+          ..write('ciphertext: $ciphertext, ')
+          ..write('serverSequence: $serverSequence, ')
+          ..write('receivedAt: $receivedAt, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $AppMetadataTable extends AppMetadata
     with TableInfo<$AppMetadataTable, AppMetadataData> {
   @override
@@ -19762,6 +20393,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CollectionsTable collections = $CollectionsTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
+  late final $SyncInboxTable syncInbox = $SyncInboxTable(this);
   late final $AppMetadataTable appMetadata = $AppMetadataTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -19790,6 +20422,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     collections,
     attachments,
     syncQueue,
+    syncInbox,
     appMetadata,
   ];
   @override
@@ -36049,6 +36682,324 @@ typedef $$SyncQueueTableProcessedTableManager =
       SyncQueueData,
       PrefetchHooks Function()
     >;
+typedef $$SyncInboxTableCreateCompanionBuilder =
+    SyncInboxCompanion Function({
+      required String operationId,
+      required String workspaceId,
+      required String entityType,
+      required String entityId,
+      required int schemaVersion,
+      required String nonce,
+      required String ciphertext,
+      required int serverSequence,
+      Value<DateTime> receivedAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+typedef $$SyncInboxTableUpdateCompanionBuilder =
+    SyncInboxCompanion Function({
+      Value<String> operationId,
+      Value<String> workspaceId,
+      Value<String> entityType,
+      Value<String> entityId,
+      Value<int> schemaVersion,
+      Value<String> nonce,
+      Value<String> ciphertext,
+      Value<int> serverSequence,
+      Value<DateTime> receivedAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+
+class $$SyncInboxTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncInboxTable> {
+  $$SyncInboxTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nonce => $composableBuilder(
+    column: $table.nonce,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ciphertext => $composableBuilder(
+    column: $table.ciphertext,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get serverSequence => $composableBuilder(
+    column: $table.serverSequence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncInboxTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncInboxTable> {
+  $$SyncInboxTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entityId => $composableBuilder(
+    column: $table.entityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nonce => $composableBuilder(
+    column: $table.nonce,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ciphertext => $composableBuilder(
+    column: $table.ciphertext,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get serverSequence => $composableBuilder(
+    column: $table.serverSequence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncInboxTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncInboxTable> {
+  $$SyncInboxTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get workspaceId => $composableBuilder(
+    column: $table.workspaceId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get entityType => $composableBuilder(
+    column: $table.entityType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get entityId =>
+      $composableBuilder(column: $table.entityId, builder: (column) => column);
+
+  GeneratedColumn<int> get schemaVersion => $composableBuilder(
+    column: $table.schemaVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get nonce =>
+      $composableBuilder(column: $table.nonce, builder: (column) => column);
+
+  GeneratedColumn<String> get ciphertext => $composableBuilder(
+    column: $table.ciphertext,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get serverSequence => $composableBuilder(
+    column: $table.serverSequence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+}
+
+class $$SyncInboxTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncInboxTable,
+          SyncInboxData,
+          $$SyncInboxTableFilterComposer,
+          $$SyncInboxTableOrderingComposer,
+          $$SyncInboxTableAnnotationComposer,
+          $$SyncInboxTableCreateCompanionBuilder,
+          $$SyncInboxTableUpdateCompanionBuilder,
+          (
+            SyncInboxData,
+            BaseReferences<_$AppDatabase, $SyncInboxTable, SyncInboxData>,
+          ),
+          SyncInboxData,
+          PrefetchHooks Function()
+        > {
+  $$SyncInboxTableTableManager(_$AppDatabase db, $SyncInboxTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncInboxTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncInboxTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncInboxTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> operationId = const Value.absent(),
+                Value<String> workspaceId = const Value.absent(),
+                Value<String> entityType = const Value.absent(),
+                Value<String> entityId = const Value.absent(),
+                Value<int> schemaVersion = const Value.absent(),
+                Value<String> nonce = const Value.absent(),
+                Value<String> ciphertext = const Value.absent(),
+                Value<int> serverSequence = const Value.absent(),
+                Value<DateTime> receivedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncInboxCompanion(
+                operationId: operationId,
+                workspaceId: workspaceId,
+                entityType: entityType,
+                entityId: entityId,
+                schemaVersion: schemaVersion,
+                nonce: nonce,
+                ciphertext: ciphertext,
+                serverSequence: serverSequence,
+                receivedAt: receivedAt,
+                status: status,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String operationId,
+                required String workspaceId,
+                required String entityType,
+                required String entityId,
+                required int schemaVersion,
+                required String nonce,
+                required String ciphertext,
+                required int serverSequence,
+                Value<DateTime> receivedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncInboxCompanion.insert(
+                operationId: operationId,
+                workspaceId: workspaceId,
+                entityType: entityType,
+                entityId: entityId,
+                schemaVersion: schemaVersion,
+                nonce: nonce,
+                ciphertext: ciphertext,
+                serverSequence: serverSequence,
+                receivedAt: receivedAt,
+                status: status,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SyncInboxTable, SyncInboxData>(table),
+                  BaseReferences<_$AppDatabase, $SyncInboxTable, SyncInboxData>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncInboxTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncInboxTable,
+      SyncInboxData,
+      $$SyncInboxTableFilterComposer,
+      $$SyncInboxTableOrderingComposer,
+      $$SyncInboxTableAnnotationComposer,
+      $$SyncInboxTableCreateCompanionBuilder,
+      $$SyncInboxTableUpdateCompanionBuilder,
+      (
+        SyncInboxData,
+        BaseReferences<_$AppDatabase, $SyncInboxTable, SyncInboxData>,
+      ),
+      SyncInboxData,
+      PrefetchHooks Function()
+    >;
 typedef $$AppMetadataTableCreateCompanionBuilder =
     AppMetadataCompanion Function({
       required String key,
@@ -36268,6 +37219,8 @@ class $AppDatabaseManager {
       $$AttachmentsTableTableManager(_db, _db.attachments);
   $$SyncQueueTableTableManager get syncQueue =>
       $$SyncQueueTableTableManager(_db, _db.syncQueue);
+  $$SyncInboxTableTableManager get syncInbox =>
+      $$SyncInboxTableTableManager(_db, _db.syncInbox);
   $$AppMetadataTableTableManager get appMetadata =>
       $$AppMetadataTableTableManager(_db, _db.appMetadata);
 }

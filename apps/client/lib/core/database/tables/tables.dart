@@ -590,8 +590,24 @@ class SyncQueue extends Table {
   DateTimeColumn get nextAttemptAt =>
       dateTime().withDefault(currentDateAndTime)();
   TextColumn get lastError => text().nullable()();
-  TextColumn get status =>
-      text().withDefault(const Constant('PENDING'))();
+  TextColumn get status => text().withDefault(const Constant('PENDING'))();
+}
+
+// Ciphertext received from JetStream is durable before the pull cursor advances.
+class SyncInbox extends Table {
+  TextColumn get operationId => text()();
+  TextColumn get workspaceId => text()();
+  TextColumn get entityType => text()();
+  TextColumn get entityId => text()();
+  IntColumn get schemaVersion => integer()();
+  TextColumn get nonce => text()();
+  TextColumn get ciphertext => text()();
+  IntColumn get serverSequence => integer()();
+  DateTimeColumn get receivedAt => dateTime().withDefault(currentDateAndTime)();
+  TextColumn get status => text().withDefault(const Constant('RECEIVED'))();
+
+  @override
+  Set<Column> get primaryKey => {workspaceId, operationId};
 }
 
 // --- APP METADATA (METADATOS Y CONTROL DE MIGRACIONES) ---

@@ -5,8 +5,8 @@ import 'package:mantenimiento_app/core/database/app_database.dart';
 import 'package:mantenimiento_app/core/services/backup_restore_service.dart';
 
 void main() {
-  group('T-20/T-24 Drift Schema 3 -> Schema 5 Migration & Hardening', () {
-    test('Migra base de datos Schema 3 a Schema 5 con datos reales preservados', () async {
+  group('T-20/T-24 Drift Schema 3 -> Schema 6 Migration & Hardening', () {
+    test('Migra base de datos Schema 3 a Schema 6 con datos reales preservados', () async {
       // 1. Crear una base de datos SQLite en memoria en versión 3 (estado pre-T-20)
       final appDb = AppDatabase(
         NativeDatabase.memory(
@@ -247,7 +247,7 @@ void main() {
       );
 
       // 4. Validar versión final
-      expect(appDb.schemaVersion, equals(5));
+      expect(appDb.schemaVersion, equals(6));
 
       // 5. Validar que las 4 tablas baseline contienen workspace_id = 'default'
       final pRows = await appDb.select(appDb.partners).get();

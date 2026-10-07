@@ -23,8 +23,13 @@ services:
       NODE_ENV: development
       PORT: 3000
       API_PREFIX: api/v1
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080}
       DATABASE_URL: postgresql://decolumax:change-me-local@postgres:5432/decolumax
       RUN_MIGRATIONS: "true"
+      NATS_URL: ${NATS_URL:-tls://mant.qpsecure.cloud:4422}
+      NATS_SYNC_USER: ${NATS_SYNC_USER:-}
+      NATS_SYNC_PASSWORD: ${NATS_SYNC_PASSWORD:-}
+      NATS_SYNC_STREAM: ${NATS_SYNC_STREAM:-DECO_SYNC}
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:

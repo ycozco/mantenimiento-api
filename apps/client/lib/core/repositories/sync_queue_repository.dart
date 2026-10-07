@@ -76,6 +76,22 @@ class SyncQueueRepository {
         .get();
   }
 
+  /// Watches this workspace's local operations for diagnostics and UI status.
+  /// This is only an Outbox view; it does not imply delivery to another device.
+  Stream<List<SyncQueueData>> watchRecent({int limit = 100}) {
+    if (limit < 1) {
+      throw ArgumentError.value(limit, 'limit', 'Debe ser mayor que cero');
+    }
+    return (_db.select(_db.syncQueue)
+          ..where((row) => row.workspaceId.equals(workspaceId))
+          ..orderBy([
+            (row) => OrderingTerm.desc(row.queuedAt),
+            (row) => OrderingTerm.desc(row.id),
+          ])
+          ..limit(limit))
+        .watch();
+  }
+
   /// Atomically claims one due operation so concurrent send loops cannot
   /// publish the same row at the same time.
   Future<bool> markSending(String operationId, {DateTime? now}) {
