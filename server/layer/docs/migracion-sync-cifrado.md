@@ -1,6 +1,6 @@
 # Migración de Decolumax a sincronización entre socios con cifrado de extremo a extremo
 
-Fecha de diseño: 2026-10-05, America/Lima. Estado: propuesta documentada; no implementada ni desplegada.
+Fecha de diseño: 2026-10-05, America/Lima. Estado al 2026-10-07: relay NATS y recepción local implementados parcialmente; falta cifrado de extremo a extremo y despliegue HTTP de la API.
 
 ## 1. Objetivo y decisiones de diseño
 
@@ -19,16 +19,23 @@ El plan central anterior en [PLAN.md](../PLAN.md) y [sync_protocol_v3.md](../../
 
 | Componente | Estado observado | Trabajo necesario |
 |---|---|---|
-| Cliente | Drift, schema 5 y tablas de negocio existentes | Conservar repositorios y cálculos; completar aislamiento de workspace |
+| Cliente | Drift, schema 6, outbox y recepción durable de sobres cifrados por workspace | Cifrar outbox, acordar claves, descifrar y aplicar cambios de negocio |
 | Outbox | `SyncQueueRepository.enqueue/pending`, `operationId`, `baseVersion`; llamadas en mantenimiento | Cubrir todas las escrituras; añadir registro duradero de operaciones y recibos por dispositivo |
 | Compras | Compra, detalles y stock se escriben en transacción | Emitir un único agregado lógico con IDs estables; no recrear movimientos al recibir |
-| API NestJS | Auth, sesiones, health, PostgreSQL fundacional | Reutilizable como control; no existe aún asociación aceptada ni registro criptográfico de dispositivos |
+| API NestJS | Auth, sesiones, `POST /sync/push`, `GET /sync/pull`, relay NATS sobre TLS; credenciales solo del servidor | Desplegar por HTTPS/NPM; implementar asociación aceptada, concesiones y revocación de dispositivos |
 | Guard de acceso | Verifica JWT, sin consulta de revocación de sesión por petición | Corregir antes de emitir permisos de mensajería; probar refresh concurrente y revocación |
-| Protocolo V3 | `server_seq`, OCC y validación en servidor | Sustituir autoridad central por causalidad y reglas deterministas entre dispositivos |
+| Protocolo V3 | `server_seq`, OCC y validación central siguen separados del relay nuevo | Definir la transición por workspace sin ejecutar dos autoridades de escritura |
 | Android | Manifest principal sin permiso explícito INTERNET; release firmado con debug | Revisar manifest fusionado, permisos por transporte y firma de distribución |
 | Bibliotecas P2P | No hay dependencia de WebRTC/NATS/Nearby en `pubspec.yaml` | Prototipo aislado antes de añadir una dependencia al producto |
 
 Los cambios locales previos de navegación, dependencias y documentación del usuario quedan fuera de los commits de este diseño. No hay benchmark de esta arquitectura: las mediciones anteriores de API+PostgreSQL no se pueden presentar como consumo del buzón.
+
+## Avance implementado el 2026-10-07
+
+- `29acd9d feat(sync): add encrypted JetStream inbox API and Flutter client`: endpoints autenticados de push/pull, límites de payload, publicación deduplicada y descarga filtrada por workspace; Flutter guarda inbox y cursor en una transacción Drift.
+- `70bde23 chore(deploy): expose sync API to NPM network`: Compose conecta la API a `main_npm_network` por el alias `decolumax-sync-api`, sin publicar el puerto HTTP en el host.
+- Validación local: `flutter analyze --fatal-infos`, 210 pruebas Flutter, `npm run build`, 2 pruebas Jest y compilación APK/Web.
+- El avance no está desplegado ni verificado contra el VPS. La app no marca eventos como aplicados, porque aún faltan acuerdo de claves entre socios, cifrado de la outbox y aplicación idempotente a las tablas de negocio.
 
 ## 3. Arquitectura y límites de confianza
 
@@ -163,7 +170,7 @@ Web: WSS para buzón; WebRTC para directo; no listener TCP/UDP equivalente al na
 
 ## 11. Secuencia de ejecución y commits
 
-Cada paquete entrega código, pruebas de su garantía y una entrada con commit/evidencia. Solo esta documentación está terminada. Las fases siguientes están pendientes.
+Cada paquete entrega código, pruebas de su garantía y una entrada con commit/evidencia. P0 está documentada; el relay e inbox de transporte están en progreso. Las fases de seguridad de socios, cifrado y aplicación de dominios siguen pendientes.
 
 | Fase | Entregable / commit sugerido | Dependencia y criterio de cierre |
 |---|---|---|
