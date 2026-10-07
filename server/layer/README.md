@@ -14,6 +14,6 @@ La imagen de producción de la API usa `node:22-alpine`; la compatibilidad de `a
 
 Plan de trabajo, correcciones previas y criterios de cierre: [PLAN.md](PLAN.md).
 
-La API requiere `NATS_URL`, `NATS_SYNC_USER`, `NATS_SYNC_PASSWORD` y `NATS_SYNC_STREAM`; las credenciales se configuran solo en el servidor. Flutter se compila con `--dart-define=SYNC_API_BASE_URL=https://<dominio-api>/api/v1`. Variables, rutas y límites: [docs/sync-api.md](docs/sync-api.md).
+La API requiere `NATS_URL`, `NATS_SYNC_USER`, `NATS_SYNC_PASSWORD` y `NATS_SYNC_STREAM`; las credenciales se configuran solo en el servidor. Flutter se compila con `--dart-define=SYNC_API_BASE_URL=https://mant.qpsecure.cloud/api/v1`. Variables, rutas y límites: [docs/sync-api.md](docs/sync-api.md).
 
 La arquitectura de buzón y migración está descrita en [docs/migracion-sync-cifrado.md](docs/migracion-sync-cifrado.md), junto con la [comparación de servicios, proyectos Flutter y recursos](docs/evaluacion-p2p-flutter.md).

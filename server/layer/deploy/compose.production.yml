@@ -25,6 +25,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - decolumax_pgdata:/var/lib/postgresql/data
+    networks:
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -58,8 +60,13 @@ services:
       NATS_SYNC_USER: ${NATS_SYNC_USER:?Set NATS_SYNC_USER in .env}
       NATS_SYNC_PASSWORD: ${NATS_SYNC_PASSWORD:?Set NATS_SYNC_PASSWORD in .env}
       NATS_SYNC_STREAM: ${NATS_SYNC_STREAM:-DECO_SYNC}
-    ports:
-      - "127.0.0.1:3000:3000"
+    expose:
+      - "3000"
+    networks:
+      internal: {}
+      npm_proxy:
+        aliases:
+          - decolumax-sync-api
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,3 +80,10 @@ services:
 
 volumes:
   decolumax_pgdata:
+
+networks:
+  internal:
+    internal: true
+  npm_proxy:
+    external: true
+    name: ${NPM_DOCKER_NETWORK:-main_npm_network}

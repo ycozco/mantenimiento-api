@@ -22,7 +22,7 @@ CORS_ORIGINS=https://<origen-web-de-la-app>
 
 El usuario NATS debe poder publicar en `deco.>` y usar las APIs JetStream requeridas para consultar el stream. No usar el usuario administrativo ni credenciales de aplicación móvil. El puerto `4422` es únicamente la conexión privada API-servidor NATS sobre TLS. El cliente Flutter consume HTTPS del API.
 
-Para NPM, enrutar el host HTTPS reservado para el API al servicio `api:3000` dentro de la red del proxy. El servicio no debe exponer públicamente el puerto 3000 ni cambiar el stream TCP que ya usa `mant.qpsecure.cloud:4422`. La API queda enlazada a `127.0.0.1:3000` en el host, como está en `deploy/compose.production.yml`.
+Para NPM, crear un Proxy Host para `mant.qpsecure.cloud`, con esquema HTTP, nombre de destino `decolumax-sync-api` y puerto `3000`; activar TLS/Let's Encrypt y redirección HTTPS en NPM. HTTP API entra por 443 y el stream TCP NATS sigue en 4422 sobre el mismo hostname. El API solo se expone dentro de la red Docker `main_npm_network`, sin publicar el puerto 3000 en el host.
 
 ## Rutas disponibles
 
@@ -53,11 +53,11 @@ npm run start:dev
 En Flutter, Android Emulator usa `http://10.0.2.2:3000/api/v1` y Web usa `http://localhost:3000/api/v1` por defecto. Para compilar contra el dominio HTTPS del API:
 
 ```powershell
-flutter build apk --dart-define=SYNC_API_BASE_URL=https://<dominio-api>/api/v1
-flutter build web --dart-define=SYNC_API_BASE_URL=https://<dominio-api>/api/v1
+flutter build apk --dart-define=SYNC_API_BASE_URL=https://mant.qpsecure.cloud/api/v1
+flutter build web --dart-define=SYNC_API_BASE_URL=https://mant.qpsecure.cloud/api/v1
 ```
 
-Web requiere que `CORS_ORIGINS` contenga el origen desde donde se sirve la app. El DNS `mant.qpsecure.cloud` descrito para NATS TCP no crea por sí mismo un endpoint HTTP para la API.
+Web requiere que `CORS_ORIGINS` contenga el origen desde donde se sirve la app. La ruta HTTP depende de crear el Proxy Host de NPM descrito arriba; el registro DNS existente por sí solo no configura esa ruta.
 
 ## Límites actuales
 
