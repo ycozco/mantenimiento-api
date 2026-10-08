@@ -1,5 +1,7 @@
 import {
   Injectable,
+  NotFoundException,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -26,13 +28,29 @@ type SessionRow = AuthUser & {
   expiresAt: Date;
 };
 
+type SessionClaims = {
+  sub: string;
+  workspaceId: string;
+  sessionId: string;
+  deviceId: string;
+};
+
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
+  private dummyPasswordHash = '';
+
   constructor(
     private readonly db: DatabaseService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
   ) {}
+
+  async onModuleInit(): Promise<void> {
+    this.dummyPasswordHash = await argon2.hash(
+      randomBytes(32).toString('base64url'),
+      { type: argon2.argon2id },
+    );
+  }
 
   async login(dto: LoginDto) {
     const result = await this.db.query<{
@@ -45,19 +63,24 @@ export class AuthService {
       password_hash: string;
     }>(
       `SELECT u.id, u.workspace_id, w.slug AS workspace_slug,
-              u.email, u.display_name, u.role, u.password_hash
+              i.email, i.display_name, u.role, i.password_hash
          FROM users u
+         JOIN user_identities i ON i.id = u.identity_id
          JOIN workspaces w ON w.id = u.workspace_id
-        WHERE lower(u.email) = lower($1)
+        WHERE i.normalized_email = lower(trim($1))
           AND lower(w.slug) = lower($2)
-          AND u.is_active = TRUE
+          AND u.is_active = TRUE AND i.is_active = TRUE
           AND u.deleted_at IS NULL
           AND w.deleted_at IS NULL`,
       [dto.email.trim(), dto.workspaceSlug.trim()],
     );
     const row = result.rows[0];
-    if (!row || !(await argon2.verify(row.password_hash, dto.password))) {
-      throw new UnauthorizedException('Credenciales inválidas');
+    const passwordMatches = await argon2.verify(
+      row?.password_hash ?? this.dummyPasswordHash,
+      dto.password,
+    );
+    if (!row || !passwordMatches) {
+      throw new UnauthorizedException('Credenciales invÃ¡lidas');
     }
 
     const user: AuthUser = {
@@ -78,10 +101,11 @@ export class AuthService {
       `SELECT s.id AS "sessionId", s.refresh_token_hash AS "refreshTokenHash",
               s.device_id AS "deviceId",
               s.expires_at AS "expiresAt", u.id, u.workspace_id AS "workspaceId",
-              w.slug AS "workspaceSlug", u.email, u.display_name AS "displayName",
+              w.slug AS "workspaceSlug", i.email, i.display_name AS "displayName",
               u.role
          FROM user_sessions s
          JOIN users u ON u.id = s.user_id AND u.workspace_id = s.workspace_id
+         JOIN user_identities i ON i.id = u.identity_id AND i.is_active = TRUE
          JOIN workspaces w ON w.id = s.workspace_id
         WHERE s.id = $1 AND s.revoked_at IS NULL
           AND s.expires_at > NOW() AND u.is_active = TRUE
@@ -90,17 +114,22 @@ export class AuthService {
     );
     const session = result.rows[0];
     if (!session || !(await argon2.verify(session.refreshTokenHash, parsed.secret))) {
-      throw new UnauthorizedException('Refresh token inválido');
+      throw new UnauthorizedException('Refresh token invÃ¡lido');
     }
 
     const nextSecret = randomBytes(32).toString('base64url');
     const nextHash = await argon2.hash(nextSecret, { type: argon2.argon2id });
-    await this.db.query(
+    const rotated = await this.db.query(
       `UPDATE user_sessions
           SET refresh_token_hash = $1, last_used_at = NOW()
-        WHERE id = $2 AND revoked_at IS NULL`,
-      [nextHash, session.sessionId],
+        WHERE id = $2 AND refresh_token_hash = $3
+          AND revoked_at IS NULL AND expires_at > NOW()
+       RETURNING id`,
+      [nextHash, session.sessionId, session.refreshTokenHash],
     );
+    if (rotated.rowCount !== 1) {
+      throw new UnauthorizedException('Refresh token invÃ¡lido');
+    }
     const user: AuthUser = {
       id: session.id,
       workspaceId: session.workspaceId,
@@ -117,13 +146,120 @@ export class AuthService {
     );
   }
 
+  async switchWorkspace(claims: SessionClaims, workspaceSlug: string) {
+    const nextSessionId = randomUUID();
+    const nextSecret = randomBytes(32).toString('base64url');
+    const nextHash = await argon2.hash(nextSecret, { type: argon2.argon2id });
+    const days = Number(this.config.get<string>('REFRESH_TOKEN_DAYS', '30'));
+    const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+    const switched = await this.db.withTransaction(async (client) => {
+      const active = await client.query<{
+        identityId: string;
+        deviceId: string;
+      }>(
+        `SELECT i.id AS "identityId", s.device_id AS "deviceId"
+           FROM user_sessions s
+           JOIN users u
+             ON u.id = s.user_id AND u.workspace_id = s.workspace_id
+           JOIN user_identities i ON i.id = u.identity_id
+           JOIN workspaces w ON w.id = s.workspace_id
+          WHERE s.id = $1 AND s.user_id = $2 AND s.workspace_id = $3
+            AND s.device_id = $4 AND s.revoked_at IS NULL
+            AND s.expires_at > NOW() AND u.is_active = TRUE
+            AND u.deleted_at IS NULL AND i.is_active = TRUE
+            AND w.deleted_at IS NULL
+          FOR UPDATE OF s`,
+        [
+          claims.sessionId,
+          claims.sub,
+          claims.workspaceId,
+          claims.deviceId,
+        ],
+      );
+      const current = active.rows[0];
+      if (!current) {
+        throw new UnauthorizedException('SesiÃ³n revocada o inactiva');
+      }
+
+      const target = await client.query<AuthUser>(
+        `SELECT u.id, u.workspace_id AS "workspaceId",
+                w.slug AS "workspaceSlug", i.email,
+                i.display_name AS "displayName", u.role
+           FROM users u
+           JOIN user_identities i ON i.id = u.identity_id
+           JOIN workspaces w ON w.id = u.workspace_id
+          WHERE i.id = $1 AND lower(w.slug) = lower($2)
+            AND i.is_active = TRUE AND u.is_active = TRUE
+            AND u.deleted_at IS NULL AND w.deleted_at IS NULL
+          FOR UPDATE OF u, w`,
+        [current.identityId, workspaceSlug.trim()],
+      );
+      const user = target.rows[0];
+      if (!user) {
+        throw new NotFoundException('No tienes acceso a esa organizaciÃ³n');
+      }
+
+      const revoked = await client.query(
+        `UPDATE user_sessions SET revoked_at = NOW()
+          WHERE id = $1 AND revoked_at IS NULL
+         RETURNING id`,
+        [claims.sessionId],
+      );
+      if (revoked.rowCount !== 1) {
+        throw new UnauthorizedException('La sesiÃ³n ya no estÃ¡ activa');
+      }
+
+      await client.query(
+        `INSERT INTO user_sessions
+           (id, workspace_id, user_id, device_id, refresh_token_hash, expires_at)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          nextSessionId,
+          user.workspaceId,
+          user.id,
+          current.deviceId,
+          nextHash,
+          expiresAt,
+        ],
+      );
+      return { user, deviceId: current.deviceId };
+    });
+
+    return this.tokens(
+      switched.user,
+      nextSessionId,
+      switched.deviceId,
+      `${nextSessionId}.${nextSecret}`,
+    );
+  }
+
   async logout(refreshToken: string): Promise<void> {
     const parsed = this.parseRefreshToken(refreshToken);
-    await this.db.query(
-      `UPDATE user_sessions SET revoked_at = COALESCE(revoked_at, NOW())
-        WHERE id = $1`,
+    const result = await this.db.query<{ refresh_token_hash: string }>(
+      `SELECT s.refresh_token_hash
+         FROM user_sessions s
+         JOIN users u ON u.id = s.user_id AND u.workspace_id = s.workspace_id
+         JOIN user_identities i ON i.id = u.identity_id AND i.is_active = TRUE
+         JOIN workspaces w ON w.id = s.workspace_id
+        WHERE s.id = $1 AND s.revoked_at IS NULL AND s.expires_at > NOW()
+          AND u.is_active = TRUE AND u.deleted_at IS NULL
+          AND w.deleted_at IS NULL`,
       [parsed.sessionId],
     );
+    const row = result.rows[0];
+    if (!row || !(await argon2.verify(row.refresh_token_hash, parsed.secret))) {
+      throw new UnauthorizedException('Refresh token invÃ¡lido');
+    }
+    const revoked = await this.db.query(
+      `UPDATE user_sessions SET revoked_at = COALESCE(revoked_at, NOW())
+        WHERE id = $1 AND refresh_token_hash = $2 AND revoked_at IS NULL
+       RETURNING id`,
+      [parsed.sessionId, row.refresh_token_hash],
+    );
+    if (revoked.rowCount !== 1) {
+      throw new UnauthorizedException('Refresh token invÃ¡lido');
+    }
   }
 
   private async createSession(user: AuthUser, deviceId?: string) {
@@ -161,7 +297,7 @@ export class AuthService {
   private parseRefreshToken(refreshToken: string) {
     const separator = refreshToken.indexOf('.');
     if (separator <= 0 || separator === refreshToken.length - 1) {
-      throw new UnauthorizedException('Refresh token inválido');
+      throw new UnauthorizedException('Refresh token invÃ¡lido');
     }
     const sessionId = refreshToken.slice(0, separator);
     if (
@@ -169,8 +305,9 @@ export class AuthService {
         sessionId,
       )
     ) {
-      throw new UnauthorizedException('Refresh token inválido');
+      throw new UnauthorizedException('Refresh token invÃ¡lido');
     }
     return { sessionId, secret: refreshToken.slice(separator + 1) };
   }
 }
+

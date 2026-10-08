@@ -5,6 +5,7 @@ import { AppConfig } from './config/app.config';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
+import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { SyncModule } from './modules/sync/sync.module';
 
 @Module({
@@ -13,9 +14,11 @@ import { SyncModule } from './modules/sync/sync.module';
     DatabaseModule,
     AuthModule,
     HealthModule,
+    OrganizationsModule,
     SyncModule,
   ],
   providers: [AppConfig],
   exports: [AppConfig],
 })
 export class AppModule {}
+

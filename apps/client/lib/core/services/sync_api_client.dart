@@ -42,10 +42,83 @@ class SyncApiClient {
     await _storeTokens(data);
   }
 
+  Future<List<Map<String, dynamic>>> organizations() async {
+    final data = await _authorizedRequest((token) => _client.get(
+      _uri('/organizations'),
+      headers: {'authorization': 'Bearer $token'},
+    ));
+    return (data['organizations'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+  }
+
+  Future<Map<String, dynamic>> currentOrganization() =>
+      _authorizedRequest((token) => _client.get(
+        _uri('/organizations/current'),
+        headers: {'authorization': 'Bearer $token'},
+      ));
+
+  Future<Map<String, dynamic>> createOrganization({
+    required String name,
+    String? slug,
+  }) async {
+    final data = await _authorizedRequest((token) => _client.post(
+      _uri('/organizations'),
+      headers: {
+        'authorization': 'Bearer $token',
+        'content-type': 'application/json',
+      },
+      body: jsonEncode({'name': name, 'slug': ?slug}),
+    ));
+    return data;
+  }
+
+  Future<Map<String, dynamic>> updateCurrentOrganization({
+    String? name,
+    String? slug,
+  }) async {
+    final data = await _authorizedRequest((token) => _client.patch(
+    _uri('/organizations/current'),
+    headers: {
+      'authorization': 'Bearer $token',
+      'content-type': 'application/json',
+    },
+    body: jsonEncode({'name': ?name, 'slug': ?slug}),
+    ));
+    await _storeWorkspace(data);
+    return data;
+  }
+
+  Future<void> switchWorkspace(String workspaceSlug) async {
+    final data = await _authorizedRequest((token) => _client.post(
+      _uri('/auth/switch-workspace'),
+      headers: {
+        'authorization': 'Bearer $token',
+        'content-type': 'application/json',
+      },
+      body: jsonEncode({'workspaceSlug': workspaceSlug}),
+    ));
+    await _storeTokens(data);
+  }
+
+  Future<Map<String, dynamic>> _authorizedRequest(
+    Future<http.Response> Function(String token) send,
+  ) async {
+    var token = await _storage.read(key: 'sync_access_token');
+    if (token == null) {
+      throw const SyncApiException('Inicia sesiÃ³n para administrar organizaciones.');
+    }
+    var response = await send(token);
+    if (response.statusCode == 401) {
+      token = await _refresh();
+      response = await send(token);
+    }
+    return _decode(response);
+  }
+
   Future<SyncPullPage> pull({required String cursor, int limit = 50}) async {
     var token = await _storage.read(key: 'sync_access_token');
     if (token == null) {
-      throw const SyncApiException('Inicia sesión para sincronizar.');
+      throw const SyncApiException('Inicia sesiÃ³n para sincronizar.');
     }
     var response = await _client.get(
       _uri('/sync/pull', {'cursor': cursor, 'limit': '$limit'}),
@@ -77,7 +150,7 @@ class SyncApiClient {
   }) async {
     var token = await _storage.read(key: 'sync_access_token');
     if (token == null) {
-      throw const SyncApiException('Inicia sesión para sincronizar.');
+      throw const SyncApiException('Inicia sesiÃ³n para sincronizar.');
     }
     Future<http.Response> send(String accessToken) => _client.post(
       _uri('/sync/push'),
@@ -122,7 +195,7 @@ class SyncApiClient {
   Future<String> _refresh() async {
     final refresh = await _storage.read(key: 'sync_refresh_token');
     if (refresh == null) {
-      throw const SyncApiException('La sesión expiró; inicia sesión.');
+      throw const SyncApiException('La sesiÃ³n expirÃ³; inicia sesiÃ³n.');
     }
     final response = await _client.post(
       _uri('/auth/refresh'),
@@ -145,14 +218,18 @@ class SyncApiClient {
     );
     final user = data['user'];
     if (user is Map<String, dynamic>) {
-      await _storage.write(
-        key: 'sync_workspace_id',
-        value: user['workspaceId'] as String?,
-      );
-      await _storage.write(
-        key: 'sync_workspace_slug',
-        value: user['workspaceSlug'] as String?,
-      );
+      await _storeWorkspace(user);
+    }
+  }
+
+  Future<void> _storeWorkspace(Map<String, dynamic> workspace) async {
+    final id = workspace['workspaceId'] ?? workspace['id'];
+    final slug = workspace['workspaceSlug'] ?? workspace['slug'];
+    if (id is String) {
+      await _storage.write(key: 'sync_workspace_id', value: id);
+    }
+    if (slug is String) {
+      await _storage.write(key: 'sync_workspace_slug', value: slug);
     }
   }
 
@@ -174,7 +251,7 @@ class SyncApiClient {
       body = jsonDecode(response.body) as Map<String, dynamic>;
     } catch (_) {
       throw SyncApiException(
-        'Respuesta inválida del API (${response.statusCode}).',
+        'Respuesta invÃ¡lida del API (${response.statusCode}).',
       );
     }
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -204,3 +281,4 @@ class SyncApiException implements Exception {
   @override
   String toString() => message;
 }
+
