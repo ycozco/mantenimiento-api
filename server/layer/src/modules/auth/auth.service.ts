@@ -80,7 +80,7 @@ export class AuthService implements OnModuleInit {
       dto.password,
     );
     if (!row || !passwordMatches) {
-      throw new UnauthorizedException('Credenciales invÃ¡lidas');
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
     const user: AuthUser = {
@@ -114,7 +114,7 @@ export class AuthService implements OnModuleInit {
     );
     const session = result.rows[0];
     if (!session || !(await argon2.verify(session.refreshTokenHash, parsed.secret))) {
-      throw new UnauthorizedException('Refresh token invÃ¡lido');
+      throw new UnauthorizedException('Refresh token inválido');
     }
 
     const nextSecret = randomBytes(32).toString('base64url');
@@ -128,7 +128,7 @@ export class AuthService implements OnModuleInit {
       [nextHash, session.sessionId, session.refreshTokenHash],
     );
     if (rotated.rowCount !== 1) {
-      throw new UnauthorizedException('Refresh token invÃ¡lido');
+      throw new UnauthorizedException('Refresh token inválido');
     }
     const user: AuthUser = {
       id: session.id,
@@ -179,7 +179,7 @@ export class AuthService implements OnModuleInit {
       );
       const current = active.rows[0];
       if (!current) {
-        throw new UnauthorizedException('SesiÃ³n revocada o inactiva');
+        throw new UnauthorizedException('Sesión revocada o inactiva');
       }
 
       const target = await client.query<AuthUser>(
@@ -197,7 +197,7 @@ export class AuthService implements OnModuleInit {
       );
       const user = target.rows[0];
       if (!user) {
-        throw new NotFoundException('No tienes acceso a esa organizaciÃ³n');
+        throw new NotFoundException('No tienes acceso a esa organización');
       }
 
       const revoked = await client.query(
@@ -207,7 +207,7 @@ export class AuthService implements OnModuleInit {
         [claims.sessionId],
       );
       if (revoked.rowCount !== 1) {
-        throw new UnauthorizedException('La sesiÃ³n ya no estÃ¡ activa');
+        throw new UnauthorizedException('La sesión ya no está activa');
       }
 
       await client.query(
@@ -249,7 +249,7 @@ export class AuthService implements OnModuleInit {
     );
     const row = result.rows[0];
     if (!row || !(await argon2.verify(row.refresh_token_hash, parsed.secret))) {
-      throw new UnauthorizedException('Refresh token invÃ¡lido');
+      throw new UnauthorizedException('Refresh token inválido');
     }
     const revoked = await this.db.query(
       `UPDATE user_sessions SET revoked_at = COALESCE(revoked_at, NOW())
@@ -258,7 +258,7 @@ export class AuthService implements OnModuleInit {
       [parsed.sessionId, row.refresh_token_hash],
     );
     if (revoked.rowCount !== 1) {
-      throw new UnauthorizedException('Refresh token invÃ¡lido');
+      throw new UnauthorizedException('Refresh token inválido');
     }
   }
 
@@ -297,7 +297,7 @@ export class AuthService implements OnModuleInit {
   private parseRefreshToken(refreshToken: string) {
     const separator = refreshToken.indexOf('.');
     if (separator <= 0 || separator === refreshToken.length - 1) {
-      throw new UnauthorizedException('Refresh token invÃ¡lido');
+      throw new UnauthorizedException('Refresh token inválido');
     }
     const sessionId = refreshToken.slice(0, separator);
     if (
@@ -305,7 +305,7 @@ export class AuthService implements OnModuleInit {
         sessionId,
       )
     ) {
-      throw new UnauthorizedException('Refresh token invÃ¡lido');
+      throw new UnauthorizedException('Refresh token inválido');
     }
     return { sessionId, secret: refreshToken.slice(separator + 1) };
   }

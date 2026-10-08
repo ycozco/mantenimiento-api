@@ -105,7 +105,7 @@ class SyncApiClient {
   ) async {
     var token = await _storage.read(key: 'sync_access_token');
     if (token == null) {
-      throw const SyncApiException('Inicia sesiÃ³n para administrar organizaciones.');
+      throw const SyncApiException('Inicia sesión para administrar organizaciones.');
     }
     var response = await send(token);
     if (response.statusCode == 401) {
@@ -118,7 +118,7 @@ class SyncApiClient {
   Future<SyncPullPage> pull({required String cursor, int limit = 50}) async {
     var token = await _storage.read(key: 'sync_access_token');
     if (token == null) {
-      throw const SyncApiException('Inicia sesiÃ³n para sincronizar.');
+      throw const SyncApiException('Inicia sesión para sincronizar.');
     }
     var response = await _client.get(
       _uri('/sync/pull', {'cursor': cursor, 'limit': '$limit'}),
@@ -150,7 +150,7 @@ class SyncApiClient {
   }) async {
     var token = await _storage.read(key: 'sync_access_token');
     if (token == null) {
-      throw const SyncApiException('Inicia sesiÃ³n para sincronizar.');
+      throw const SyncApiException('Inicia sesión para sincronizar.');
     }
     Future<http.Response> send(String accessToken) => _client.post(
       _uri('/sync/push'),
@@ -195,7 +195,7 @@ class SyncApiClient {
   Future<String> _refresh() async {
     final refresh = await _storage.read(key: 'sync_refresh_token');
     if (refresh == null) {
-      throw const SyncApiException('La sesiÃ³n expirÃ³; inicia sesiÃ³n.');
+      throw const SyncApiException('La sesión expiró; inicia sesión.');
     }
     final response = await _client.post(
       _uri('/auth/refresh'),
@@ -251,7 +251,7 @@ class SyncApiClient {
       body = jsonDecode(response.body) as Map<String, dynamic>;
     } catch (_) {
       throw SyncApiException(
-        'Respuesta invÃ¡lida del API (${response.statusCode}).',
+        'Respuesta inválida del API (${response.statusCode}).',
       );
     }
     if (response.statusCode < 200 || response.statusCode >= 300) {

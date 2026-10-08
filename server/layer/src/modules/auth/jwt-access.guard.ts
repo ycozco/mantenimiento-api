@@ -37,7 +37,7 @@ export class JwtAccessGuard implements CanActivate {
     try {
       claims = await this.jwt.verifyAsync<AccessClaims>(header.slice(7));
     } catch {
-      throw new UnauthorizedException('Access token invÃ¡lido');
+      throw new UnauthorizedException('Access token inválido');
     }
 
     if (
@@ -46,7 +46,7 @@ export class JwtAccessGuard implements CanActivate {
       typeof claims.sessionId !== 'string' ||
       typeof claims.deviceId !== 'string'
     ) {
-      throw new UnauthorizedException('Access token invÃ¡lido');
+      throw new UnauthorizedException('Access token inválido');
     }
 
     const session = await this.db.query<{ role: string }>(
@@ -65,7 +65,7 @@ export class JwtAccessGuard implements CanActivate {
     );
     const activeSession = session.rows[0];
     if (!activeSession) {
-      throw new UnauthorizedException('SesiÃ³n revocada o inactiva');
+      throw new UnauthorizedException('Sesión revocada o inactiva');
     }
     request.user = { ...claims, role: activeSession.role };
     return true;

@@ -53,7 +53,7 @@ export class AuthAuditService {
       );
     } catch (error) {
       this.logger.warn(
-        `No se pudo guardar evento de autenticaciÃ³n (${event.eventType}/${event.outcome}): ${error instanceof Error ? error.message : 'error desconocido'}`,
+        `No se pudo guardar evento de autenticación (${event.eventType}/${event.outcome}): ${error instanceof Error ? error.message : 'error desconocido'}`,
       );
     }
   }

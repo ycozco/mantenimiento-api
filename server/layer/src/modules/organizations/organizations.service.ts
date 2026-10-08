@@ -72,7 +72,7 @@ export class OrganizationsService {
       });
     } catch (error) {
       if (this.isUniqueViolation(error)) {
-        throw new ConflictException('Ese identificador de organizaciÃ³n ya existe');
+        throw new ConflictException('Ese identificador de organización ya existe');
       }
       throw error;
     }
@@ -90,7 +90,7 @@ export class OrganizationsService {
       [userId, workspaceId],
     );
     if (!result.rows[0]) {
-      throw new NotFoundException('OrganizaciÃ³n no encontrada');
+      throw new NotFoundException('Organización no encontrada');
     }
     return result.rows[0];
   }
@@ -119,12 +119,12 @@ export class OrganizationsService {
         [dto.name?.trim() ?? null, dto.slug?.trim() ?? null, workspaceId],
       );
       if (!result.rows[0]) {
-        throw new NotFoundException('OrganizaciÃ³n no encontrada');
+        throw new NotFoundException('Organización no encontrada');
       }
       return { ...result.rows[0], role: context.role };
     } catch (error) {
       if (this.isUniqueViolation(error)) {
-        throw new ConflictException('Ese identificador de organizaciÃ³n ya existe');
+        throw new ConflictException('Ese identificador de organización ya existe');
       }
       throw error;
     }
@@ -147,7 +147,7 @@ export class OrganizationsService {
       [userId, workspaceId],
     );
     if (!result.rows[0]) {
-      throw new NotFoundException('MembresÃ­a activa no encontrada');
+      throw new NotFoundException('Membresía activa no encontrada');
     }
     return result.rows[0];
   }

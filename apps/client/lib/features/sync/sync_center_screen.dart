@@ -82,7 +82,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
       if (signedIn && workspaceId != null) _loadOrganizations();
     } catch (error) {
       if (mounted) {
-        setState(() => _apiMessage = 'No se pudo restaurar la sesiÃ³n: $error');
+        setState(() => _apiMessage = 'No se pudo restaurar la sesión: $error');
       }
     }
   }
@@ -107,7 +107,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         _workspaceId = id;
         _workspaceSlug = slug;
         _passwordController.clear();
-        _apiMessage = 'SesiÃ³n iniciada. Ya puedes descargar sobres cifrados.';
+        _apiMessage = 'Sesión iniciada. Ya puedes descargar sobres cifrados.';
       });
       _loadOrganizations();
     } catch (error) {
@@ -165,7 +165,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           _workspaceId = null;
           _workspaceSlug = null;
           _organizations = const [];
-          _apiMessage = 'SesiÃ³n cerrada en este dispositivo.';
+          _apiMessage = 'Sesión cerrada en este dispositivo.';
         });
       }
     } catch (error) {
@@ -199,7 +199,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         _workspaceId = id;
         _workspaceSlug = currentSlug;
         _workspaceController.text = currentSlug ?? '';
-        _apiMessage = 'OrganizaciÃ³n activa: ${currentSlug ?? slug}.';
+        _apiMessage = 'Organización activa: ${currentSlug ?? slug}.';
       });
       await _loadOrganizations();
     } catch (error) {
@@ -210,7 +210,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
   }
 
   Future<void> _createOrganization() async {
-    final values = await _organizationForm(title: 'Crear organizaciÃ³n');
+    final values = await _organizationForm(title: 'Crear organización');
     if (values == null) return;
     setState(() => _apiBusy = true);
     try {
@@ -221,7 +221,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
       await _loadOrganizations();
       if (mounted) {
         setState(() => _apiMessage =
-            'OrganizaciÃ³n ${created['name']} creada. Cambia a ella cuando quieras.');
+            'Organización ${created['name']} creada. Cambia a ella cuando quieras.');
       }
     } catch (error) {
       if (mounted) setState(() => _apiMessage = '$error');
@@ -235,7 +235,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
     if (current.isEmpty) return;
     final organization = current.first;
     final values = await _organizationForm(
-      title: 'Editar organizaciÃ³n',
+      title: 'Editar organización',
       name: '${organization['name'] ?? ''}',
       slug: '${organization['slug'] ?? ''}',
     );
@@ -252,7 +252,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         setState(() {
           _workspaceSlug = slug;
           _workspaceController.text = slug ?? '';
-          _apiMessage = 'Datos de la organizaciÃ³n actualizados.';
+          _apiMessage = 'Datos de la organización actualizados.';
         });
       }
     } catch (error) {
@@ -287,7 +287,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
               controller: slugController,
               decoration: const InputDecoration(
                 labelText: 'Identificador',
-                helperText: 'Ejemplo: empresa-norte. Ãšnico entre organizaciones.',
+                helperText: 'Ejemplo: empresa-norte. Único entre organizaciones.',
               ),
             ),
           ],
@@ -333,7 +333,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const AppPageTitle(
-            title: 'SincronizaciÃ³n',
+            title: 'Sincronización',
             icon: Icons.sync_rounded,
             color: AppTheme.skyAccent,
           ),
@@ -341,7 +341,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
             isScrollable: true,
             tabs: [
               Tab(text: 'Estado'),
-              Tab(text: 'OrganizaciÃ³n'),
+              Tab(text: 'Organización'),
               Tab(text: 'Dispositivos'),
               Tab(text: 'Conflictos'),
             ],
@@ -370,7 +370,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         );
       }
       if (!snapshot.hasData) {
-        return const LoadingStateView(message: 'Leyendo cola localâ€¦');
+        return const LoadingStateView(message: 'Leyendo cola local…');
       }
 
       final rows = snapshot.data!;
@@ -391,7 +391,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
             icon: Icons.inventory_2_outlined,
             title: 'Cola local de cambios',
             subtitle:
-                'Estos estados describen datos guardados en este dispositivo. AÃºn no hay un backend que confirme su aplicaciÃ³n en otro socio.',
+                'Estos estados describen datos guardados en este dispositivo. Aún no hay un backend que confirme su aplicación en otro socio.',
             child: Column(
               children: [
                 Row(
@@ -439,9 +439,9 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           const SizedBox(height: 12),
           const _NoticeCard(
             icon: Icons.lock_outline_rounded,
-            title: 'Sobres cifrados; aplicaciÃ³n pendiente',
+            title: 'Sobres cifrados; aplicación pendiente',
             message:
-                'La app guarda los sobres recibidos antes de mover el cursor. AÃºn falta acordar las claves entre socios, cifrar la outbox local y aplicar cambios a las tablas de negocio.',
+                'La app guarda los sobres recibidos antes de mover el cursor. Aún falta acordar las claves entre socios, cifrar la outbox local y aplicar cambios a las tablas de negocio.',
           ),
         ],
       );
@@ -450,10 +450,10 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
 
   Widget _buildApiCard() => _SectionCard(
     icon: Icons.cloud_sync_rounded,
-    title: 'API de sincronizaciÃ³n',
+    title: 'API de sincronización',
     subtitle: _signedIn
         ? 'Conectado a ${_workspaceSlug ?? 'workspace'}'
-        : 'Inicia sesiÃ³n con una cuenta de la organizaciÃ³n.',
+        : 'Inicia sesión con una cuenta de la organización.',
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -461,7 +461,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           TextField(
             controller: _workspaceController,
             decoration: const InputDecoration(
-              labelText: 'OrganizaciÃ³n / workspace',
+              labelText: 'Organización / workspace',
             ),
             textInputAction: TextInputAction.next,
           ),
@@ -475,7 +475,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           const SizedBox(height: 8),
           TextField(
             controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'ContraseÃ±a'),
+            decoration: const InputDecoration(labelText: 'Contraseña'),
             obscureText: true,
             onSubmitted: (_) {
               if (!_apiBusy) _login();
@@ -485,7 +485,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           FilledButton.icon(
             onPressed: _apiBusy ? null : _login,
             icon: const Icon(Icons.login_rounded),
-            label: Text(_apiBusy ? 'Conectandoâ€¦' : 'Iniciar sesiÃ³n'),
+            label: Text(_apiBusy ? 'Conectando…' : 'Iniciar sesión'),
           ),
         ] else ...[
           Row(
@@ -497,12 +497,12 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
                       ? const SizedBox.square(
                           dimension: 16,
                           child: CircularProgre…24 tokens truncated…ns.download_rounded),
-                  label: Text(_apiBusy ? 'Descargandoâ€¦' : 'Descargar cambios'),
+                  label: Text(_apiBusy ? 'Descargando…' : 'Descargar cambios'),
                 ),
               ),
               const SizedBox(width: 8),
               IconButton.outlined(
-                tooltip: 'Cerrar sesiÃ³n',
+                tooltip: 'Cerrar sesión',
                 onPressed: _apiBusy ? null : _logout,
                 icon: const Icon(Icons.logout_rounded),
               ),
@@ -535,7 +535,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           icon: Icons.inbox_outlined,
           title: 'Sobres recibidos',
           subtitle:
-              '${items.length} guardados localmente; pendientes de descifrado y aplicaciÃ³n.',
+              '${items.length} guardados localmente; pendientes de descifrado y aplicación.',
           child: items.isEmpty
               ? const Text('No hay sobres cifrados recibidos.')
               : Column(
@@ -549,7 +549,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
                           ),
                           title: Text(item.entityType),
                           subtitle: Text(
-                            'Secuencia ${item.serverSequence} Â· ${item.operationId}',
+                            'Secuencia ${item.serverSequence} · ${item.operationId}',
                           ),
                           trailing: const Text('Cifrado'),
                         ),
@@ -573,9 +573,9 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           ? AppTheme.emeraldSuccess
           : AppTheme.amberSafety,
     ),
-    title: Text('${row.operation} Â· ${row.entityTable}'),
+    title: Text('${row.operation} · ${row.entityTable}'),
     subtitle: Text(
-      '${row.entityId} Â· ${row.queuedAt.toLocal()}',
+      '${row.entityId} · ${row.queuedAt.toLocal()}',
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     ),
@@ -590,12 +590,12 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         title: 'Mis organizaciones',
         subtitle: _signedIn
             ? 'La cuenta puede pertenecer a varias organizaciones.'
-            : 'Inicia sesiÃ³n para ver las organizaciones asociadas a tu cuenta.',
+            : 'Inicia sesión para ver las organizaciones asociadas a tu cuenta.',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (!_signedIn)
-              const Text('La gestiÃ³n se habilita despuÃ©s de iniciar sesiÃ³n en Estado.'),
+              const Text('La gestión se habilita después de iniciar sesión en Estado.'),
             if (_signedIn && _organizationsLoading)
               const LinearProgressIndicator(),
             if (_signedIn && !_organizationsLoading && _organizations.isEmpty)
@@ -611,7 +611,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
                   FilledButton.icon(
                     onPressed: _apiBusy ? null : _createOrganization,
                     icon: const Icon(Icons.add_business_rounded),
-                    label: const Text('Crear organizaciÃ³n'),
+                    label: const Text('Crear organización'),
                   ),
                   OutlinedButton.icon(
                     onPressed: _apiBusy ? null : _loadOrganizations,
@@ -632,12 +632,12 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
       const SizedBox(height: 12),
       _SectionCard(
         icon: Icons.admin_panel_settings_outlined,
-        title: 'MembresÃ­a y seguridad',
+        title: 'Membresía y seguridad',
         subtitle: _workspaceSlug == null
-            ? 'Sin organizaciÃ³n activa'
-            : 'Activa: $_workspaceSlug Â· ID: ${_workspaceId ?? 'desconocido'}',
+            ? 'Sin organización activa'
+            : 'Activa: $_workspaceSlug · ID: ${_workspaceId ?? 'desconocido'}',
         child: const Text(
-          'Cambiar de organizaciÃ³n crea una sesiÃ³n nueva limitada al destino. Invitaciones, gestiÃ³n de miembros y aprobaciÃ³n de dispositivos siguen pendientes; la app no recibe credenciales NATS.',
+          'Cambiar de organización crea una sesión nueva limitada al destino. Invitaciones, gestión de miembros y aprobación de dispositivos siguen pendientes; la app no recibe credenciales NATS.',
         ),
       ),
       if (_apiMessage != null) ...[
@@ -666,8 +666,8 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child: const Icon(Icons.business_rounded),
       ),
-      title: Text((organization['name'] as String?) ?? 'OrganizaciÃ³n'),
-      subtitle: Text('$slug Â· $role'),
+      title: Text((organization['name'] as String?) ?? 'Organización'),
+      subtitle: Text('$slug · $role'),
       trailing: organization['isCurrent'] == true
           ? const Chip(label: Text('Activa'))
           : TextButton(
@@ -686,7 +686,7 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
         );
       }
       if (!snapshot.hasData) {
-        return const LoadingStateView(message: 'Preparando este dispositivoâ€¦');
+        return const LoadingStateView(message: 'Preparando este dispositivo…');
       }
 
       final deviceId = snapshot.data!;
@@ -718,8 +718,8 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
                 _ValueLine(
                   label: 'Estado de registro',
                   value: _signedIn
-                      ? 'SesiÃ³n vinculada; gestiÃ³n de dispositivos pendiente'
-                      : 'AÃºn no vinculado',
+                      ? 'Sesión vinculada; gestión de dispositivos pendiente'
+                      : 'Aún no vinculado',
                 ),
               ],
             ),
@@ -727,9 +727,9 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
           const SizedBox(height: 12),
           const _NoticeCard(
             icon: Icons.phonelink_erase_rounded,
-            title: 'GestiÃ³n de dispositivos pendiente del backend',
+            title: 'Gestión de dispositivos pendiente del backend',
             message:
-                'La lista de socios, aprobaciÃ³n y revocaciÃ³n no puede mantenerse solo en cada telÃ©fono. Se habilitarÃ¡ cuando el servicio central registre y revoque claves por dispositivo.',
+                'La lista de socios, aprobación y revocación no puede mantenerse solo en cada teléfono. Se habilitará cuando el servicio central registre y revoque claves por dispositivo.',
           ),
         ],
       );
@@ -741,22 +741,22 @@ class _SyncCenterScreenState extends State<SyncCenterScreen> {
     children: const [
       _SectionCard(
         icon: Icons.compare_arrows_rounded,
-        title: 'ResoluciÃ³n de conflictos',
-        subtitle: 'No se han recibido conflictos de sincronizaciÃ³n.',
+        title: 'Resolución de conflictos',
+        subtitle: 'No se han recibido conflictos de sincronización.',
         child: _NoticeCard(
           icon: Icons.info_outline_rounded,
-          title: 'El inbox aÃºn no estÃ¡ implementado',
+          title: 'El inbox aún no está implementado',
           message:
-              'No se declara que no existan conflictos en el servidor: esta app aÃºn no descarga ni aplica eventos entrantes. La resoluciÃ³n se conectarÃ¡ al registro local y al cursor del dispositivo.',
+              'No se declara que no existan conflictos en el servidor: esta app aún no descarga ni aplica eventos entrantes. La resolución se conectará al registro local y al cursor del dispositivo.',
         ),
       ),
       SizedBox(height: 12),
       _SectionCard(
         icon: Icons.restore_rounded,
-        title: 'RecuperaciÃ³n',
+        title: 'Recuperación',
         subtitle: 'Los respaldos actuales son locales.',
         child: Text(
-          'TodavÃ­a no existe un cursor remoto ni un snapshot de sincronizaciÃ³n para reanudar cambios despuÃ©s de una ausencia prolongada.',
+          'Todavía no existe un cursor remoto ni un snapshot de sincronización para reanudar cambios después de una ausencia prolongada.',
         ),
       ),
     ],
@@ -816,7 +816,7 @@ class _ConnectionCard extends StatelessWidget {
           ] else ...[
             const SizedBox(height: 8),
             const Text(
-              'El VPS confirmÃ³ el servicio. Usa esta acciÃ³n para revisar DNS, puerto y certificado desde este cliente.',
+              'El VPS confirmó el servicio. Usa esta acción para revisar DNS, puerto y certificado desde este cliente.',
             ),
           ],
           const SizedBox(height: 12),
@@ -828,7 +828,7 @@ class _ConnectionCard extends StatelessWidget {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.network_check_rounded),
-            label: Text(probing ? 'Comprobandoâ€¦' : 'Comprobar canal TLS'),
+            label: Text(probing ? 'Comprobando…' : 'Comprobar canal TLS'),
           ),
         ],
       ),
